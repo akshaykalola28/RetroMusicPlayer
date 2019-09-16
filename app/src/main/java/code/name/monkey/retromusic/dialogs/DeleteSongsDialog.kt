@@ -27,7 +27,6 @@ import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.SAFUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 
 
 class DeleteSongsDialog : DialogFragment() {
@@ -53,25 +52,44 @@ class DeleteSongsDialog : DialogFragment() {
             }
         }
 
-        return MaterialDialog(requireActivity(), BottomSheet()).show {
-            title(title)
-            message(text = content)
-            negativeButton(android.R.string.cancel) {
-                dismiss()
-            }
-            noAutoDismiss()
-            positiveButton(R.string.action_delete) {
-                if (songs != null) {
-                    if ((songs.size == 1) && MusicPlayerRemote.isPlaying(songs[0])) {
-                        MusicPlayerRemote.playNextSong()
+        return MaterialDialog.Builder(requireActivity())
+                .title(title)
+                .content(content)
+                .positiveText(R.string.delete_action)
+                .autoDismiss(false)
+                .negativeText(android.R.string.cancel)
+                .onPositive { _, _ ->
+                    if (songs != null) {
+                        if ((songs.size == 1) && MusicPlayerRemote.isPlaying(songs[0])) {
+                            MusicPlayerRemote.playNextSong()
+                        }
                     }
-                }
 
-                songsToRemove = songs
-                deleteSongsAsyncTask = DeleteSongsAsyncTask(this@DeleteSongsDialog)
-                deleteSongsAsyncTask?.execute(DeleteSongsAsyncTask.LoadingInfo(songs, null))
-            }
-        }
+                    songsToRemove = songs
+                    deleteSongsAsyncTask = DeleteSongsAsyncTask(this@DeleteSongsDialog)
+                    deleteSongsAsyncTask?.execute(DeleteSongsAsyncTask.LoadingInfo(songs, null))
+                }
+                .build()
+
+        /* return MaterialDialog(requireActivity(), BottomSheet()).show {
+             title(title)
+             message(text = content)
+             negativeButton(android.R.string.cancel) {
+                 dismiss()
+             }
+             noAutoDismiss()
+             positiveButton(R.string.action_delete) {
+                 if (songs != null) {
+                     if ((songs.size == 1) && MusicPlayerRemote.isPlaying(songs[0])) {
+                         MusicPlayerRemote.playNextSong()
+                     }
+                 }
+
+                 songsToRemove = songs
+                 deleteSongsAsyncTask = DeleteSongsAsyncTask(this@DeleteSongsDialog)
+                 deleteSongsAsyncTask?.execute(DeleteSongsAsyncTask.LoadingInfo(songs, null))
+             }
+         }*/
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

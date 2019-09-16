@@ -23,7 +23,6 @@ import code.name.monkey.retromusic.R.string
 import code.name.monkey.retromusic.model.Playlist
 import code.name.monkey.retromusic.util.PlaylistsUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import java.util.*
 
 
@@ -42,18 +41,15 @@ class DeletePlaylistDialog : DialogFragment() {
             content = Html.fromHtml(getString(string.delete_playlist_x, playlists[0].name))
         }
 
-        return MaterialDialog(activity!!, BottomSheet())
-                .show {
-                    title(title)
-                    message(text = content)
-                    negativeButton(android.R.string.cancel)
-                    positiveButton(R.string.action_delete) {
-                        if (activity == null)
-                            return@positiveButton
-                        PlaylistsUtil.deletePlaylists(activity!!, playlists)
-                    }
-                    negativeButton(android.R.string.cancel)
+        return MaterialDialog.Builder(requireActivity())
+                .title(title)
+                .content(content)
+                .positiveText(R.string.delete_action)
+                .negativeText(android.R.string.cancel)
+                .onPositive { _, _ ->
+                    PlaylistsUtil.deletePlaylists(requireContext(), playlists)
                 }
+                .build()
     }
 
     companion object {

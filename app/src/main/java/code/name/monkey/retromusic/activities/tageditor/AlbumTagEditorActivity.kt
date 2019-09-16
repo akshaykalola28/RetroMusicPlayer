@@ -13,11 +13,11 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ATHUtil
 import code.name.monkey.appthemehelper.util.MaterialUtil
-import code.name.monkey.appthemehelper.util.TintHelper
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ATHUtil
+import com.kabouzeid.appthemehelper.util.TintHelper
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.extensions.appHandleColor
 import code.name.monkey.retromusic.glide.palette.BitmapPaletteTranscoder

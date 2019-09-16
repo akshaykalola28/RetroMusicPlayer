@@ -20,19 +20,15 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.TwoStatePreference
-import code.name.monkey.appthemehelper.ACCENT_COLORS
-import code.name.monkey.appthemehelper.ACCENT_COLORS_SUB
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.common.prefs.supportv7.ATEColorPreference
-import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.VersionUtils
-import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.appshortcuts.DynamicShortcutManager
 import code.name.monkey.retromusic.util.PreferenceUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.color.colorChooser
+import com.afollestad.materialdialogs.color.ColorChooserDialog
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEColorPreference
+import com.kabouzeid.appthemehelper.util.ColorUtil
 
 
 /**
@@ -63,7 +59,6 @@ class ThemeSettingsFragment : AbsSettingsFragment() {
                 }
 
                 ThemeStore.editTheme(requireContext())
-                        .activityTheme(PreferenceUtil.getThemeResFromPrefValue(theme))
                         .primaryColor(color)
                         .commit()
 
@@ -83,16 +78,12 @@ class ThemeSettingsFragment : AbsSettingsFragment() {
         accentColorPref.setColor(accentColor, ColorUtil.darkenColor(accentColor))
 
         accentColorPref.setOnPreferenceClickListener {
-            materialDialog = MaterialDialog(requireContext(), BottomSheet()).show {
-                title(R.string.accent_color)
-                positiveButton(R.string.set)
-                colorChooser(colors = ACCENT_COLORS, allowCustomArgb = true, subColors = ACCENT_COLORS_SUB) { _, color ->
-                    ThemeStore.editTheme(requireContext()).accentColor(color).commit()
-                    if (VersionUtils.hasNougatMR())
-                        DynamicShortcutManager(requireContext()).updateDynamicShortcuts()
-                    requireActivity().recreate()
-                }
-            }
+            ColorChooserDialog.Builder(requireActivity(), R.string.accent_color)
+                    .accentMode(true)
+                    .allowUserColorInput(true)
+                    .allowUserColorInputAlpha(true)
+                    .preselect(accentColor)
+                    .show(requireActivity())
             return@setOnPreferenceClickListener true
         }
 

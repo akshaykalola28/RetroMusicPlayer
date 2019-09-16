@@ -6,12 +6,13 @@ import android.view.MenuItem
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionManager
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsBaseActivity
 import code.name.monkey.retromusic.fragments.settings.MainSettingsFragment
 import code.name.monkey.retromusic.util.PreferenceUtil
+import code.name.monkey.retromusic.util.RetroColorUtil
 import kotlinx.android.synthetic.main.activity_settings.*
 
 
@@ -43,7 +44,7 @@ class SettingsActivity : AbsBaseActivity(), SharedPreferences.OnSharedPreference
             setTitleTextColor(ThemeStore.textColorPrimary(context))
             setBackgroundColor(ThemeStore.primaryColor(context))
             setNavigationOnClickListener { onBackPressed() }
-            ToolbarContentTintHelper.colorBackButton(toolbar, ThemeStore.textColorSecondary(context))
+            RetroColorUtil.colorBackButton(toolbar, ThemeStore.textColorSecondary(context))
         }
         appBarLayout.setBackgroundColor(ThemeStore.primaryColor(this))
 

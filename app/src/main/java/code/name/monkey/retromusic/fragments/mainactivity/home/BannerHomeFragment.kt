@@ -9,10 +9,10 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import androidx.recyclerview.widget.LinearLayoutManager
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.common.ATHToolbarActivity
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.common.ATHToolbarActivity
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.Constants
 import code.name.monkey.retromusic.Constants.USER_BANNER

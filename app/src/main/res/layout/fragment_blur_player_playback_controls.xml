@@ -104,7 +104,7 @@
             android:textAppearance="@style/TextViewHeadline6"
             tools:text="@string/bug_report_summary" />
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -32,9 +32,6 @@ import code.name.monkey.retromusic.R.string
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.MusicUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.audio.exceptions.CannotReadException
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException
@@ -53,18 +50,15 @@ inline fun ViewGroup.forEach(action: (View) -> Unit) {
 class SongDetailDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val context: Activity = activity!!
+
         val song = arguments!!.getParcelable<Song>("song")
+        val dialogView = layoutInflater.inflate(layout.dialog_file_details, null)
 
-        val materialDialog = MaterialDialog(context, BottomSheet())
-                .show {
-                    customView(layout.dialog_file_details,
-                            scrollable = true)
-                    positiveButton(android.R.string.ok)
-                    title(string.action_details)
-                }
-        val dialogView = materialDialog.getCustomView()
-
+        val dialog = MaterialDialog.Builder(requireActivity())
+                .customView(dialogView, true)
+                .title(getString(string.label_details))
+                .positiveText(android.R.string.ok)
+                .build()
         val fileName: TextView = dialogView.findViewById(R.id.fileName)
         val filePath: TextView = dialogView.findViewById(R.id.filePath)
         val fileSize: TextView = dialogView.findViewById(R.id.fileSize)
@@ -73,53 +67,53 @@ class SongDetailDialog : DialogFragment() {
         val bitRate: TextView = dialogView.findViewById(R.id.bitrate)
         val samplingRate: TextView = dialogView.findViewById(R.id.samplingRate)
 
-        fileName.text = makeTextWithTitle(context, string.label_file_name, "-")
-        filePath.text = makeTextWithTitle(context, string.label_file_path, "-")
-        fileSize.text = makeTextWithTitle(context, string.label_file_size, "-")
-        fileFormat.text = makeTextWithTitle(context, string.label_file_format, "-")
-        trackLength.text = makeTextWithTitle(context, string.label_track_length, "-")
-        bitRate.text = makeTextWithTitle(context, string.label_bit_rate, "-")
-        samplingRate.text = makeTextWithTitle(context, string.label_sampling_rate, "-")
+        fileName.text = makeTextWithTitle(requireContext(), string.label_file_name, "-")
+        filePath.text = makeTextWithTitle(requireContext(), string.label_file_path, "-")
+        fileSize.text = makeTextWithTitle(requireContext(), string.label_file_size, "-")
+        fileFormat.text = makeTextWithTitle(requireContext(), string.label_file_format, "-")
+        trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, "-")
+        bitRate.text = makeTextWithTitle(requireContext(), string.label_bit_rate, "-")
+        samplingRate.text = makeTextWithTitle(requireContext(), string.label_sampling_rate, "-")
         if (song != null) {
             val songFile = File(song.data)
             if (songFile.exists()) {
-                fileName.text = makeTextWithTitle(context, string.label_file_name, songFile.name)
-                filePath.text = makeTextWithTitle(context, string.label_file_path, songFile.absolutePath)
-                fileSize.text = makeTextWithTitle(context, string.label_file_size, getFileSizeString(songFile.length()))
+                fileName.text = makeTextWithTitle(requireContext(), string.label_file_name, songFile.name)
+                filePath.text = makeTextWithTitle(requireContext(), string.label_file_path, songFile.absolutePath)
+                fileSize.text = makeTextWithTitle(requireContext(), string.label_file_size, getFileSizeString(songFile.length()))
                 try {
                     val audioFile = AudioFileIO.read(songFile)
                     val audioHeader = audioFile.audioHeader
 
-                    fileFormat.text = makeTextWithTitle(context, string.label_file_format, audioHeader.format)
-                    trackLength.text = makeTextWithTitle(context, string.label_track_length, MusicUtil.getReadableDurationString((audioHeader.trackLength * 1000).toLong()))
-                    bitRate.text = makeTextWithTitle(context, string.label_bit_rate, audioHeader.bitRate + " kb/s")
-                    samplingRate.text = makeTextWithTitle(context, string.label_sampling_rate, audioHeader.sampleRate + " Hz")
+                    fileFormat.text = makeTextWithTitle(requireContext(), string.label_file_format, audioHeader.format)
+                    trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, MusicUtil.getReadableDurationString((audioHeader.trackLength * 1000).toLong()))
+                    bitRate.text = makeTextWithTitle(requireContext(), string.label_bit_rate, audioHeader.bitRate + " kb/s")
+                    samplingRate.text = makeTextWithTitle(requireContext(), string.label_sampling_rate, audioHeader.sampleRate + " Hz")
                 } catch (@NonNull e: CannotReadException) {
                     Log.e(TAG, "error while reading the song file", e)
                     // fallback
-                    trackLength.text = makeTextWithTitle(context, string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
+                    trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
                 } catch (@NonNull e: IOException) {
                     Log.e(TAG, "error while reading the song file", e)
-                    trackLength.text = makeTextWithTitle(context, string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
+                    trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
                 } catch (@NonNull e: TagException) {
                     Log.e(TAG, "error while reading the song file", e)
-                    trackLength.text = makeTextWithTitle(context, string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
+                    trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
                 } catch (@NonNull e: ReadOnlyFileException) {
                     Log.e(TAG, "error while reading the song file", e)
-                    trackLength.text = makeTextWithTitle(context, string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
+                    trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
                 } catch (@NonNull e: InvalidAudioFrameException) {
                     Log.e(TAG, "error while reading the song file", e)
-                    trackLength.text = makeTextWithTitle(context, string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
+                    trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
                 }
 
             } else {
                 // fallback
-                fileName.text = makeTextWithTitle(context, string.label_file_name, song.title)
-                trackLength.text = makeTextWithTitle(context, string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
+                fileName.text = makeTextWithTitle(requireContext(), string.label_file_name, song.title)
+                trackLength.text = makeTextWithTitle(requireContext(), string.label_track_length, MusicUtil.getReadableDurationString(song.duration))
             }
         }
 
-        return materialDialog
+        return dialog
     }
 
     companion object {

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.preference.PreferenceManager
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
 import code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment
@@ -16,6 +15,7 @@ import code.name.monkey.retromusic.glide.RetroMusicColoredTarget
 import code.name.monkey.retromusic.glide.SongGlideRequest
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.model.Song
+import code.name.monkey.retromusic.util.RetroColorUtil
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_blur.*
 
@@ -50,7 +50,7 @@ class BlurPlayerFragment : AbsPlayerFragment() {
         playerToolbar!!.apply {
             inflateMenu(R.menu.menu_player)
             setNavigationOnClickListener { activity!!.onBackPressed() }
-            ToolbarContentTintHelper.colorizeToolbar(this, Color.WHITE, activity)
+            RetroColorUtil.colorizeToolbar(this, Color.WHITE, activity)
         }.setOnMenuItemClickListener(this)
     }
 
@@ -62,7 +62,7 @@ class BlurPlayerFragment : AbsPlayerFragment() {
         playbackControlsFragment.setDark(color)
         lastColor = color
         callbacks!!.onPaletteColorChanged()
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar!!, Color.WHITE, activity)
+        RetroColorUtil.colorizeToolbar(playerToolbar!!, Color.WHITE, activity)
     }
 
     override fun toggleFavorite(song: Song) {

@@ -14,31 +14,152 @@
 
 package code.name.monkey.retromusic.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ActionMenuView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.palette.graphics.Palette;
+
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.util.ATHUtil;
+import com.kabouzeid.appthemehelper.util.ColorUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import code.name.monkey.appthemehelper.ThemeStore;
-import code.name.monkey.appthemehelper.util.ATHUtil;
-import code.name.monkey.appthemehelper.util.ColorUtil;
 import code.name.monkey.retromusic.R;
 
+import static com.kabouzeid.appthemehelper.util.ViewUtil.removeOnGlobalLayoutListener;
+
 public class RetroColorUtil {
+
+    public static void colorBackButton(@NonNull Toolbar toolbar, @ColorInt int color) {
+        final PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY);
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            final View backButton = toolbar.getChildAt(i);
+            if (backButton instanceof ImageView) {
+                ((ImageView) backButton).getDrawable().setColorFilter(colorFilter);
+            } else if (backButton instanceof TextView) {
+                // ((TextView) backButton).setTextColor(color);
+            }
+        }
+    }
+
+    public static void colorizeToolbar(Toolbar toolbarView, int toolbarIconsColor,
+                                       Activity activity) {
+        final PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(toolbarIconsColor,
+                PorterDuff.Mode.MULTIPLY);
+
+        for (int i = 0; i < toolbarView.getChildCount(); i++) {
+            final View v = toolbarView.getChildAt(i);
+
+            //Step 1 : Changing the color of back button (or open drawer button).
+            if (v instanceof ImageButton) {
+                //Action Bar back button
+                ((ImageButton) v).getDrawable().setColorFilter(colorFilter);
+            }
+
+            if (v instanceof ActionMenuView) {
+                for (int j = 0; j < ((ActionMenuView) v).getChildCount(); j++) {
+
+                    //Step 2: Changing the color of any ActionMenuViews - icons that are not back button, nor text, nor overflow menu icon.
+                    //Colorize the ActionViews -> all icons that are NOT: back button | overflow menu
+                    final View innerView = ((ActionMenuView) v).getChildAt(j);
+                    if (innerView instanceof ActionMenuItemView) {
+                        for (int k = 0; k < ((ActionMenuItemView) innerView).getCompoundDrawables().length; k++) {
+                            if (((ActionMenuItemView) innerView).getCompoundDrawables()[k] != null) {
+                                final int finalK = k;
+
+                                //Important to set the color filter in seperate thread, by adding it to the message queue
+                                //Won't work otherwise.
+                                innerView.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((ActionMenuItemView) innerView).getCompoundDrawables()[finalK]
+                                                .setColorFilter(colorFilter);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Step 3: Changing the color of title and subtitle.
+            toolbarView.setTitleTextColor(ThemeStore.textColorPrimary(activity));
+            toolbarView.setSubtitleTextColor(ThemeStore.textColorSecondary(activity));
+
+            //Step 4: Changing the color of the Overflow Menu icon.
+            setOverflowButtonColor(activity, toolbarView, toolbarIconsColor);
+        }
+    }
+
+    private static void setOverflowButtonColor(final Activity activity,
+                                               final PorterDuffColorFilter colorFilter) {
+        final String overflowDescription = activity
+                .getString(R.string.abc_action_menu_overflow_description);
+        final ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
+        final ViewTreeObserver viewTreeObserver = decorView.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onGlobalLayout() {
+                final ArrayList<View> outViews = new ArrayList<View>();
+                decorView.findViewsWithText(outViews, overflowDescription,
+                        View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+                if (outViews.isEmpty()) {
+                    return;
+                }
+                final ActionMenuView overflowViewParent = (ActionMenuView) outViews.get(0).getParent();
+                overflowViewParent.getOverflowIcon().setColorFilter(colorFilter);
+                removeOnGlobalLayoutListener(decorView, this);
+            }
+        });
+    }
+
+    private static void setOverflowButtonColor(final Activity activity, final Toolbar toolbar,
+                                               final int toolbarIconsColor) {
+        final ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
+        final ViewTreeObserver viewTreeObserver = decorView.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                if (toolbar != null && toolbar.getOverflowIcon() != null) {
+                    Drawable bg = DrawableCompat.wrap(toolbar.getOverflowIcon());
+                    DrawableCompat.setTint(bg, toolbarIconsColor);
+                }
+                removeOnGlobalLayoutListener(decorView, this);
+            }
+        });
+    }
+
     public static int toolbarColor(@NonNull Context context) {
-        int color = ThemeStore.Companion.primaryColor(context);
-        if (ATHUtil.INSTANCE.isWindowBackgroundDark(context)) {
-            return ATHUtil.INSTANCE.resolveColor(context, R.attr.cardBackgroundColor);
+        int color = ThemeStore.primaryColor(context);
+        if (ATHUtil.isWindowBackgroundDark(context)) {
+            return ATHUtil.resolveColor(context, R.attr.cardBackgroundColor);
         } else {
             return color;
         }
@@ -66,9 +187,9 @@ public class RetroColorUtil {
         int background = getSwatch(palette).getRgb();
 
         if (inverse != -1) {
-            return ColorUtil.INSTANCE.getReadableText(inverse, background, 150);
+            return ViewUtil.INSTANCE.getReadableText(inverse, background, 150);
         }
-        return ColorUtil.INSTANCE.stripAlpha(getSwatch(palette).getTitleTextColor());
+        return ColorUtil.stripAlpha(getSwatch(palette).getTitleTextColor());
     }
 
     @NonNull
@@ -189,16 +310,16 @@ public class RetroColorUtil {
 
     @ColorInt
     public static int shiftBackgroundColorForLightText(@ColorInt int backgroundColor) {
-        while (ColorUtil.INSTANCE.isColorLight(backgroundColor)) {
-            backgroundColor = ColorUtil.INSTANCE.darkenColor(backgroundColor);
+        while (ColorUtil.isColorLight(backgroundColor)) {
+            backgroundColor = ColorUtil.darkenColor(backgroundColor);
         }
         return backgroundColor;
     }
 
     @ColorInt
     public static int shiftBackgroundColorForDarkText(@ColorInt int backgroundColor) {
-        while (!ColorUtil.INSTANCE.isColorLight(backgroundColor)) {
-            backgroundColor = ColorUtil.INSTANCE.lightenColor(backgroundColor);
+        while (!ColorUtil.isColorLight(backgroundColor)) {
+            backgroundColor = ColorUtil.lightenColor(backgroundColor);
         }
         return backgroundColor;
     }

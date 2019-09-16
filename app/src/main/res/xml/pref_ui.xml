@@ -2,8 +2,8 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <code.name.monkey.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory app:title="@string/grid_style_label">
-        <code.name.monkey.retromusic.preferences.MaterialListPreference
+    <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory app:title="@string/grid_style_label">
+        <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEListPreference
             android:defaultValue="0"
             android:entries="@array/pref_grid_style_list_titles"
             android:entryValues="@array/pref_grid_style_list_values"
@@ -14,7 +14,7 @@
             app:enableCopying="true"
             app:icon="@drawable/ic_album_white_24dp" />
 
-        <code.name.monkey.retromusic.preferences.MaterialListPreference
+        <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEListPreference
             android:defaultValue="0"
             android:entries="@array/pref_grid_style_list_titles"
             android:entryValues="@array/pref_grid_style_list_values"
@@ -26,7 +26,7 @@
             app:icon="@drawable/ic_artist_white_24dp" />
 
 
-        <code.name.monkey.retromusic.preferences.MaterialListPreference
+        <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEListPreference
             android:defaultValue="0"
             android:entries="@array/pref_home_grid_style_list_titles"
             android:entryValues="@array/pref_home_grid_style_list_values"
@@ -37,22 +37,22 @@
             app:enableCopying="true"
             app:icon="@drawable/ic_home_white_24dp" />
 
-        <code.name.monkey.appthemehelper.common.prefs.supportv7.ATESwitchPreference
+        <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATESwitchPreference
             android:defaultValue="false"
             android:key="toggle_home_banner"
             android:summary="@string/pref_summary_home_banner"
             android:title="@string/pref_title_home_banner" />
 
-        <code.name.monkey.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory android:title="@string/pref_header_library">
+        <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory android:title="@string/pref_header_library">
 
-            <code.name.monkey.retromusic.preferences.LibraryPreference
+            <com.kabouzeid.retromusic.preferences.LibraryPreference
                 android:key="library_categories"
                 android:summary="@string/pref_summary_library_categories"
                 android:title="@string/library_categories"
                 app:enableCopying="true"
                 app:icon="@drawable/ic_library_music_white_24dp" />
 
-            <code.name.monkey.retromusic.preferences.MaterialListPreference
+            <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEListPreference
                 android:defaultValue="0"
                 android:entries="@array/pref_tab_text_mode_titles"
                 android:entryValues="@array/pref_tab_text_mode_values"
@@ -61,8 +61,6 @@
                 android:positiveButtonText="@null"
                 android:title="@string/pref_title_tab_text_mode"
                 app:enableCopying="true" />
-        </code.name.monkey.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory>
-
-
-    </code.name.monkey.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory>
+        </com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory>
+    </com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory>
 </androidx.preference.PreferenceScreen>

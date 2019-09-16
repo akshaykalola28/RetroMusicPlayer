@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.core.view.ViewCompat
-import code.name.monkey.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsMusicServiceActivity
 import code.name.monkey.retromusic.fragments.player.lockscreen.LockScreenPlayerControlsFragment

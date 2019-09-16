@@ -13,17 +13,16 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.OvershootInterpolator
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
-import code.name.monkey.appthemehelper.util.TintHelper
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
+import com.kabouzeid.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsBaseActivity
 import code.name.monkey.retromusic.activities.saf.SAFGuideActivity
 import code.name.monkey.retromusic.util.RetroUtil
 import code.name.monkey.retromusic.util.SAFUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItems
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_album_tag_editor.*
@@ -50,17 +49,20 @@ abstract class AbsTagEditorActivity : AbsBaseActivity() {
     private var savedArtworkInfo: ArtworkInfo? = null
 
     protected val show: MaterialDialog
-        get() = MaterialDialog(this@AbsTagEditorActivity).show {
-            title(code.name.monkey.retromusic.R.string.update_image)
-            listItems(items = items) { _, position, _ ->
-                when (position) {
-                    0 -> getImageFromLastFM()
-                    1 -> startImagePicker()
-                    2 -> searchImageOnWeb()
-                    3 -> deleteImage()
+        get() = MaterialDialog.Builder(this@AbsTagEditorActivity)
+                .title(R.string.update_image)
+                .items(items)
+                .itemsCallback { _, _, position, _ ->
+                    when (position) {
+                        0 -> getImageFromLastFM()
+                        1 -> startImagePicker()
+                        2 -> searchImageOnWeb()
+                        3 -> deleteImage()
+                    }
                 }
-            }
-        }
+                .build()
+
+
     protected abstract val contentViewLayout: Int
 
     internal val albumArtist: String?
@@ -185,7 +187,7 @@ abstract class AbsTagEditorActivity : AbsBaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(contentViewLayout)
 
-        saveFab = findViewById( R.id.saveTags)
+        saveFab = findViewById(R.id.saveTags)
         getIntentExtras()
 
         songPaths = getSongPaths()

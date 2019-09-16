@@ -3,12 +3,6 @@
 
 
     <style name="Theme.RetroMusic.Base" parent="Theme.MaterialComponents.NoActionBar">
-
-        <item name="md_corner_radius">16dp</item>
-        <item name="md_font_title">@font/circular</item>
-        <item name="md_font_body">@font/circular</item>
-        <item name="md_font_button">@font/circular</item>
-        <item name="md_color_button_text">@color/md_white_1000</item>
         <item name="md_background_color">@color/dark_color</item>
 
         <item name="android:windowActionBarOverlay">true</item>
@@ -75,13 +69,6 @@
     </style>
 
     <style name="Theme.RetroMusic.Base.Light" parent="Theme.MaterialComponents.Light.NoActionBar">
-
-        <item name="md_corner_radius">16dp</item>
-        <item name="md_font_title">@font/circular</item>
-        <item name="md_font_body">@font/circular</item>
-        <item name="md_font_button">@font/circular</item>
-        <item name="md_color_button_text">@color/md_black_1000</item>
-
         <item name="android:windowActionBarOverlay">true</item>
         <item name="windowActionBarOverlay">true</item>
 

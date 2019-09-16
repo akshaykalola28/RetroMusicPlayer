@@ -35,7 +35,7 @@
                 app:titleEnabled="false">
 
 
-                <code.name.monkey.appthemehelper.common.views.ATEToolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"
                     style="@style/Toolbar"
                     app:layout_collapseMode="pin"
@@ -70,7 +70,7 @@
                         android:tint="@color/md_white_1000"
                         app:srcCompat="@drawable/ic_format_color_fill" />
 
-                    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -93,7 +93,7 @@
                         android:tint="@color/md_white_1000"
                         app:srcCompat="@drawable/ic_theme_palette_white_24dp" />
 
-                    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -116,7 +116,7 @@
                         android:tint="@color/md_white_1000"
                         app:srcCompat="@drawable/ic_view_carousel_black_24dp" />
 
-                    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -138,7 +138,7 @@
                         android:tint="@color/md_white_1000"
                         app:srcCompat="@drawable/ic_rounded_corner" />
 
-                    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
@@ -161,7 +161,7 @@
                         android:tint="@color/md_white_1000"
                         app:srcCompat="@drawable/ic_favorite_white_24dp" />
 
-                    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"

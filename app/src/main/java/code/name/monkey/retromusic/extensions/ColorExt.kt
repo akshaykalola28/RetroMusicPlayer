@@ -14,7 +14,7 @@
 
 package code.name.monkey.retromusic.extensions
 
-import code.name.monkey.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.ColorUtil
 
 fun Int.ripAlpha(): Int {
     return ColorUtil.stripAlpha(this)

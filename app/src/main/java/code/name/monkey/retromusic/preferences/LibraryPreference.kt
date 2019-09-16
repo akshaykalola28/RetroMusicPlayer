@@ -23,14 +23,13 @@ import android.widget.Toast
 import androidx.preference.PreferenceDialogFragmentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.common.prefs.supportv7.ATEDialogPreference
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEDialogPreference
+import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.CategoryInfoAdapter
 import code.name.monkey.retromusic.model.CategoryInfo
 import code.name.monkey.retromusic.util.PreferenceUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.customview.customView
 import java.util.*
 
 
@@ -73,7 +72,26 @@ class LibraryPreferenceDialog : PreferenceDialogFragmentCompat() {
 
         adapter.attachToRecyclerView(recyclerView)
 
-        return MaterialDialog(context!!, BottomSheet())
+        return MaterialDialog.Builder(requireActivity())
+                .title(R.string.library_categories)
+                .customView(view, false)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .neutralText(R.string.reset_action)
+                .autoDismiss(false)
+                .onNeutral { _, _ ->
+                    adapter.categoryInfos = PreferenceUtil.getInstance(requireContext()).defaultLibraryCategoryInfos
+                }
+                .onNegative { _, _ ->
+                    dismiss()
+                }
+                .onPositive { _, _ ->
+                    updateCategories(adapter.categoryInfos)
+                    dismiss()
+                }
+                .build()
+
+        /*return MaterialDialog(context!!, BottomSheet())
                 .title(code.name.monkey.retromusic.R.string.library_categories)
                 .customView(view = view)
                 .positiveButton(android.R.string.ok) {
@@ -86,7 +104,7 @@ class LibraryPreferenceDialog : PreferenceDialogFragmentCompat() {
                 .neutralButton(code.name.monkey.retromusic.R.string.reset_action) {
                     adapter.categoryInfos = PreferenceUtil.getInstance(requireContext()).defaultLibraryCategoryInfos
                 }
-                .noAutoDismiss()
+                .noAutoDismiss()*/
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -114,12 +132,8 @@ class LibraryPreferenceDialog : PreferenceDialogFragmentCompat() {
 
     companion object {
 
-        fun newInstance(key: String): LibraryPreferenceDialog {
-            val bundle = Bundle()
-            bundle.putString(ARG_KEY, key)
-            val fragment = LibraryPreferenceDialog()
-            fragment.arguments = bundle
-            return fragment
+        fun newInstance(): LibraryPreferenceDialog {
+            return LibraryPreferenceDialog()
         }
     }
 }

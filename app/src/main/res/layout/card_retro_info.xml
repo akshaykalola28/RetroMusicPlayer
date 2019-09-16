@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <code.name.monkey.appthemehelper.common.views.ATEAccentTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             style="@style/SubTitleTextAppearance"
             android:text="@string/support_development"
             android:textAppearance="@style/TextViewOverline" />
@@ -45,14 +45,14 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp">
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/circular"
                     android:text="@string/git_hub"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:alpha="0.85"
@@ -89,13 +89,13 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp">
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/translate"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:alpha="0.85"
@@ -133,13 +133,13 @@
                 android:paddingBottom="8dp">
 
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/rate_app"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:textAppearance="@style/TextViewBody2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -177,13 +177,13 @@
                 android:paddingBottom="8dp">
 
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/donate"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:textAppearance="@style/TextViewBody2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -220,13 +220,13 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp">
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/report_bug"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:textAppearance="@style/TextViewBody2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -266,7 +266,7 @@
                 android:paddingBottom="8dp">
 
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/action_share"
@@ -306,7 +306,7 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp">
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/faq"

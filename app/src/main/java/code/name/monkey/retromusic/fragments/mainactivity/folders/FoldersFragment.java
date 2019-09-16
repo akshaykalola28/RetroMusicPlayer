@@ -28,6 +28,12 @@ import com.afollestad.materialcab.MaterialCab;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.common.ATHToolbarActivity;
+import com.kabouzeid.appthemehelper.util.ATHUtil;
+import com.kabouzeid.appthemehelper.util.ColorUtil;
+import com.kabouzeid.appthemehelper.util.TintHelper;
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import java.io.File;
@@ -41,12 +47,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import code.name.monkey.appthemehelper.ThemeStore;
-import code.name.monkey.appthemehelper.common.ATHToolbarActivity;
-import code.name.monkey.appthemehelper.util.ATHUtil;
-import code.name.monkey.appthemehelper.util.ColorUtil;
-import code.name.monkey.appthemehelper.util.TintHelper;
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper;
 import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.adapter.SongFileAdapter;
 import code.name.monkey.retromusic.dialogs.OptionsSheetDialogFragment;
@@ -225,7 +225,7 @@ public class FoldersFragment extends AbsMainActivityFragment implements
     }
 
     private void setUpAppbarColor() {
-        int primaryColor = ThemeStore.Companion.primaryColor(getContext());
+        int primaryColor = ThemeStore.primaryColor(getContext());
         getMainActivity().setSupportActionBar(toolbar);
         TintHelper.setTintAuto(container, primaryColor, true);
         appBarLayout.setBackgroundColor(primaryColor);
@@ -234,10 +234,10 @@ public class FoldersFragment extends AbsMainActivityFragment implements
         toolbar.setNavigationOnClickListener(v -> {
             showMainMenu(OptionsSheetDialogFragment.FOLDER);
         });
-        breadCrumbs.setActivatedContentColor(ToolbarContentTintHelper.toolbarTitleColor(getActivity(), ColorUtil.INSTANCE.darkenColor(primaryColor)));
+        breadCrumbs.setActivatedContentColor(ToolbarContentTintHelper.toolbarTitleColor(getActivity(), ColorUtil.darkenColor(primaryColor)));
         breadCrumbs.setDeactivatedContentColor(ToolbarContentTintHelper.toolbarSubtitleColor(getActivity(),
-                ColorUtil.INSTANCE.darkenColor(primaryColor)));
-        appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> getMainActivity().setLightStatusbar(!ATHUtil.INSTANCE.isWindowBackgroundDark(getContext())));
+                ColorUtil.darkenColor(primaryColor)));
+        appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> getMainActivity().setLightStatusbar(!ATHUtil.isWindowBackgroundDark(getContext())));
     }
 
     private void setUpBreadCrumbs() {
@@ -247,7 +247,7 @@ public class FoldersFragment extends AbsMainActivityFragment implements
     private void setUpRecyclerView() {
         //noinspection ConstantConditions
         ViewUtil.INSTANCE.setUpFastScrollRecyclerViewColor(getActivity(), recyclerView,
-                ThemeStore.Companion.accentColor(getActivity()));
+                ThemeStore.accentColor(getActivity()));
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         appBarLayout.addOnOffsetChangedListener(this);
     }
@@ -300,7 +300,7 @@ public class FoldersFragment extends AbsMainActivityFragment implements
         cab = new MaterialCab(getMainActivity(), R.id.cab_stub)
                 .setMenu(menuRes)
                 .setCloseDrawableRes(R.drawable.ic_close_white_24dp)
-                .setBackgroundColor(RetroColorUtil.shiftBackgroundColorForLightText(ThemeStore.Companion.primaryColor(getActivity())))
+                .setBackgroundColor(RetroColorUtil.shiftBackgroundColorForLightText(ThemeStore.primaryColor(getActivity())))
                 .start(callback);
         return cab;
     }
@@ -369,7 +369,7 @@ public class FoldersFragment extends AbsMainActivityFragment implements
                             .setAction(R.string.action_scan,
                                     v -> new ListPathsAsyncTask(getActivity(), this::scanPaths)
                                             .execute(new ListPathsAsyncTask.LoadingInfo(finalFile, AUDIO_FILE_FILTER)))
-                            .setActionTextColor(ThemeStore.Companion.accentColor(getActivity()))
+                            .setActionTextColor(ThemeStore.accentColor(getActivity()))
                             .show();
                 }
             }).execute(new ListSongsAsyncTask.LoadingInfo(toList(file.getParentFile()), fileFilter,

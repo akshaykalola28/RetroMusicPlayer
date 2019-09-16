@@ -2,7 +2,7 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <code.name.monkey.appthemehelper.common.prefs.supportv7.ATESwitchPreference
+    <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATESwitchPreference
         android:defaultValue="true"
         android:key="audio_ducking"
         android:summary="@string/pref_summary_audio_ducking"
@@ -10,20 +10,20 @@
         app:enableCopying="true"
         app:icon="@drawable/ic_volume_down_white_24dp" />
 
-    <code.name.monkey.appthemehelper.common.prefs.supportv7.ATESwitchPreference
+    <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATESwitchPreference
         android:defaultValue="false"
         android:key="gapless_playback"
         android:summary="@string/pref_summary_gapless_playback"
         android:title="@string/pref_title_gapless_playback"
         app:enableCopying="true" />
 
-    <code.name.monkey.appthemehelper.common.prefs.supportv7.ATEPreference
+    <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEPreference
         app:icon="@drawable/ic_equalizer_white_24dp"
         android:key="equalizer"
         android:title="@string/equalizer"
         app:enableCopying="true" />
 
-    <code.name.monkey.appthemehelper.common.prefs.supportv7.ATESwitchPreference
+    <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATESwitchPreference
         android:defaultValue="false"
         android:key="toggle_headset"
         android:summary="@string/pref_summary_toggle_headset"
@@ -31,7 +31,7 @@
         app:enableCopying="true"
         app:icon="@drawable/ic_play_arrow_white_32dp" />
 
-    <code.name.monkey.appthemehelper.common.prefs.supportv7.ATESwitchPreference
+    <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATESwitchPreference
         android:defaultValue="false"
         android:key="toggle_shuffle"
         android:summary="@string/pref_summary_toggle_shuffle"

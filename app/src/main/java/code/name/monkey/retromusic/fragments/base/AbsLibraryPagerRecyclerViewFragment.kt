@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
-import code.name.monkey.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.util.DensityUtil

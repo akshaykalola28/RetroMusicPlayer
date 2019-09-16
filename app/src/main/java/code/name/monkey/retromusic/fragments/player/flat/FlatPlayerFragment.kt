@@ -8,18 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
-import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
 import code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.PreferenceUtil
+import code.name.monkey.retromusic.util.RetroColorUtil
 import code.name.monkey.retromusic.util.ViewUtil
 import code.name.monkey.retromusic.views.DrawableGradient
+import com.kabouzeid.appthemehelper.util.ATHUtil
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
 import kotlinx.android.synthetic.main.fragment_flat_player.*
 
 class FlatPlayerFragment : AbsPlayerFragment() {
@@ -43,7 +43,7 @@ class FlatPlayerFragment : AbsPlayerFragment() {
         playerToolbar.inflateMenu(R.menu.menu_player)
         playerToolbar.setNavigationOnClickListener { _ -> activity!!.onBackPressed() }
         playerToolbar.setOnMenuItemClickListener(this)
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, ATHUtil.resolveColor(context,
+        RetroColorUtil.colorizeToolbar(playerToolbar, ATHUtil.resolveColor(context,
                 R.attr.iconColor), activity)
     }
 
@@ -107,7 +107,7 @@ class FlatPlayerFragment : AbsPlayerFragment() {
             MaterialValueHelper.getPrimaryTextColor(context!!, isLight)
         else
             ATHUtil.resolveColor(context!!, R.attr.iconColor)
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, iconColor, activity)
+        RetroColorUtil.colorizeToolbar(playerToolbar, iconColor, activity)
         if (PreferenceUtil.getInstance(requireContext()).adaptiveColor) {
             colorize(color)
         }

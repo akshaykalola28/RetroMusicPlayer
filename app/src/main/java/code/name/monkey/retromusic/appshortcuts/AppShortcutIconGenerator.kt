@@ -24,7 +24,7 @@ import android.os.Build
 import android.util.TypedValue
 
 import androidx.annotation.RequiresApi
-import code.name.monkey.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.RetroUtil

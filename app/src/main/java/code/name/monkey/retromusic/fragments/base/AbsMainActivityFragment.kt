@@ -3,9 +3,9 @@ package code.name.monkey.retromusic.fragments.base
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.VersionUtils
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ColorUtil
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.MainActivity
 import code.name.monkey.retromusic.dialogs.OptionsSheetDialogFragment

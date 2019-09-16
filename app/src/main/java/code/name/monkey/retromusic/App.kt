@@ -16,8 +16,8 @@ package code.name.monkey.retromusic
 
 import android.widget.Toast
 import androidx.multidex.MultiDexApplication
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.VersionUtils
+import com.kabouzeid.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.appshortcuts.DynamicShortcutManager
 import code.name.monkey.retromusic.dagger.DaggerMusicComponent
 import code.name.monkey.retromusic.dagger.MusicComponent
@@ -32,9 +32,7 @@ class App : MultiDexApplication() {
     lateinit var billingProcessor: BillingProcessor
 
     override fun onCreate() {
-        if (MissingSplitsManagerFactory.create(this).disableAppIfMissingRequiredSplits()) {
-            return
-        }
+
         super.onCreate()
         instance = this
         musicComponent = DaggerMusicComponent.builder()

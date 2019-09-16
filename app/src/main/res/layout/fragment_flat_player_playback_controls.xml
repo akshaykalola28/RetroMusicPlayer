@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/songCurrentProgress"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -32,7 +32,7 @@
             android:textSize="12sp"
             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/songTotalTime"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

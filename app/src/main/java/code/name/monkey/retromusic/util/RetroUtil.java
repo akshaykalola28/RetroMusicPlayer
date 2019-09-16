@@ -54,8 +54,8 @@ import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
 
-import code.name.monkey.appthemehelper.ThemeStore;
-import code.name.monkey.appthemehelper.util.TintHelper;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.util.TintHelper;
 import code.name.monkey.retromusic.App;
 
 public class RetroUtil {
@@ -192,7 +192,7 @@ public class RetroUtil {
     public static Drawable getTintedDrawable(@DrawableRes int id) {
         return TintHelper
                 .createTintedDrawable(ContextCompat.getDrawable(App.Companion.getContext(), id),
-                        ThemeStore.Companion.accentColor(App.Companion.getContext()));
+                        ThemeStore.accentColor(App.Companion.getContext()));
     }
 
     @NonNull

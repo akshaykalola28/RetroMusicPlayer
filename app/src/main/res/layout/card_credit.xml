@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <code.name.monkey.appthemehelper.common.views.ATEAccentTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             style="@style/SubTitleTextAppearance"
             android:text="@string/credit_title"
             android:textAppearance="@style/TextViewOverline" />

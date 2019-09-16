@@ -14,10 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.palette.graphics.Palette
-import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.LyricsActivity
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
@@ -32,6 +28,9 @@ import code.name.monkey.retromusic.util.RetroColorUtil
 import code.name.monkey.retromusic.util.ViewUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.animation.GlideAnimation
+import com.kabouzeid.appthemehelper.util.ATHUtil
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
 import kotlinx.android.synthetic.main.fragment_color_player.*
 
 class ColorFragment : AbsPlayerFragment() {
@@ -115,7 +114,7 @@ class ColorFragment : AbsPlayerFragment() {
             inflateMenu(R.menu.menu_player)
             setNavigationOnClickListener { activity!!.onBackPressed() }
             setOnMenuItemClickListener(this@ColorFragment)
-            ToolbarContentTintHelper.colorizeToolbar(this, ATHUtil.resolveColor(context, R.attr.iconColor), activity)
+            RetroColorUtil.colorizeToolbar(this, ATHUtil.resolveColor(context, R.attr.iconColor), activity)
         }
     }
 
@@ -175,7 +174,7 @@ class ColorFragment : AbsPlayerFragment() {
 
         colorGradientBackground?.setBackgroundColor(backgroundColor)
 
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, textColor, activity)
+        RetroColorUtil.colorizeToolbar(playerToolbar, textColor, activity)
 
         lastColor = textColor
 

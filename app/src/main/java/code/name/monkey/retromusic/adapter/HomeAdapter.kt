@@ -9,7 +9,7 @@ import androidx.annotation.IntDef
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import code.name.monkey.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.album.AlbumFullWidthAdapter
 import code.name.monkey.retromusic.adapter.artist.ArtistAdapter

@@ -21,7 +21,7 @@
             app:titleEnabled="false">
 
 
-            <code.name.monkey.appthemehelper.common.views.ATEToolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 style="@style/Toolbar"
                 app:layout_collapseMode="pin"
@@ -51,7 +51,7 @@
         android:scrollbars="none"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
         android:id="@android:id/empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

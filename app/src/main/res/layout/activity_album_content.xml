@@ -53,7 +53,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
         android:id="@+id/songTitle"
         style="@style/SubTitleTextAppearance"
         android:text="@string/songs" />
@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="false" />
 
-    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
         android:id="@+id/moreTitle"
         style="@style/SubTitleTextAppearance"
         android:text="@string/songs"

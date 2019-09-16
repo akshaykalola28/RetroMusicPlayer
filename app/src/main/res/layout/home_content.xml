@@ -49,7 +49,7 @@
             android:layout_height="96dp"
             app:srcCompat="@drawable/ic_play_arrow_white_64dp" />
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/emptyText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

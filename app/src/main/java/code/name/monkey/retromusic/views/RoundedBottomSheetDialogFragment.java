@@ -25,16 +25,17 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.FrameLayout;
 
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-
-import java.util.Objects;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import code.name.monkey.appthemehelper.ThemeStore;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.kabouzeid.appthemehelper.ThemeStore;
+
+import java.util.Objects;
+
 import code.name.monkey.appthemehelper.util.VersionUtils;
 import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.activities.base.AbsBaseActivity;
@@ -55,12 +56,12 @@ public class RoundedBottomSheetDialogFragment extends AppCompatDialogFragment {
             if (bottomSheet != null) {
                 BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
                 behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                bottomSheet.setBackground(RetroUtil.getTintedDrawable(getContext(), R.drawable.bg_bottom_sheet_dialog_fragment, ThemeStore.Companion.primaryColor(getContext())));
+                bottomSheet.setBackground(RetroUtil.getTintedDrawable(getContext(), R.drawable.bg_bottom_sheet_dialog_fragment, ThemeStore.primaryColor(getContext())));
             }
         });
         if (getActivity() != null) {
             if (VersionUtils.INSTANCE.hasNougat()) {
-                ((AbsBaseActivity) getActivity()).setNavigationbarColor(ThemeStore.Companion.primaryColor(getContext()));
+                ((AbsBaseActivity) getActivity()).setNavigationbarColor(ThemeStore.primaryColor(getContext()));
             } else {
                 ((AbsBaseActivity) getActivity()).setNavigationbarColorAuto();
             }
@@ -80,7 +81,7 @@ public class RoundedBottomSheetDialogFragment extends AppCompatDialogFragment {
         if (getDialog() != null && getDialog().getWindow() != null) {
             Window window = getDialog().getWindow();
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            window.setNavigationBarColor(ThemeStore.Companion.primaryColor(getContext()));
+            window.setNavigationBarColor(ThemeStore.primaryColor(getContext()));
             window.findViewById(com.google.android.material.R.id.container).setFitsSystemWindows(true);
         }
     }

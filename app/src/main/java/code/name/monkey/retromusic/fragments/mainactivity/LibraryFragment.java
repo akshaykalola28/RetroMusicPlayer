@@ -23,16 +23,16 @@ import androidx.fragment.app.FragmentTransaction;
 import com.afollestad.materialcab.MaterialCab;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.card.MaterialCardView;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.common.ATHToolbarActivity;
+import com.kabouzeid.appthemehelper.util.ATHUtil;
+import com.kabouzeid.appthemehelper.util.TintHelper;
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import code.name.monkey.appthemehelper.ThemeStore;
-import code.name.monkey.appthemehelper.common.ATHToolbarActivity;
-import code.name.monkey.appthemehelper.util.ATHUtil;
-import code.name.monkey.appthemehelper.util.TintHelper;
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper;
 import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.dialogs.CreatePlaylistDialog;
 import code.name.monkey.retromusic.dialogs.OptionsSheetDialogFragment;
@@ -149,7 +149,7 @@ public class LibraryFragment extends AbsMainActivityFragment implements CabHolde
 
     @SuppressWarnings("ConstantConditions")
     private void setupToolbar() {
-        int primaryColor = ThemeStore.Companion.primaryColor(getContext());
+        int primaryColor = ThemeStore.primaryColor(getContext());
         TintHelper.setTintAuto(contentContainer, primaryColor, true);
         appBarLayout.setBackgroundColor(primaryColor);
         toolbar.setBackgroundColor(RetroColorUtil.toolbarColor(getMainActivity()));
@@ -159,7 +159,7 @@ public class LibraryFragment extends AbsMainActivityFragment implements CabHolde
             NavigationUtil.goToSearch(getMainActivity(), pair);
         });
         appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) ->
-                getMainActivity().setLightStatusbar(!ATHUtil.INSTANCE.isWindowBackgroundDark(getContext())));
+                getMainActivity().setLightStatusbar(!ATHUtil.isWindowBackgroundDark(getContext())));
         getMainActivity().setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> showMainMenu(OptionsSheetDialogFragment.LIBRARY));
     }
@@ -199,7 +199,7 @@ public class LibraryFragment extends AbsMainActivityFragment implements CabHolde
                 .setMenu(menuRes)
                 .setCloseDrawableRes(R.drawable.ic_close_white_24dp)
                 .setBackgroundColor(
-                        RetroColorUtil.shiftBackgroundColorForLightText(ThemeStore.Companion.primaryColor(Objects.requireNonNull(getActivity()))))
+                        RetroColorUtil.shiftBackgroundColorForLightText(ThemeStore.primaryColor(Objects.requireNonNull(getActivity()))))
                 .start(callback);
         return cab;
     }

@@ -2,8 +2,8 @@ package code.name.monkey.retromusic.activities
 
 import android.os.Bundle
 import android.view.MenuItem
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsBaseActivity
 import code.name.monkey.retromusic.extensions.applyToolbar

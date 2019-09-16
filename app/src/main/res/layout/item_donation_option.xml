@@ -19,7 +19,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                 android:id="@+id/itemPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
 
             </code.name.monkey.retromusic.views.WidthFitSquareLayout>
 
-            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                 android:id="@+id/itemTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                 android:textAppearance="@style/TextViewBody2"
                 tools:text="Title" />
 
-            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                 android:id="@+id/itemText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -16,12 +16,12 @@ package code.name.monkey.retromusic.views;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import code.name.monkey.appthemehelper.util.ATHUtil;
+import com.kabouzeid.appthemehelper.util.ATHUtil;
+
 import code.name.monkey.retromusic.R;
 
 
@@ -43,7 +43,7 @@ public class IconImageView extends AppCompatImageView {
 
     private void init(Context context) {
         if (context == null) return;
-        setImageTintList(ColorStateList.valueOf(ATHUtil.INSTANCE.resolveColor(context, R.attr.iconColor)));
+        setImageTintList(ColorStateList.valueOf(ATHUtil.resolveColor(context, R.attr.iconColor)));
         //setColorFilter(ATHUtil.INSTANCE.resolveColor(context, R.attr.iconColor), PorterDuff.Mode.SRC_IN);
     }
 }

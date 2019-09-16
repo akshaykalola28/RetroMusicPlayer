@@ -11,7 +11,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
-import code.name.monkey.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.base.AbsMusicServiceFragment
 import code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment

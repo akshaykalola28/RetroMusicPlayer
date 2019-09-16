@@ -73,16 +73,17 @@ class RingtoneManager(val context: Context) {
         }
 
         fun getDialog(context: Context): MaterialDialog {
-            return MaterialDialog(context).show {
-                title(R.string.dialog_title_set_ringtone)
-                message(R.string.dialog_message_set_ringtone)
-                positiveButton(android.R.string.ok) {
-                    val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-                    intent.data = Uri.parse("package:" + context.applicationContext.packageName)
-                    context.startActivity(intent)
-                }
-                negativeButton(android.R.string.cancel)
-            }
+            return MaterialDialog.Builder(context)
+                    .title(R.string.dialog_title_set_ringtone)
+                    .content(R.string.dialog_message_set_ringtone)
+                    .positiveText(android.R.string.ok)
+                    .negativeText(android.R.string.cancel)
+                    .onPositive { _, _ ->
+                        val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                        intent.data = Uri.parse("package:" + context.applicationContext.packageName)
+                        context.startActivity(intent)
+                    }
+                    .show()
         }
 
     }

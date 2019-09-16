@@ -50,7 +50,7 @@
             <include layout="@layout/status_bar" />
         </FrameLayout>
 
-        <code.name.monkey.appthemehelper.common.views.ATEToolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/playerToolbar"
             style="@style/Toolbar"
             android:navigationIcon="@drawable/ic_keyboard_arrow_down_black_24dp"
@@ -110,7 +110,7 @@
                     app:srcCompat="@drawable/default_artist_art" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </code.name.monkey.appthemehelper.common.views.ATEToolbar>
+        </com.google.android.material.appbar.MaterialToolbar>
 
         <FrameLayout
             android:id="@+id/player_lyrics"

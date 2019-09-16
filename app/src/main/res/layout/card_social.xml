@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <code.name.monkey.appthemehelper.common.views.ATEAccentTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             style="@style/SubTitleTextAppearance"
             android:text="@string/social"
             android:textAppearance="@style/TextViewOverline" />
@@ -45,13 +45,13 @@
                 android:paddingBottom="8dp">
 
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/pinterest_page"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:alpha="0.85"
@@ -88,13 +88,13 @@
                 android:paddingBottom="8dp">
 
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/instagram_page"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:alpha="0.85"
@@ -130,13 +130,13 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp">
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/twitter_page"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:alpha="0.85"
@@ -172,13 +172,13 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp">
 
-                <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/telegram_group"
                     android:textAppearance="@style/TextViewSubtitle1" />
 
-                <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:alpha="0.85"

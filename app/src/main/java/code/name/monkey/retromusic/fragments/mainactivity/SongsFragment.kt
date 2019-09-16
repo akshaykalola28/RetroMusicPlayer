@@ -1,6 +1,8 @@
 package code.name.monkey.retromusic.fragments.mainactivity
 
+import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
@@ -15,10 +17,33 @@ import java.util.*
 import javax.inject.Inject
 
 class SongsFragment : AbsLibraryPagerRecyclerViewCustomGridSizeFragment<SongAdapter, GridLayoutManager>(), SongView {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        print("onActivityCreated")
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        print("onAttach")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        print("onResume")
+        if (adapter!!.dataSet.isEmpty()) {
+            songPresenter.loadSongs()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        print("onDestroyView")
+        songPresenter.detachView()
+
+    }
 
     @Inject
     lateinit var songPresenter: SongPresenter
-
 
     override val emptyMessage: Int
         get() = R.string.no_songs
@@ -26,7 +51,6 @@ class SongsFragment : AbsLibraryPagerRecyclerViewCustomGridSizeFragment<SongAdap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.musicComponent.inject(this)
-        songPresenter.attachView(this)
     }
 
     override fun createLayoutManager(): GridLayoutManager {
@@ -45,6 +69,10 @@ class SongsFragment : AbsLibraryPagerRecyclerViewCustomGridSizeFragment<SongAdap
         } else SongAdapter(libraryFragment.mainActivity, dataSet, itemLayoutRes, usePalette, libraryFragment)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        songPresenter.attachView(this)
+    }
     override fun songs(songs: ArrayList<Song>) {
         adapter?.swapDataSet(songs)
     }
@@ -86,17 +114,6 @@ class SongsFragment : AbsLibraryPagerRecyclerViewCustomGridSizeFragment<SongAdap
         adapter!!.notifyDataSetChanged()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (adapter!!.dataSet.isEmpty()) {
-            songPresenter.loadSongs()
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        songPresenter.detachView()
-    }
 
     override fun showEmptyView() {
         adapter!!.swapDataSet(ArrayList())

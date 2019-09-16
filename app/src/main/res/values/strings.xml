@@ -131,7 +131,7 @@
     <string name="could_not_scan_files">Could not scan %d files.</string>
 
     <string name="create_action">Create</string>
-
+    <string name="playlist_exists">Playlist %1$s already exists.</string>
     <string name="created_playlist_x">Created playlist %1$s.</string>
 
     <string name="credit_title">Members and contributors </string>
@@ -657,4 +657,7 @@
     <string name="action_cycle_repeat">Cycle repeat mode</string>
     <string name="action_toggle_shuffle">Toggle shuffle mode</string>
     <string name="action_toggle_favorite">Toggle favorite</string>
+    <string name="delete_action">Delete</string>
+    <string name="rename_action">Rename</string>
+    <string name="label_details">Details</string>
 </resources>

@@ -1,6 +1,5 @@
 package code.name.monkey.retromusic.adapter.playlist
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -8,9 +7,6 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.base.AbsMultiSelectAdapter
 import code.name.monkey.retromusic.adapter.base.MediaEntryViewHolder
@@ -27,6 +23,7 @@ import code.name.monkey.retromusic.model.smartplaylist.AbsSmartPlaylist
 import code.name.monkey.retromusic.model.smartplaylist.LastAddedPlaylist
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.NavigationUtil
+import com.kabouzeid.appthemehelper.ThemeStore
 import java.util.*
 
 
@@ -82,18 +79,16 @@ class PlaylistAdapter(protected val activity: AppCompatActivity, dataSet: ArrayL
             holder.text!!.text = getPlaylistText(playlist)
         }
         if (holder.image != null) {
-            holder.image!!.setImageDrawable(getIconRes(playlist))
+            holder.image!!.setImageResource(getIconRes(playlist))
         }
     }
 
-    private fun getIconRes(playlist: Playlist): Drawable {
-        if (playlist is AbsSmartPlaylist) {
-            return TintHelper.createTintedDrawable(activity, playlist.iconRes, ATHUtil.resolveColor(activity, R.attr.iconColor))!!
+    private fun getIconRes(playlist: Playlist): Int {
+        return if (playlist is AbsSmartPlaylist) {
+            playlist.iconRes
+        } else {
+            if (MusicUtil.isFavoritePlaylist(activity, playlist)) R.drawable.ic_favorite_white_24dp else R.drawable.ic_playlist_play_white_24dp
         }
-        return if (MusicUtil.isFavoritePlaylist(activity, playlist))
-            TintHelper.createTintedDrawable(activity, R.drawable.ic_favorite_white_24dp, ThemeStore.accentColor(activity))!!
-        else
-            TintHelper.createTintedDrawable(activity, R.drawable.ic_playlist_play_white_24dp, ATHUtil.resolveColor(activity, R.attr.iconColor))!!
     }
 
     override fun getItemViewType(position: Int): Int {

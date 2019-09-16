@@ -18,21 +18,14 @@ import android.app.Dialog
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.MaterialUtil
 import code.name.monkey.retromusic.R
-import code.name.monkey.retromusic.R.layout
-import code.name.monkey.retromusic.R.string
 import code.name.monkey.retromusic.extensions.appHandleColor
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.PlaylistsUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.WhichButton
-import com.afollestad.materialdialogs.actions.getActionButton
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -45,7 +38,40 @@ class CreatePlaylistDialog : DialogFragment() {
     override fun onCreateDialog(
             savedInstanceState: Bundle?
     ): Dialog {
-        val materialDialog = MaterialDialog(activity!!, BottomSheet())
+        val view = layoutInflater.inflate(R.layout.dialog_playlist, null)
+        playlistView = view.findViewById(R.id.actionNewPlaylist)
+        actionNewPlaylistContainer = view.findViewById(R.id.actionNewPlaylistContainer)
+
+        val dialog = MaterialDialog.Builder(requireActivity())
+                .title(R.string.new_playlist_title)
+                .positiveText(R.string.create_action)
+                .negativeText(android.R.string.cancel)
+                .customView(view, false)
+                .onPositive { _, _ ->
+                    val name = playlistView.text.toString().trim()
+                    if (name.isNotEmpty()) {
+                        if (!PlaylistsUtil.doesPlaylistExist(requireContext(), name)) {
+                            val songs = arguments?.getParcelableArrayList<Song>("songs")
+                                    ?: return@onPositive
+                            if (playlistView.text.toString().trim { it <= ' ' }.isNotEmpty()) {
+                                val playlistId = PlaylistsUtil.createPlaylist(requireContext(), playlistView.text.toString())
+                                if (playlistId != -1 && activity != null) {
+                                    PlaylistsUtil.addToPlaylist(requireContext(), songs, playlistId, true)
+                                }
+                            }
+                        } else {
+                            Toast.makeText(requireContext(), getString(R.string.playlist_exists, name), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                .build()
+
+        MaterialUtil.setTint(actionNewPlaylistContainer, false)
+
+        val playlistId = arguments!!.getLong(MediaStore.Audio.Playlists.Members.PLAYLIST_ID)
+        playlistView.appHandleColor().setText(PlaylistsUtil.getNameForPlaylist(context!!, playlistId), TextView.BufferType.EDITABLE)
+        return dialog
+        /*val materialDialog = MaterialDialog(activity!!, BottomSheet())
                 .show {
                     title(string.new_playlist_title)
                     customView(layout.dialog_playlist)
@@ -65,9 +91,9 @@ class CreatePlaylistDialog : DialogFragment() {
                         }
                     }
                     getActionButton(WhichButton.POSITIVE).updateTextColor(ThemeStore.accentColor(context))
-                }
+                }*/
 
-        val dialogView = materialDialog.getCustomView()
+        /*val dialogView = materialDialog.getCustomView()
         playlistView = dialogView.findViewById(R.id.actionNewPlaylist)
         actionNewPlaylistContainer = dialogView.findViewById(R.id.actionNewPlaylistContainer)
 
@@ -75,7 +101,7 @@ class CreatePlaylistDialog : DialogFragment() {
 
         val playlistId = arguments!!.getLong(MediaStore.Audio.Playlists.Members.PLAYLIST_ID)
         playlistView.appHandleColor().setText(PlaylistsUtil.getNameForPlaylist(context!!, playlistId), TextView.BufferType.EDITABLE)
-        return materialDialog
+        return materialDialog*/
     }
 
     companion object {

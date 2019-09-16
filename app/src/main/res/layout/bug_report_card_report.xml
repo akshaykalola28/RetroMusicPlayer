@@ -32,14 +32,14 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
-            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="8dp"
                 android:text="@string/bug_report_use_account"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
-            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="8dp"
@@ -58,7 +58,7 @@
         android:paddingEnd="16dp"
         android:paddingRight="16dp">
 
-        <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -102,7 +102,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -171,14 +171,14 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
 
-            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="8dp"
                 android:text="@string/bug_report_manual"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
-            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="8dp"

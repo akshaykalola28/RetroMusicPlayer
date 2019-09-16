@@ -18,6 +18,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.MainActivity
@@ -25,8 +26,7 @@ import code.name.monkey.retromusic.util.NavigationUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.views.OptionMenuItemView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.customview.customView
+
 
 class OptionsSheetDialogFragment : DialogFragment(), View.OnClickListener {
 
@@ -66,12 +66,11 @@ class OptionsSheetDialogFragment : DialogFragment(), View.OnClickListener {
         actionFolders.setOnClickListener(this)
 
 
-        materialDialog = MaterialDialog(activity!!, BottomSheet())
-                .show {
-                    icon(R.mipmap.ic_launcher_round)
-                    title(R.string.app_name)
-                    customView(view = layout, scrollable = true)
-                }
+        materialDialog = MaterialDialog.Builder(requireActivity())
+                .title(R.string.app_name)
+                .iconRes(R.mipmap.ic_launcher_round)
+                .customView(layout, true)
+                .build()
         return materialDialog
     }
 

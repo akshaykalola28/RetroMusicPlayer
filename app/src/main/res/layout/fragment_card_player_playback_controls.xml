@@ -14,7 +14,7 @@
         android:layout_height="@dimen/progress_container_height"
         android:background="@color/twenty_percent_black_overlay">
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/songCurrentProgress"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -26,7 +26,7 @@
             android:textSize="12sp"
             tools:ignore="RtlHardcoded,RtlSymmetry" />
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/songTotalTime"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -92,7 +92,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                 android:id="@+id/songTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                 android:maxLines="1"
                 android:textAppearance="@style/TextViewSubtitle1" />
 
-            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                 android:id="@+id/songText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

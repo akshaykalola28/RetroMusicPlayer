@@ -14,11 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
-import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsMusicServiceActivity
@@ -35,9 +30,10 @@ import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.RetroUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.input.getInputLayout
-import com.afollestad.materialdialogs.input.input
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
+import com.kabouzeid.appthemehelper.util.TintHelper
 import kotlinx.android.synthetic.main.activity_lyrics.*
 import kotlinx.android.synthetic.main.fragment_lyrics.*
 import kotlinx.android.synthetic.main.fragment_synced.*
@@ -50,10 +46,10 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener, ViewPage
     override fun onPageScrollStateChanged(state: Int) {
         when (state) {
             ViewPager.SCROLL_STATE_IDLE ->
-                fab.show(true)
+                fab.show()
             ViewPager.SCROLL_STATE_DRAGGING,
             ViewPager.SCROLL_STATE_SETTLING ->
-                fab.hide(true)
+                fab.hide()
         }
     }
 
@@ -156,19 +152,31 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener, ViewPage
             e.printStackTrace()
         }
 
-        val materialDialog = MaterialDialog(this, BottomSheet()).show {
-            title(R.string.add_time_framed_lryics)
-            negativeButton(R.string.action_search) { RetroUtil.openUrl(this@LyricsActivity, googleSearchLrcUrl) }
-            input(hint = getString(R.string.paste_lyrics_here),
-                    prefill = content,
-                    inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE) { _, input ->
-                LyricUtil.writeLrcToLoc(song.title, song.artistName, input.toString())
-            }
-            positiveButton(android.R.string.ok) {
-                updateSong()
-            }
-        }
-        MaterialUtil.setTint(materialDialog.getInputLayout(), false)
+        /*  val materialDialog = MaterialDialog(this, BottomSheet()).show {
+              title(R.string.add_time_framed_lryics)
+              negativeButton(R.string.action_search) { RetroUtil.openUrl(this@LyricsActivity, googleSearchLrcUrl) }
+              input(hint = getString(R.string.paste_lyrics_here),
+                      prefill = content,
+                      inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE) { _, input ->
+                  LyricUtil.writeLrcToLoc(song.title, song.artistName, input.toString())
+              }
+              positiveButton(android.R.string.ok) {
+                  updateSong()
+              }
+          }
+  */
+        MaterialDialog.Builder(this)
+                .title(R.string.add_time_framed_lryics)
+                .positiveText(android.R.string.ok)
+                .negativeText(R.string.action_search)
+                .onNegative { _, _ -> RetroUtil.openUrl(this@LyricsActivity, googleSearchLrcUrl) }
+                .onPositive { _, _ ->
+                    updateSong()
+                }
+                .inputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                .input(getString(R.string.paste_lyrics_here), content) { _, input -> LyricUtil.writeLrcToLoc(song.title, song.artistName, input.toString()) }
+
+        //MaterialUtil.setTint(materialDialog.getInputLayout(), false)
     }
 
     private fun updateSong() {
@@ -185,7 +193,7 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener, ViewPage
             lyricsString!!
         }
 
-        val materialDialog = MaterialDialog(this, BottomSheet()).show {
+        /*val materialDialog = MaterialDialog(this, BottomSheet()).show {
             title(R.string.add_lyrics)
             negativeButton(R.string.action_search) { RetroUtil.openUrl(this@LyricsActivity, getGoogleSearchUrl()) }
             input(hint = getString(R.string.paste_lyrics_here),
@@ -199,7 +207,23 @@ class LyricsActivity : AbsMusicServiceActivity(), View.OnClickListener, ViewPage
                 updateSong()
             }
         }
-        MaterialUtil.setTint(materialDialog.getInputLayout(), false)
+        MaterialUtil.setTint(materialDialog.getInputLayout(), false)*/
+
+        MaterialDialog.Builder(this)
+                .title(R.string.add_lyrics)
+                .positiveText(android.R.string.ok)
+                .negativeText(R.string.action_search)
+                .onNegative { _, _ -> RetroUtil.openUrl(this@LyricsActivity, googleSearchLrcUrl) }
+                .onPositive { _, _ ->
+                    updateSong()
+                }
+                .inputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                .input(getString(R.string.paste_lyrics_here), content) { _, input ->
+                    val fieldKeyValueMap = EnumMap<FieldKey, String>(FieldKey::class.java)
+                    fieldKeyValueMap[FieldKey.LYRICS] = input.toString()
+                    WriteTagsAsyncTask(this@LyricsActivity).execute(WriteTagsAsyncTask.LoadingInfo(getSongPaths(song), fieldKeyValueMap, null))
+                }
+
     }
 
     private fun getSongPaths(song: Song): ArrayList<String> {

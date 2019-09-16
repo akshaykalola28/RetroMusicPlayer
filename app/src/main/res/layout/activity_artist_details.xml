@@ -39,7 +39,7 @@
 
             </code.name.monkey.retromusic.views.WidthFitSquareLayout>
 
-            <code.name.monkey.appthemehelper.common.views.ATEToolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 style="@style/Toolbar"
                 app:layout_collapseMode="pin" />
@@ -71,7 +71,7 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                         android:id="@+id/artistTitle"
                         style="@style/TextAppearance.MaterialComponents.Headline6"
                         android:layout_width="match_parent"
@@ -80,7 +80,7 @@
                         tools:ignore="MissingPrefix"
                         tools:text="Title" />
 
-                    <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                    <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                         android:id="@+id/text"
                         style="@style/TextAppearance.MaterialComponents.Subtitle2"
                         android:layout_width="match_parent"

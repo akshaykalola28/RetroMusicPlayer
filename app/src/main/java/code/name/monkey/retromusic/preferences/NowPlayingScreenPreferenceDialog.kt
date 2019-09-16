@@ -16,6 +16,7 @@ package code.name.monkey.retromusic.preferences
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.AttributeSet
@@ -28,16 +29,16 @@ import android.widget.Toast
 import androidx.preference.PreferenceDialogFragmentCompat
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.common.prefs.supportv7.ATEDialogPreference
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEDialogPreference
 import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.NowPlayingScreen
 import code.name.monkey.retromusic.util.NavigationUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.ViewUtil
+import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
 import com.bumptech.glide.Glide
 
 class NowPlayingScreenPreference : ATEDialogPreference {
@@ -61,9 +62,14 @@ class NowPlayingScreenPreference : ATEDialogPreference {
     }
 }
 
-class NowPlayingScreenPreferenceDialog : PreferenceDialogFragmentCompat(), ViewPager.OnPageChangeListener {
-
+class NowPlayingScreenPreferenceDialog : PreferenceDialogFragmentCompat(), ViewPager.OnPageChangeListener, MaterialDialog.SingleButtonCallback {
+    private var whichButtonClicked: DialogAction = DialogAction.NEUTRAL
     private var viewPagerPosition: Int = 0
+
+    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+        whichButtonClicked = which;
+    }
+
 
     override fun onPageScrollStateChanged(state: Int) {
 
@@ -90,21 +96,26 @@ class NowPlayingScreenPreferenceDialog : PreferenceDialogFragmentCompat(), ViewP
         viewPager.pageMargin = ViewUtil.convertDpToPixel(32f, resources).toInt()
         viewPager.currentItem = PreferenceUtil.getInstance(requireContext()).nowPlayingScreen.ordinal
 
+        return MaterialDialog.Builder(requireActivity())
+                .title(R.string.pref_title_now_playing_screen_appearance)
+                .positiveText(android.R.string.ok)
+                .negativeText(android.R.string.cancel)
+                .onAny(this)
+                .customView(view, false)
+                .build()
+    }
 
-        return MaterialDialog(activity!!).show {
-            title(R.string.pref_title_album_cover_style)
-            positiveButton(R.string.set) {
-                val nowPlayingScreen = NowPlayingScreen.values()[viewPagerPosition]
-                if (isNowPlayingThemes(nowPlayingScreen)) {
-                    val result = getString(nowPlayingScreen.titleRes) + " theme is Pro version feature."
-                    Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
-                    NavigationUtil.goToProVersion(activity!!)
-                } else {
-                    PreferenceUtil.getInstance(requireContext()).nowPlayingScreen = nowPlayingScreen
-                }
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if (whichButtonClicked == DialogAction.POSITIVE) {
+            val nowPlayingScreen = NowPlayingScreen.values()[viewPagerPosition]
+            if (isNowPlayingThemes(nowPlayingScreen)) {
+                val result = getString(nowPlayingScreen.titleRes) + " theme is Pro version feature."
+                Toast.makeText(context, result, Toast.LENGTH_SHORT).show()
+                NavigationUtil.goToProVersion(activity!!)
+            } else {
+                PreferenceUtil.getInstance(requireContext()).nowPlayingScreen = nowPlayingScreen
             }
-            negativeButton(android.R.string.cancel)
-            customView(view = view, scrollable = false, noVerticalPadding = false)
         }
     }
 
@@ -126,12 +137,8 @@ class NowPlayingScreenPreferenceDialog : PreferenceDialogFragmentCompat(), ViewP
     }
 
     companion object {
-        fun newInstance(key: String): NowPlayingScreenPreferenceDialog {
-            val bundle = Bundle()
-            bundle.putString(ARG_KEY, key)
-            val fragment = NowPlayingScreenPreferenceDialog()
-            fragment.arguments = bundle
-            return fragment
+        fun newInstance(): NowPlayingScreenPreferenceDialog {
+            return NowPlayingScreenPreferenceDialog()
         }
     }
 }

@@ -22,7 +22,6 @@ import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.model.PlaylistSong
 import code.name.monkey.retromusic.util.PlaylistsUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 
 
 class RemoveFromPlaylistDialog : DialogFragment() {
@@ -42,8 +41,16 @@ class RemoveFromPlaylistDialog : DialogFragment() {
             }
         }
 
-
-        return MaterialDialog(activity!!, BottomSheet())
+        return MaterialDialog.Builder(requireActivity())
+                .title(title)
+                .content(content)
+                .positiveText(R.string.remove_action)
+                .negativeText(android.R.string.cancel)
+                .onPositive { _, _ ->
+                    PlaylistsUtil.removeFromPlaylist(requireActivity(), songs as MutableList<PlaylistSong>)
+                }
+                .build()
+        /*return MaterialDialog(activity!!, BottomSheet())
                 .show {
                     title(title)
                     message(text = content)
@@ -53,7 +60,7 @@ class RemoveFromPlaylistDialog : DialogFragment() {
                             return@positiveButton
                         PlaylistsUtil.removeFromPlaylist(activity!!, songs as MutableList<PlaylistSong>)
                     }
-                }
+                }*/
 
     }
 

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.MaterialUtil
 import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.BuildConfig
@@ -15,6 +14,7 @@ import code.name.monkey.retromusic.activities.base.AbsBaseActivity
 import code.name.monkey.retromusic.extensions.applyToolbar
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.TransactionDetails
+import com.kabouzeid.appthemehelper.ThemeStore
 import kotlinx.android.synthetic.main.activity_pro_version.*
 import java.lang.ref.WeakReference
 

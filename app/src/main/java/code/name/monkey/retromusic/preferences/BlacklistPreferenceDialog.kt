@@ -21,14 +21,12 @@ import android.os.Bundle
 import android.text.Html
 import android.util.AttributeSet
 import androidx.fragment.app.DialogFragment
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.common.prefs.supportv7.ATEDialogPreference
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEDialogPreference
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.dialogs.BlacklistFolderChooserDialog
 import code.name.monkey.retromusic.providers.BlacklistStore
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.list.listItems
 import java.io.File
 import java.util.*
 
@@ -58,7 +56,47 @@ class BlacklistPreferenceDialog : DialogFragment(), BlacklistFolderChooserDialog
         val blacklistFolderChooserDialog = childFragmentManager.findFragmentByTag("FOLDER_CHOOSER") as BlacklistFolderChooserDialog?
         blacklistFolderChooserDialog?.setCallback(this)
         refreshBlacklistData()
-        return MaterialDialog(context!!, BottomSheet()).show {
+        return MaterialDialog.Builder(requireActivity())
+                .title(R.string.blacklist)
+                .positiveText(android.R.string.ok)
+                .neutralText(R.string.clear_action)
+                .negativeText(R.string.add_action)
+                .items(paths)
+                .autoDismiss(false)
+                .itemsCallback { _, _, _, text ->
+                    MaterialDialog.Builder(requireActivity())
+                            .title(R.string.remove_from_blacklist)
+                            .content(Html.fromHtml(getString(R.string.do_you_want_to_remove_from_the_blacklist, text)))
+                            .positiveText(R.string.remove_action)
+                            .negativeText(android.R.string.cancel)
+                            .onPositive { _, _ ->
+                                BlacklistStore.getInstance(requireContext()).removePath(File(text.toString()))
+                                refreshBlacklistData()
+                            }
+                            .show()
+                }
+                .onNeutral { _, _ ->
+                    MaterialDialog.Builder(requireActivity())
+                            .title(R.string.clear_blacklist)
+                            .content(R.string.do_you_want_to_clear_the_blacklist)
+                            .positiveText(R.string.clear_action)
+                            .negativeText(android.R.string.cancel)
+                            .onPositive { _, _ ->
+                                BlacklistStore.getInstance(requireContext()).clear()
+                                refreshBlacklistData()
+                            }
+                            .show()
+                }
+                .onNegative { _, _ ->
+                    val dialog = BlacklistFolderChooserDialog.create()
+                    dialog.setCallback(this@BlacklistPreferenceDialog)
+                    dialog.show(childFragmentManager, "FOLDER_CHOOSER");
+                }
+                .onPositive { _, _ ->
+                    dismiss()
+                }
+                .build()
+        /*return MaterialDialog(context!!, BottomSheet()).show {
             title(code.name.monkey.retromusic.R.string.blacklist)
             positiveButton(android.R.string.ok) {
                 dismiss()
@@ -91,7 +129,7 @@ class BlacklistPreferenceDialog : DialogFragment(), BlacklistFolderChooserDialog
                 }
             }
             noAutoDismiss()
-        }
+        }*/
     }
 
     private lateinit var paths: ArrayList<String>
@@ -99,7 +137,7 @@ class BlacklistPreferenceDialog : DialogFragment(), BlacklistFolderChooserDialog
     private fun refreshBlacklistData() {
         this.paths = BlacklistStore.getInstance(context!!).paths
         val dialog = dialog as MaterialDialog?
-        dialog?.listItems(items = paths)
+        dialog?.setItems(*paths.toTypedArray())
     }
 
     override fun onFolderSelection(dialog: BlacklistFolderChooserDialog, folder: File) {

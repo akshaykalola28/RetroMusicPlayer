@@ -23,7 +23,7 @@ import android.graphics.drawable.Drawable
 import android.text.TextUtils
 import android.view.View
 import android.widget.RemoteViews
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.MainActivity
 import code.name.monkey.retromusic.appwidgets.base.BaseAppWidget

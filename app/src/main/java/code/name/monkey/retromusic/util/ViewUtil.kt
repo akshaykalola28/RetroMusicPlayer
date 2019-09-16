@@ -22,6 +22,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.view.View
@@ -31,10 +32,12 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.core.view.ViewCompat
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+
 
 object ViewUtil {
 
@@ -125,5 +128,95 @@ object ViewUtil {
     fun convertDpToPixel(dp: Float, resources: Resources): Float {
         val metrics = resources.displayMetrics
         return dp * metrics.density
+    }
+
+    fun colorHandles(view: TextView, color: Int) {
+        try {
+            val editorField = TextView::class.java.getDeclaredField("mEditor")
+            if (!editorField.isAccessible) {
+                editorField.isAccessible = true
+            }
+
+            val editor = editorField.get(view)
+            val editorClass = editor.javaClass
+
+            val handleNames = arrayOf("mSelectHandleLeft", "mSelectHandleRight", "mSelectHandleCenter")
+            val resNames = arrayOf("mTextSelectHandleLeftRes", "mTextSelectHandleRightRes", "mTextSelectHandleRes")
+
+            for (i in handleNames.indices) {
+                val handleField = editorClass.getDeclaredField(handleNames[i])
+                if (!handleField.isAccessible) {
+                    handleField.isAccessible = true
+                }
+
+                var handleDrawable: Drawable? = handleField.get(editor) as Drawable
+
+                if (handleDrawable == null) {
+                    val resField = TextView::class.java.getDeclaredField(resNames[i])
+                    if (!resField.isAccessible) {
+                        resField.isAccessible = true
+                    }
+                    val resId = resField.getInt(view)
+                    handleDrawable = view.resources.getDrawable(resId)
+                }
+
+                if (handleDrawable != null) {
+                    val drawable = handleDrawable.mutate()
+                    drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+                    handleField.set(editor, drawable)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun setItemIconColors(bottomNavigationView: BottomNavigationView, @ColorInt normalColor: Int, @ColorInt selectedColor: Int) {
+        val iconSl = ColorStateList(
+                arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked)),
+                intArrayOf(normalColor, selectedColor))
+        bottomNavigationView.itemIconTintList = iconSl
+    }
+
+    fun setItemTextColors(bottomNavigationView: BottomNavigationView, @ColorInt normalColor: Int, @ColorInt selectedColor: Int) {
+        val textSl = ColorStateList(
+                arrayOf(intArrayOf(-android.R.attr.state_checked), intArrayOf(android.R.attr.state_checked)),
+                intArrayOf(normalColor, selectedColor))
+        bottomNavigationView.itemTextColor = textSl
+    }
+
+    @ColorInt
+    fun getReadableText(@ColorInt textColor: Int, @ColorInt backgroundColor: Int): Int {
+        return getReadableText(textColor, backgroundColor, 100)
+    }
+
+    @ColorInt
+    fun getReadableText(@ColorInt textColor: Int, @ColorInt backgroundColor: Int, difference: Int): Int {
+        var textColorFinal = textColor
+        val isLight = ColorUtil.isColorLight(backgroundColor)
+        var i = 0
+        while (getDifference(textColorFinal, backgroundColor) < difference && i < 100) {
+            textColorFinal = getMixedColor(textColorFinal, if (isLight) Color.BLACK else Color.WHITE)
+            i++
+        }
+
+        return textColorFinal
+    }
+
+    fun getDifference(@ColorInt color1: Int, @ColorInt color2: Int): Double {
+        var diff = Math.abs(0.299 * (Color.red(color1) - Color.red(color2)))
+        diff += Math.abs(0.587 * (Color.green(color1) - Color.green(color2)))
+        diff += Math.abs(0.114 * (Color.blue(color1) - Color.blue(color2)))
+        return diff
+    }
+
+    @ColorInt
+    fun getMixedColor(@ColorInt color1: Int, @ColorInt color2: Int): Int {
+        return Color.rgb(
+                (Color.red(color1) + Color.red(color2)) / 2,
+                (Color.green(color1) + Color.green(color2)) / 2,
+                (Color.blue(color1) + Color.blue(color2)) / 2
+        )
     }
 }

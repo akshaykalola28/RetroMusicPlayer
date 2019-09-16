@@ -11,8 +11,8 @@ import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
 import androidx.core.app.ActivityCompat
-import code.name.monkey.appthemehelper.ThemeStore
 import com.google.android.material.snackbar.Snackbar
+import com.kabouzeid.appthemehelper.ThemeStore
 
 
 abstract class AbsBaseActivity : AbsThemeActivity() {

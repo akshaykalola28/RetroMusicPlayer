@@ -7,9 +7,6 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
 import code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment
@@ -18,9 +15,12 @@ import code.name.monkey.retromusic.helper.MusicProgressViewUpdateHelper
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.model.lyrics.AbsSynchronizedLyrics
 import code.name.monkey.retromusic.model.lyrics.Lyrics
+import code.name.monkey.retromusic.util.RetroColorUtil
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ATHUtil
 import kotlinx.android.synthetic.main.fragment_adaptive_player.*
 
-class AdaptiveFragment : AbsPlayerFragment(),  MusicProgressViewUpdateHelper.Callback {
+class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Callback {
 
     private lateinit var lyricsLayout: FrameLayout
     private lateinit var lyricsLine1: TextView
@@ -144,7 +144,7 @@ class AdaptiveFragment : AbsPlayerFragment(),  MusicProgressViewUpdateHelper.Cal
         playerToolbar.apply {
             inflateMenu(R.menu.menu_player)
             setNavigationOnClickListener { activity!!.onBackPressed() }
-            ToolbarContentTintHelper.colorizeToolbar(this, primaryColor, activity)
+            RetroColorUtil.colorizeToolbar(this, primaryColor, activity)
             setTitleTextColor(primaryColor)
             setSubtitleTextColor(ThemeStore.textColorSecondary(context!!))
             setOnMenuItemClickListener(this@AdaptiveFragment)
@@ -185,7 +185,7 @@ class AdaptiveFragment : AbsPlayerFragment(),  MusicProgressViewUpdateHelper.Cal
         playbackControlsFragment.setDark(color)
         lastColor = color
         callbacks!!.onPaletteColorChanged()
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, ATHUtil.resolveColor(context, R.attr.iconColor), activity)
+        RetroColorUtil.colorizeToolbar(playerToolbar, ATHUtil.resolveColor(context, R.attr.iconColor), activity)
     }
 
     override fun onShow() {

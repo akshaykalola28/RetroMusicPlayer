@@ -53,14 +53,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
         android:id="@+id/biographyTitle"
         style="@style/SubTitleTextAppearance"
         android:text="@string/biography"
         android:visibility="gone"
         tools:visibility="visible" />
 
-    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
         android:id="@+id/biographyText"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="match_parent"
@@ -72,7 +72,7 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
-    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
         android:id="@+id/albumTitle"
         style="@style/SubTitleTextAppearance"
         android:text="@string/albums" />
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:nestedScrollingEnabled="false" />
 
-    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
         android:id="@+id/songTitle"
         style="@style/SubTitleTextAppearance"
         android:text="@string/songs" />

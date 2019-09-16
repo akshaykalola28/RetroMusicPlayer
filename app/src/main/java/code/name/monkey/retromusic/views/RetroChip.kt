@@ -17,8 +17,8 @@ package code.name.monkey.retromusic.views
 import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ATHUtil
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ATHUtil
 import code.name.monkey.retromusic.R
 import com.google.android.material.chip.Chip
 

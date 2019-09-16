@@ -14,6 +14,8 @@
 
 package code.name.monkey.retromusic.model;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import org.jetbrains.annotations.NotNull;
 
 import kotlinx.android.parcel.Parcelize;

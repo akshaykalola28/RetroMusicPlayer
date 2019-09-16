@@ -42,13 +42,13 @@
         android:paddingEnd="16dp"
         android:paddingBottom="8dp">
 
-        <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextViewSubtitle1" />
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

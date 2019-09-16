@@ -20,12 +20,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.VisibleForTesting;
 import androidx.palette.graphics.Palette;
 
-import java.util.List;
+import com.kabouzeid.appthemehelper.util.ColorUtil;
 
-import code.name.monkey.appthemehelper.util.ColorUtil;
+import java.util.List;
 
 /**
  * @author Hemanth S (h4h13).
@@ -138,7 +139,7 @@ public class MediaNotificationProcessor {
     }
 
     private int selectForegroundColor(int backgroundColor, Palette palette) {
-        if (ColorUtil.INSTANCE.isColorLight(backgroundColor)) {
+        if (ColorUtil.isColorLight(backgroundColor)) {
             return selectForegroundColorForSwatches(palette.getDarkVibrantSwatch(),
                     palette.getVibrantSwatch(),
                     palette.getDarkMutedSwatch(),

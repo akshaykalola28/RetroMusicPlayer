@@ -81,7 +81,7 @@
                         app:cardUseCompatPadding="true"
                         app:layout_scrollFlags="scroll|enterAlways">
 
-                        <code.name.monkey.appthemehelper.common.views.ATEToolbar
+                        <com.google.android.material.appbar.MaterialToolbar
                             android:id="@+id/toolbar"
                             style="@style/Toolbar"
                             app:title="@string/search_hint"

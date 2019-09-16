@@ -41,7 +41,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="48dp" />
 
-                    <code.name.monkey.appthemehelper.common.views.ATEToolbar
+                    <com.google.android.material.appbar.MaterialToolbar
                         android:id="@+id/toolbar"
                         style="@style/Toolbar"
                         app:titleTextAppearance="@style/ToolbarTextAppearanceNormal"
@@ -75,7 +75,7 @@
                 android:layout_height="96dp"
                 app:srcCompat="@drawable/ic_disc_full_black_24dp" />
 
-            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                 android:id="@+id/emptyText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -26,8 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import code.name.monkey.appthemehelper.ThemeStore;
-import code.name.monkey.appthemehelper.util.ColorUtil;
+import com.kabouzeid.appthemehelper.ThemeStore;
+import com.kabouzeid.appthemehelper.util.ColorUtil;
 import code.name.monkey.retromusic.R;
 
 /**
@@ -53,7 +53,7 @@ public class OptionMenuItemView extends FrameLayout {
     public OptionMenuItemView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
 
-        int accentColor = ThemeStore.Companion.accentColor(context);
+        int accentColor = ThemeStore.accentColor(context);
         setBackground(ContextCompat.getDrawable(context, R.drawable.menu_item_background));
 
         setClickable(true);
@@ -61,7 +61,7 @@ public class OptionMenuItemView extends FrameLayout {
 
         inflate(context, R.layout.item_option_menu, this);
 
-        setBackgroundTintList(ColorStateList.valueOf(ColorUtil.INSTANCE.adjustAlpha(accentColor, 0.22f)));
+        setBackgroundTintList(ColorStateList.valueOf(ColorUtil.adjustAlpha(accentColor, 0.22f)));
 
         textView = findViewById(R.id.title);
         iconImageView = findViewById(R.id.icon);
@@ -81,7 +81,7 @@ public class OptionMenuItemView extends FrameLayout {
     public void setSelected(boolean selected) {
         super.setSelected(selected);
         if (selected) {
-            int accentColor = ThemeStore.Companion.accentColor(getContext());
+            int accentColor = ThemeStore.accentColor(getContext());
             textView.setTextColor(accentColor);
             iconImageView.setImageTintList(ColorStateList.valueOf(accentColor));
         }

@@ -19,7 +19,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
-import code.name.monkey.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.ColorUtil
 import code.name.monkey.retromusic.R
 
 class ColorIconsImageView : AppCompatImageView {

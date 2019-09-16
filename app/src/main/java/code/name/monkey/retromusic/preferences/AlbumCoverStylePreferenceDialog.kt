@@ -28,14 +28,13 @@ import android.widget.TextView
 import androidx.preference.PreferenceDialogFragmentCompat
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.common.prefs.supportv7.ATEDialogPreference
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEDialogPreference
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.AlbumCoverStyle
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.ViewUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
 import com.bumptech.glide.Glide
 
 
@@ -74,7 +73,17 @@ class AlbumCoverStylePreferenceDialog : PreferenceDialogFragmentCompat(), ViewPa
         viewPager.pageMargin = ViewUtil.convertDpToPixel(32f, resources).toInt()
         viewPager.currentItem = PreferenceUtil.getInstance(requireContext()).albumCoverStyle.ordinal
 
-        return MaterialDialog(activity!!).show {
+        return MaterialDialog.Builder(requireActivity())
+                .title(R.string.pref_title_album_cover_style)
+                .positiveText(R.string.set)
+                .onPositive { _, _ ->
+                    val nowPlayingScreen = AlbumCoverStyle.values()[viewPagerPosition]
+                    PreferenceUtil.getInstance(requireContext()).albumCoverStyle = nowPlayingScreen
+                }
+                .negativeText(android.R.string.cancel)
+                .customView(view, false)
+                .build()
+        /*return MaterialDialog(activity!!).show {
             title(R.string.pref_title_album_cover_style)
             positiveButton(R.string.set) {
                 val nowPlayingScreen = AlbumCoverStyle.values()[viewPagerPosition]
@@ -82,7 +91,7 @@ class AlbumCoverStylePreferenceDialog : PreferenceDialogFragmentCompat(), ViewPa
             }
             negativeButton(android.R.string.cancel)
             customView(view = view, scrollable = false, noVerticalPadding = false)
-        }
+        }*/
     }
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -136,12 +145,8 @@ class AlbumCoverStylePreferenceDialog : PreferenceDialogFragmentCompat(), ViewPa
     companion object {
         val TAG: String = AlbumCoverStylePreferenceDialog::class.java.simpleName
 
-        fun newInstance(key: String): AlbumCoverStylePreferenceDialog {
-            val bundle = Bundle()
-            bundle.putString(ARG_KEY, key)
-            val fragment = AlbumCoverStylePreferenceDialog()
-            fragment.arguments = bundle
-            return fragment
+        fun newInstance(): AlbumCoverStylePreferenceDialog {
+            return AlbumCoverStylePreferenceDialog()
         }
     }
 }

@@ -16,22 +16,22 @@ import android.view.animation.LinearInterpolator
 import android.widget.PopupMenu
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
-import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.extensions.ripAlpha
+import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.helper.MusicProgressViewUpdateHelper
 import code.name.monkey.retromusic.helper.PlayPauseButtonOnClickHandler
 import code.name.monkey.retromusic.misc.SimpleOnSeekbarChangeListener
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.service.MusicService
-import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.ViewUtil
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
+import com.kabouzeid.appthemehelper.util.TintHelper
 import kotlinx.android.synthetic.main.fragment_full_player_controls.*
 
 /**
@@ -296,7 +296,7 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
                     else
                         R.drawable.ic_favorite_border_white_24dp
 
-                    val drawable = TintHelper.createTintedDrawable(activity, res, Color.WHITE)
+                    val drawable = TintHelper.createTintedDrawable(ContextCompat.getDrawable(activity, res), Color.WHITE)
                     songFavourite?.setImageDrawable(drawable)
                 }
             }

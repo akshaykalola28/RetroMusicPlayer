@@ -16,7 +16,7 @@ package code.name.monkey.retromusic.glide
 
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import code.name.monkey.appthemehelper.util.ATHUtil
+import com.kabouzeid.appthemehelper.util.ATHUtil
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.glide.palette.BitmapPaletteTarget
 import code.name.monkey.retromusic.glide.palette.BitmapPaletteWrapper

@@ -25,6 +25,8 @@ import android.support.v4.media.MediaDescriptionCompat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.kabouzeid.appthemehelper.ThemeStore;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import code.name.monkey.appthemehelper.ThemeStore;
 import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.loaders.AlbumLoader;
 import code.name.monkey.retromusic.loaders.ArtistLoader;
@@ -415,7 +416,7 @@ public class AutoMusicProvider {
         MediaDescriptionCompat.Builder builder = new MediaDescriptionCompat.Builder();
         builder.setMediaId(mediaId)
                 .setTitle(title)
-                .setIconBitmap(ImageUtil.createBitmap(ImageUtil.getTintedVectorDrawable(mContext, iconDrawableId, ThemeStore.Companion.textColorSecondary(mContext))));
+                .setIconBitmap(ImageUtil.createBitmap(ImageUtil.getTintedVectorDrawable(mContext, iconDrawableId, ThemeStore.textColorSecondary(mContext))));
 
         return new MediaBrowserCompat.MediaItem(builder.build(),
                 MediaBrowserCompat.MediaItem.FLAG_BROWSABLE);

@@ -1,9 +1,9 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <code.name.monkey.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory android:title="@string/pref_header_playlists">
+    <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory android:title="@string/pref_header_playlists">
 
-        <code.name.monkey.retromusic.preferences.MaterialListPreference
+        <com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEListPreference
             android:defaultValue="this_month"
             android:entries="@array/pref_playlists_last_added_interval_titles"
             android:entryValues="@array/pref_playlists_last_added_interval_values"
@@ -14,6 +14,6 @@
             app:enableCopying="true"
             app:icon="@drawable/ic_playlist_add_white_24dp" />
 
-    </code.name.monkey.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory>
+    </com.kabouzeid.appthemehelper.common.prefs.supportv7.ATEPreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

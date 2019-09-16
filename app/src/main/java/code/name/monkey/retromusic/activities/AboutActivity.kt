@@ -9,8 +9,8 @@ import android.view.View
 import androidx.core.app.ShareCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.Constants.APP_INSTAGRAM_LINK
 import code.name.monkey.retromusic.Constants.APP_TELEGRAM_LINK
 import code.name.monkey.retromusic.Constants.APP_TWITTER_LINK
@@ -25,8 +25,8 @@ import code.name.monkey.retromusic.activities.base.AbsBaseActivity
 import code.name.monkey.retromusic.adapter.ContributorAdapter
 import code.name.monkey.retromusic.model.Contributor
 import code.name.monkey.retromusic.util.NavigationUtil
+import code.name.monkey.retromusic.util.RetroColorUtil
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.list.listItems
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_about.*
@@ -86,7 +86,7 @@ class AboutActivity : AbsBaseActivity(), View.OnClickListener {
         appBarLayout.setBackgroundColor(ThemeStore.primaryColor(this))
         toolbar.setBackgroundColor(ThemeStore.primaryColor(this))
         setSupportActionBar(toolbar)
-        ToolbarContentTintHelper.colorBackButton(toolbar, ThemeStore.textColorSecondary(this))
+        RetroColorUtil.colorBackButton(toolbar, ThemeStore.textColorSecondary(this))
     }
 
     private fun openUrl(url: String) {
@@ -132,7 +132,17 @@ class AboutActivity : AbsBaseActivity(), View.OnClickListener {
     }
 
     private fun showChangeLogOptions() {
-        MaterialDialog(this).show {
+        MaterialDialog.Builder(this)
+                .items(listOf("Telegram Channel", "App"))
+                .itemsCallback { _, _, position, _ ->
+                    if (position == 0) {
+                        openUrl(TELEGRAM_CHANGE_LOG)
+                    } else {
+                        NavigationUtil.gotoWhatNews(this@AboutActivity)
+                    }
+                }
+                .build()
+        /*MaterialDialog(this).show {
             listItems(items = listOf("Telegram Channel", "App")) { _, position, _ ->
                 if (position == 0) {
                     openUrl(TELEGRAM_CHANGE_LOG)
@@ -140,7 +150,7 @@ class AboutActivity : AbsBaseActivity(), View.OnClickListener {
                     NavigationUtil.gotoWhatNews(this@AboutActivity)
                 }
             }
-        }
+        }*/
     }
 
     private fun getAppVersion(): String {

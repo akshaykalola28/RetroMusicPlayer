@@ -20,7 +20,7 @@
             android:scaleType="centerCrop" />
     </com.google.android.material.card.MaterialCardView>
 
-    <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+    <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

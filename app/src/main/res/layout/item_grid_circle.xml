@@ -42,7 +42,7 @@
             android:paddingEnd="4dp"
             android:paddingBottom="8dp">
 
-            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:textAppearance="@style/TextViewSubtitle1"
                 android:textStyle="bold" />
 
-            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                 android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

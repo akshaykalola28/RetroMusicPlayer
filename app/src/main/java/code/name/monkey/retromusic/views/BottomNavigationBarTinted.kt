@@ -16,13 +16,13 @@ package code.name.monkey.retromusic.views
 
 import android.content.Context
 import android.util.AttributeSet
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.NavigationViewUtil
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.util.PreferenceUtil
+import code.name.monkey.retromusic.util.ViewUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ATHUtil
+import com.kabouzeid.appthemehelper.util.ColorUtil
 
 class BottomNavigationBarTinted @JvmOverloads constructor(
         context: Context,
@@ -37,8 +37,8 @@ class BottomNavigationBarTinted @JvmOverloads constructor(
 
         val iconColor = ATHUtil.resolveColor(context, R.attr.iconColor)
         val accentColor = ThemeStore.accentColor(context)
-        NavigationViewUtil.setItemIconColors(this, ColorUtil.withAlpha(iconColor, 0.5f), accentColor)
-        NavigationViewUtil.setItemTextColors(this, ColorUtil.withAlpha(iconColor, 0.5f), accentColor)
+        ViewUtil.setItemIconColors(this, ColorUtil.withAlpha(iconColor, 0.5f), accentColor)
+        ViewUtil.setItemTextColors(this, ColorUtil.withAlpha(iconColor, 0.5f), accentColor)
 
         setOnApplyWindowInsetsListener(null)
     }

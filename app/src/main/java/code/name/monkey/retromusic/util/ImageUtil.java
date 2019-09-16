@@ -38,7 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import code.name.monkey.appthemehelper.util.TintHelper;
+import com.kabouzeid.appthemehelper.util.TintHelper;
 
 /**
  * Created on : June 18, 2016 Author     : zetbaitsu Name       : Zetra GitHub     :

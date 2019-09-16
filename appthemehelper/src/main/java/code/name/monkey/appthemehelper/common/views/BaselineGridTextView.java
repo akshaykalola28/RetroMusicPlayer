@@ -23,8 +23,6 @@ import android.util.TypedValue;
 import androidx.annotation.FontRes;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.google.android.material.textview.MaterialTextView;
-
 import code.name.monkey.appthemehelper.R;
 
 
@@ -40,7 +38,7 @@ import code.name.monkey.appthemehelper.R;
  * the grid (relative to the view's top) & that this view's height is a multiple of 4dp so that
  * subsequent views start on the grid.
  */
-public class BaselineGridTextView extends MaterialTextView {
+public class BaselineGridTextView extends AppCompatTextView {
 
     private final float FOUR_DIP;
 

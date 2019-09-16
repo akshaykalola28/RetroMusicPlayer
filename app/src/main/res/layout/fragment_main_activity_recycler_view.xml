@@ -28,7 +28,7 @@
             android:layout_height="96dp"
             app:srcCompat="@drawable/ic_music_note_off_white_24dp" />
 
-        <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+        <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
             android:id="@+id/emptyText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

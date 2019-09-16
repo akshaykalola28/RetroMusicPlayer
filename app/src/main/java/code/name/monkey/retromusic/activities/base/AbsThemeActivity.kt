@@ -9,16 +9,17 @@ import android.view.View
 import android.view.WindowManager
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
-import code.name.monkey.appthemehelper.ATH
-import code.name.monkey.appthemehelper.ATHActivity
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.TintHelper
-import code.name.monkey.appthemehelper.util.VersionUtils
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.RetroUtil
+import com.kabouzeid.appthemehelper.ATH
+import com.kabouzeid.appthemehelper.ATHActivity
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ATHUtil
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialDialogsUtil
+import com.kabouzeid.appthemehelper.util.TintHelper
+
 
 abstract class AbsThemeActivity : ATHActivity(), Runnable {
 
@@ -28,7 +29,7 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
         setTheme(PreferenceUtil.getInstance(this).generalTheme)
         hideStatusBar()
         super.onCreate(savedInstanceState)
-        //MaterialDialogsUtil.updateMaterialDialogsThemeSingleton(this)
+        MaterialDialogsUtil.updateMaterialDialogsThemeSingleton(this)
 
         changeBackgroundShape()
         setImmersiveFullscreen()
@@ -94,13 +95,13 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
         val statusBar = window.decorView.rootView.findViewById<View>(R.id.status_bar)
         if (statusBar != null) {
             when {
-                VersionUtils.hasMarshmallow() -> window.statusBarColor = color
-                VersionUtils.hasLollipop() -> statusBar.setBackgroundColor(ColorUtil.darkenColor(color))
+                //VersionUtils.hasMarshmallow() -> window.statusBarColor = color
+                //VersionUtils.hasLollipop() -> statusBar.setBackgroundColor(ColorUtil.darkenColor(color))
                 else -> statusBar.setBackgroundColor(color)
             }
         } else {
             when {
-                VersionUtils.hasMarshmallow() -> window.statusBarColor = color
+                //VersionUtils.hasMarshmallow() -> window.statusBarColor = color
                 else -> window.statusBarColor = ColorUtil.darkenColor(color)
             }
         }

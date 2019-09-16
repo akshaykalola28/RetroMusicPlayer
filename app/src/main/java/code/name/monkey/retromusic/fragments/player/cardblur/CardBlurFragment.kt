@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.preference.PreferenceManager
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
 import code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment
@@ -17,6 +16,7 @@ import code.name.monkey.retromusic.glide.RetroMusicColoredTarget
 import code.name.monkey.retromusic.glide.SongGlideRequest
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.model.Song
+import code.name.monkey.retromusic.util.RetroColorUtil
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_card_blur_player.*
 
@@ -52,7 +52,7 @@ class CardBlurFragment : AbsPlayerFragment() {
         playbackControlsFragment.setDark(color)
         lastColor = color
         callbacks!!.onPaletteColorChanged()
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, Color.WHITE, activity)
+        RetroColorUtil.colorizeToolbar(playerToolbar, Color.WHITE, activity)
 
         playerToolbar.setTitleTextColor(Color.WHITE)
         playerToolbar.setSubtitleTextColor(Color.WHITE)
@@ -98,7 +98,7 @@ class CardBlurFragment : AbsPlayerFragment() {
             setNavigationOnClickListener { activity!!.onBackPressed() }
             setTitleTextColor(Color.WHITE)
             setSubtitleTextColor(Color.WHITE)
-            ToolbarContentTintHelper.colorizeToolbar(playerToolbar, Color.WHITE, activity)
+            RetroColorUtil.colorizeToolbar(playerToolbar, Color.WHITE, activity)
         }.setOnMenuItemClickListener(this)
     }
 

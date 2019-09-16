@@ -16,22 +16,22 @@ package code.name.monkey.appthemehelper.common.prefs.supportv7.dialogs;
 
 
 import android.os.Bundle;
+import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.preference.ListPreference;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import code.name.monkey.appthemehelper.common.prefs.supportv7.ATEListPreference;
 
 /**
  * Created by hemanths on 2019-09-03.
  */
-public class ATEListPreferenceDialogFragmentCompat extends ATEPreferenceDialogFragment {
+public class ATEListPreferenceDialogFragmentCompat extends ATEPreferenceDialogFragment implements MaterialDialog.ListCallbackSingleChoice {
     private int mClickedDialogEntryIndex;
 
-    @NonNull
-    public static ATEListPreferenceDialogFragmentCompat newInstance(@NonNull String key) {
+    public static ATEListPreferenceDialogFragmentCompat newInstance(String key) {
         final ATEListPreferenceDialogFragmentCompat fragment = new ATEListPreferenceDialogFragmentCompat();
         final Bundle b = new Bundle(1);
         b.putString(ARG_KEY, key);
@@ -44,7 +44,7 @@ public class ATEListPreferenceDialogFragmentCompat extends ATEPreferenceDialogFr
     }
 
     @Override
-    protected void onPrepareDialogBuilder(@NonNull MaterialAlertDialogBuilder builder) {
+    protected void onPrepareDialogBuilder(MaterialDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
 
         final ListPreference preference = getListPreference();
@@ -55,13 +55,18 @@ public class ATEListPreferenceDialogFragmentCompat extends ATEPreferenceDialogFr
         }
 
         mClickedDialogEntryIndex = preference.findIndexOfValue(preference.getValue());
-        builder.setSingleChoiceItems(preference.getEntries(), mClickedDialogEntryIndex, (dialogInterface, i) -> {
-            mClickedDialogEntryIndex = i;
-        });
+        builder.items(preference.getEntries())
+                .alwaysCallSingleChoiceCallback()
+                .itemsCallbackSingleChoice(mClickedDialogEntryIndex, this);
 
-        builder.setPositiveButton("Ok", null);
-        builder.setNegativeButton("", null);
-        builder.setNeutralButton("", null);
+        /*
+         * The typical interaction for list-based dialogs is to have
+         * click-on-an-item dismiss the dialog instead of the user having to
+         * press 'Ok'.
+         */
+        builder.positiveText("");
+        builder.negativeText("");
+        builder.neutralText("");
     }
 
     @Override
@@ -76,11 +81,11 @@ public class ATEListPreferenceDialogFragmentCompat extends ATEPreferenceDialogFr
         }
     }
 
-   /* @Override
+    @Override
     public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
         mClickedDialogEntryIndex = which;
         onClick(dialog, DialogAction.POSITIVE);
         dismiss();
         return true;
-    }*/
+    }
 }

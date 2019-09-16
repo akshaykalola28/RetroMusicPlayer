@@ -15,9 +15,7 @@ import android.widget.Toast
 import androidx.annotation.StringDef
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.MaterialUtil
-import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsThemeActivity
 import code.name.monkey.retromusic.activities.bugreport.model.DeviceInfo
@@ -27,9 +25,10 @@ import code.name.monkey.retromusic.activities.bugreport.model.github.GithubLogin
 import code.name.monkey.retromusic.activities.bugreport.model.github.GithubTarget
 import code.name.monkey.retromusic.misc.DialogAsyncTask
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onCancel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.TintHelper
 import kotlinx.android.synthetic.main.activity_bug_report.*
 import kotlinx.android.synthetic.main.bug_report_card_device_info.*
 import kotlinx.android.synthetic.main.bug_report_card_report.*
@@ -75,7 +74,7 @@ open class BugReportActivity : AbsThemeActivity() {
     private fun initViews() {
         val accentColor = ThemeStore.accentColor(this)
         val primaryColor = ThemeStore.primaryColor(this)
-        toolbar!!.setBackgroundColor(primaryColor)
+        toolbar.setBackgroundColor(primaryColor)
         setSupportActionBar(toolbar)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -268,27 +267,31 @@ open class BugReportActivity : AbsThemeActivity() {
 
             when (result) {
                 RESULT_SUCCESS -> tryToFinishActivity()
-                RESULT_BAD_CREDENTIALS -> MaterialDialog(context).show {
-                    title(R.string.bug_report_failed)
-                    message(R.string.bug_report_failed_wrong_credentials)
-                    positiveButton(android.R.string.ok)
-                }
-                RESULT_INVALID_TOKEN -> MaterialDialog(context).show {
-                    title(R.string.bug_report_failed)
-                    message(R.string.bug_report_failed_invalid_token)
-                    positiveButton(android.R.string.ok)
-                }
-                RESULT_ISSUES_NOT_ENABLED -> MaterialDialog(context).show {
-                    title(R.string.bug_report_failed)
-                    message(R.string.bug_report_failed_issues_not_available)
-                    positiveButton(android.R.string.ok)
-                }
-                else -> MaterialDialog(context).show {
-                    title(R.string.bug_report_failed)
-                    message(R.string.bug_report_failed_unknown)
-                    positiveButton(android.R.string.ok) { tryToFinishActivity() }
-                    onCancel { tryToFinishActivity() }
-                }
+                RESULT_BAD_CREDENTIALS -> MaterialDialog.Builder(context)
+                        .title(R.string.bug_report_failed)
+                        .content(R.string.bug_report_failed_wrong_credentials)
+                        .positiveText(android.R.string.ok)
+                        .show()
+
+                RESULT_INVALID_TOKEN -> MaterialDialog.Builder(context)
+                        .title(R.string.bug_report_failed)
+                        .content(R.string.bug_report_failed_invalid_token)
+                        .positiveText(android.R.string.ok)
+                        .show()
+
+                RESULT_ISSUES_NOT_ENABLED -> MaterialDialog.Builder(context)
+                        .title(R.string.bug_report_failed)
+                        .content(R.string.bug_report_failed_issues_not_available)
+                        .positiveText(android.R.string.ok)
+                        .show()
+                else -> MaterialDialog.Builder(context)
+                        .title(R.string.bug_report_failed)
+                        .content(R.string.bug_report_failed_unknown)
+                        .positiveText(android.R.string.ok)
+                        .onPositive { _, _ -> tryToFinishActivity() }
+                        .cancelListener { tryToFinishActivity() }
+                        .show()
+
             }
         }
 

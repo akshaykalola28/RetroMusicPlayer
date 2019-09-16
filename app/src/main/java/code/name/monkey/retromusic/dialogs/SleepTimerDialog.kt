@@ -27,7 +27,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import code.name.monkey.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.service.MusicService
@@ -36,13 +36,8 @@ import code.name.monkey.retromusic.service.MusicService.ACTION_QUIT
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.ViewUtil
+import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.WhichButton
-import com.afollestad.materialdialogs.actions.getActionButton
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.callbacks.onShow
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 
 
 class SleepTimerDialog : DialogFragment() {
@@ -56,58 +51,49 @@ class SleepTimerDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         timerUpdater = TimerUpdater()
+        val view = layoutInflater.inflate(R.layout.dialog_sleep_timer, null)
 
-        materialDialog = MaterialDialog(activity!!, BottomSheet())
-                .title(R.string.action_sleep_timer)
-                .positiveButton(R.string.action_set) {
+        materialDialog = MaterialDialog.Builder(requireActivity())
+                .title(getString(R.string.action_sleep_timer))
+                .positiveText(R.string.action_set)
+                .onPositive { _, _ ->
                     PreferenceUtil.getInstance(requireContext()).sleepTimerFinishMusic = shouldFinishLastSong.isChecked
 
                     val minutes = seekArcProgress
-
-                    val pi = makeTimerPendingIntent(PendingIntent.FLAG_CANCEL_CURRENT)
+                    val pendingIntent = makeTimerPendingIntent(PendingIntent.FLAG_CANCEL_CURRENT)
 
                     val nextSleepTimerElapsedTime = SystemClock.elapsedRealtime() + minutes * 60 * 1000
                     PreferenceUtil.getInstance(requireContext()).setNextSleepTimerElapsedRealtime(nextSleepTimerElapsedTime)
-                    val am = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                    am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, nextSleepTimerElapsedTime, pi)
+                    val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, nextSleepTimerElapsedTime, pendingIntent)
 
-                    Toast.makeText(activity, activity!!.resources.getString(R.string.sleep_timer_set, minutes), Toast.LENGTH_SHORT).show()
-                }
-                .negativeButton(android.R.string.cancel) {
-                    if (activity == null) {
-                        return@negativeButton
-                    }
+                    Toast.makeText(requireActivity(), getString(R.string.sleep_timer_set, minutes), Toast.LENGTH_SHORT).show()
+                }.onNeutral { _, _ ->
                     val previous = makeTimerPendingIntent(PendingIntent.FLAG_NO_CREATE)
                     if (previous != null) {
-                        val am = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        val am = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
                         am.cancel(previous)
                         previous.cancel()
-                        Toast.makeText(activity, activity!!.resources.getString(R.string.sleep_timer_canceled), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireActivity(), getString(R.string.sleep_timer_canceled), Toast.LENGTH_SHORT).show()
                     }
 
                     val musicService = MusicPlayerRemote.musicService
                     if (musicService != null && musicService.pendingQuit) {
                         musicService.pendingQuit = false
-                        Toast.makeText(activity, activity!!.resources.getString(R.string.sleep_timer_canceled), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireActivity(), requireActivity().resources.getString(R.string.sleep_timer_canceled), Toast.LENGTH_SHORT).show()
                     }
                 }
-                .customView(R.layout.dialog_sleep_timer, scrollable = false)
-                .show {
-                    onShow {
-                        if (makeTimerPendingIntent(PendingIntent.FLAG_NO_CREATE) != null) {
-                            timerUpdater.start()
-                        }
+                .showListener {
+                    if (makeTimerPendingIntent(PendingIntent.FLAG_NO_CREATE) != null) {
+                        timerUpdater.start();
                     }
                 }
+                .customView(view, false)
+                .build()
 
-        if (activity == null || materialDialog.getCustomView() == null) {
-            return materialDialog
-        }
-
-        shouldFinishLastSong = materialDialog.getCustomView().findViewById(R.id.shouldFinishLastSong)
-        seekBar = materialDialog.getCustomView().findViewById(R.id.seekBar)
-        timerDisplay = materialDialog.getCustomView().findViewById(R.id.timerDisplay)
-
+        shouldFinishLastSong = view.findViewById(R.id.shouldFinishLastSong)
+        seekBar = view.findViewById(R.id.seekBar)
+        timerDisplay = view.findViewById(R.id.timerDisplay)
 
         val finishMusic = PreferenceUtil.getInstance(requireContext()).sleepTimerFinishMusic
         shouldFinishLastSong.isChecked = finishMusic
@@ -117,7 +103,7 @@ class SleepTimerDialog : DialogFragment() {
         updateTimeDisplayTime()
         seekBar.progress = seekArcProgress
 
-        setProgressBarColor(ThemeStore.accentColor(context!!))
+        setProgressBarColor(ThemeStore.accentColor(requireContext()))
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
@@ -161,18 +147,18 @@ class SleepTimerDialog : DialogFragment() {
     private fun updateCancelButton() {
         val musicService = MusicPlayerRemote.musicService
         if (musicService != null && musicService.pendingQuit) {
-            materialDialog.getActionButton(WhichButton.NEGATIVE).text = materialDialog.context.getString(R.string.cancel_current_timer)
+            materialDialog.setActionButton(DialogAction.NEUTRAL, getString(R.string.cancel_current_timer))
         } else {
-            materialDialog.getActionButton(WhichButton.NEGATIVE).text = null
+            materialDialog.setActionButton(DialogAction.NEGATIVE, null)
         }
     }
 
     private inner class TimerUpdater internal constructor() : CountDownTimer(PreferenceUtil.getInstance(requireContext()).nextSleepTimerElapsedRealTime - SystemClock.elapsedRealtime(), 1000) {
 
         override fun onTick(millisUntilFinished: Long) {
-            materialDialog.getActionButton(WhichButton.NEGATIVE).text =
+            materialDialog.setActionButton(DialogAction.NEUTRAL,
                     String.format("%s %s", materialDialog.context.getString(R.string.cancel_current_timer),
-                            " (" + MusicUtil.getReadableDurationString(millisUntilFinished) + ")")
+                            " (" + MusicUtil.getReadableDurationString(millisUntilFinished) + ")"))
         }
 
         override fun onFinish() {
@@ -180,77 +166,7 @@ class SleepTimerDialog : DialogFragment() {
         }
     }
 
-    /* override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-         return inflater.inflate(R.layout.dialog_sleep_timer, container, false)
-     }*/
-
     private fun setProgressBarColor(dark: Int) {
         ViewUtil.setProgressDrawable(progressSlider = seekBar, newColor = dark)
     }
-
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        MaterialUtil.setTint(actionCancel, false)
-
-        title.setTextColor(ThemeStore.textColorPrimary(context!!))
-        timerDisplay!!.setTextColor(ThemeStore.textColorSecondary(context!!))
-
-        timerUpdater = TimerUpdater()
-
-        seekArcProgress = PreferenceUtil.getInstance().lastSleepTimerValue
-        updateTimeDisplayTime()
-        seekBar.progress = seekArcProgress
-
-        setProgressBarColor(ThemeStore.accentColor(context!!))
-
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                if (i < 1) {
-                    seekBar.progress = 1
-                    return
-                }
-                seekArcProgress = i
-                updateTimeDisplayTime()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                PreferenceUtil.getInstance().lastSleepTimerValue = seekArcProgress
-            }
-        })
-
-        actionCancel.apply {
-            icon = ContextCompat.getDrawable(context, R.drawable.ic_close_white_24dp)
-            setOnClickListener {
-                val previous = makeTimerPendingIntent(PendingIntent.FLAG_NO_CREATE)
-                if (previous != null) {
-                    val am = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                    am.cancel(previous)
-                    previous.cancel()
-                    Toast.makeText(activity, activity!!.resources.getString(R.string.sleep_timer_canceled), Toast.LENGTH_SHORT).show()
-                }
-                dismiss()
-            }
-        }
-        actionSet.apply {
-            icon = ContextCompat.getDrawable(context, R.drawable.ic_time_lapse_white_24dp)
-            MaterialUtil.setTint(actionSet)
-            setOnClickListener {
-                val minutes = seekArcProgress
-                val pi = makeTimerPendingIntent(PendingIntent.FLAG_CANCEL_CURRENT)
-                val nextSleepTimerElapsedTime = SystemClock.elapsedRealtime() + minutes * 60 * 1000
-                PreferenceUtil.getInstance().setNextSleepTimerElapsedRealtime(nextSleepTimerElapsedTime)
-                val am = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, nextSleepTimerElapsedTime, pi)
-                Toast.makeText(activity, activity!!.resources.getString(R.string.sleep_timer_set, minutes), Toast.LENGTH_SHORT).show()
-                dismiss()
-            }
-        }
-    }*/
-
-
 }

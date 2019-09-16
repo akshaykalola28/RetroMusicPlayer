@@ -54,7 +54,7 @@
                 app:strokeColor="?dividerColor"
                 app:strokeWidth="1dp">
 
-                <code.name.monkey.appthemehelper.common.views.ATEToolbar
+                <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"
                     style="@style/Toolbar"
                     app:title="@string/search_hint"

@@ -15,6 +15,7 @@
 package code.name.monkey.appthemehelper.common.prefs.supportv7
 
 
+import androidx.annotation.Nullable
 import androidx.fragment.app.DialogFragment
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -27,22 +28,22 @@ import code.name.monkey.appthemehelper.common.prefs.supportv7.dialogs.ATEPrefere
  */
 abstract class ATEPreferenceFragmentCompat : PreferenceFragmentCompat() {
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        if (callbackFragment is PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback) {
-            (callbackFragment as PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback).onPreferenceDisplayDialog(this, preference)
+        if (this.callbackFragment is OnPreferenceDisplayDialogCallback) {
+            (this.callbackFragment as OnPreferenceDisplayDialogCallback).onPreferenceDisplayDialog(this, preference)
             return
         }
 
-        if (activity is PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback) {
-            (activity as PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback).onPreferenceDisplayDialog(this, preference)
+        if (this.activity is OnPreferenceDisplayDialogCallback) {
+            (this.activity as OnPreferenceDisplayDialogCallback).onPreferenceDisplayDialog(this, preference)
             return
         }
 
-        if (fragmentManager!!.findFragmentByTag("android.support.v7.preference.PreferenceFragment.DIALOG") == null) {
+        if (this.fragmentManager!!.findFragmentByTag("android.support.v7.preference.PreferenceFragment.DIALOG") == null) {
             val dialogFragment = onCreatePreferenceDialog(preference)
 
             if (dialogFragment != null) {
                 dialogFragment.setTargetFragment(this, 0)
-                dialogFragment.show(fragmentManager!!, "android.support.v7.preference.PreferenceFragment.DIALOG")
+                dialogFragment.show(this.fragmentManager!!, "android.support.v7.preference.PreferenceFragment.DIALOG")
                 return
             }
         }
@@ -50,6 +51,7 @@ abstract class ATEPreferenceFragmentCompat : PreferenceFragmentCompat() {
         super.onDisplayPreferenceDialog(preference)
     }
 
+    @Nullable
     open fun onCreatePreferenceDialog(preference: Preference): DialogFragment? {
         if (preference is ATEListPreference) {
             return ATEListPreferenceDialogFragmentCompat.newInstance(preference.getKey())

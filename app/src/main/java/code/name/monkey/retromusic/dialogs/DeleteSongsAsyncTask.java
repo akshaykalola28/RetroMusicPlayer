@@ -27,6 +27,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.android.material.shape.RoundedCornerTreatment;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -55,11 +57,19 @@ public class DeleteSongsAsyncTask extends DialogAsyncTask<DeleteSongsAsyncTask.L
     @NonNull
     @Override
     protected Dialog createDialog(@NonNull Context context) {
-        return new MaterialAlertDialogBuilder(context)
+        MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.deleting_songs)
                 .setView(R.layout.loading)
-                .setCancelable(false)
-                .create();
+                .setCancelable(false);
+        MaterialShapeDrawable alertBackground = (MaterialShapeDrawable) materialAlertDialogBuilder.getBackground();
+        if (alertBackground != null) {
+            alertBackground.setShapeAppearanceModel(
+                    alertBackground.getShapeAppearanceModel()
+                            .toBuilder()
+                            .setAllCorners(new RoundedCornerTreatment(10.0f))
+                            .build());
+        }
+        return materialAlertDialogBuilder.create();
     }
 
     @Nullable

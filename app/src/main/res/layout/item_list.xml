@@ -76,7 +76,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
-            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,15 +85,14 @@
                 android:textAppearance="@style/TextViewHeadline6"
                 android:textSize="16sp" />
 
-            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                 android:id="@+id/text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textAppearance="@style/TextViewNormal"
-                app:lineHeightHint="18sp" />
+                android:textAppearance="@style/TextViewNormal" />
         </LinearLayout>
 
         <code.name.monkey.retromusic.views.IconImageView

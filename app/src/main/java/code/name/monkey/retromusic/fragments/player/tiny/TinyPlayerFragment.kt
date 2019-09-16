@@ -8,10 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import androidx.appcompat.widget.Toolbar
-import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
-import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.fragments.MiniPlayerFragment
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
@@ -22,7 +18,11 @@ import code.name.monkey.retromusic.helper.PlayPauseButtonOnClickHandler
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
+import code.name.monkey.retromusic.util.RetroColorUtil
 import code.name.monkey.retromusic.util.ViewUtil
+import com.kabouzeid.appthemehelper.ThemeStore
+import com.kabouzeid.appthemehelper.util.ColorUtil
+import com.kabouzeid.appthemehelper.util.MaterialValueHelper
 import kotlinx.android.synthetic.main.fragment_tiny_player.*
 
 class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Callback {
@@ -38,8 +38,8 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
         animatorSet.interpolator = LinearInterpolator()
         animatorSet.start()
 
-        playerSongTotalTime.text = String.format("%s/%s", MusicUtil.getReadableDurationString(total.toLong()),
-                MusicUtil.getReadableDurationString(progress.toLong()))
+        playerSongTotalTime.text = String.format("%s/%s",
+                MusicUtil.getReadableDurationString(progress.toLong()), MusicUtil.getReadableDurationString(total.toLong()))
     }
 
 
@@ -98,7 +98,7 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
 
         playerSongTotalTime.setTextColor(textColorPrimary)
 
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, textColorPrimary, requireActivity())
+        RetroColorUtil.colorizeToolbar(playerToolbar, textColorPrimary, requireActivity())
     }
 
     override fun onFavoriteToggled() {
@@ -126,7 +126,7 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
     private fun updateSong() {
         val song = MusicPlayerRemote.currentSong
         songTitle.text = song.title
-        songText.text = String.format("%s \nby -%s", song.albumName, song.artistName)
+        songText.text = String.format("%s \nby %s", song.albumName, song.artistName)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -24,7 +24,7 @@
                 android:scaleType="centerCrop"
                 android:transitionName="@string/transition_album_art" />
 
-            <code.name.monkey.appthemehelper.common.views.ATEToolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 style="@style/Toolbar" />
         </FrameLayout>
@@ -70,7 +70,7 @@
                             android:orientation="vertical"
                             android:padding="16dp">
 
-                            <code.name.monkey.appthemehelper.common.views.ATEPrimaryTextView
+                            <com.kabouzeid.appthemehelper.common.views.ATEPrimaryTextView
                                 android:id="@+id/albumTitle"
                                 style="@style/TextAppearance.MaterialComponents.Headline6"
                                 android:layout_width="match_parent"
@@ -78,7 +78,7 @@
                                 android:maxLines="2"
                                 tools:ignore="MissingPrefix" />
 
-                            <code.name.monkey.appthemehelper.common.views.ATESecondaryTextView
+                            <com.kabouzeid.appthemehelper.common.views.ATESecondaryTextView
                                 android:id="@+id/albumText"
                                 style="@style/TextAppearance.MaterialComponents.Subtitle2"
                                 android:layout_width="match_parent"
