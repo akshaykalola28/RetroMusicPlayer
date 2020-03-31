@@ -4,20 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="?attr/rectSelector"
     android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="112dp"
         android:layout_height="156dp"
+        android:layout_margin="4dp"
         app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        app:cardUseCompatPadding="true">
+        app:cardElevation="4dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            tools:src="@tools:sample/avatars" />
     </com.google.android.material.card.MaterialCardView>
 
 
@@ -26,13 +28,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:ellipsize="end"
-        android:maxLines="1"
+        android:maxLines="2"
         android:paddingStart="12dp"
-        android:paddingTop="6dp"
         android:paddingEnd="8dp"
         android:paddingBottom="4dp"
         android:textAppearance="@style/TextViewNormal"
-        android:textColor="?colorOnPrimary"
+        android:textColor="?android:attr/textColorPrimary"
         tools:ignore="MissingPrefix"
-        tools:text="My top tracks" />
+        tools:text="@tools:sample/full_names" />
 </LinearLayout>

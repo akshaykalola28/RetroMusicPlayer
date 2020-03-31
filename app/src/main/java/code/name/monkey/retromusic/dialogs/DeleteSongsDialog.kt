@@ -18,7 +18,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Html
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.saf.SAFGuideActivity
@@ -31,7 +31,6 @@ import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 
-
 class DeleteSongsDialog : DialogFragment() {
     @JvmField
     var currentSong: Song? = null
@@ -40,18 +39,23 @@ class DeleteSongsDialog : DialogFragment() {
 
     private var deleteSongsAsyncTask: DeleteSongsAsyncTask? = null
 
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val songs: ArrayList<Song>? = arguments?.getParcelableArrayList("songs")
+        val songs: ArrayList<Song>? = requireArguments().getParcelableArrayList("songs")
         var title = 0
         var content: CharSequence = ""
         if (songs != null) {
             if (songs.size > 1) {
                 title = R.string.delete_songs_title
-                content = Html.fromHtml(getString(R.string.delete_x_songs, songs.size))
+                content = HtmlCompat.fromHtml(
+                    getString(R.string.delete_x_songs, songs.size),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
             } else {
                 title = R.string.delete_song_title
-                content = Html.fromHtml(getString(R.string.delete_song_x, songs[0].title))
+                content = HtmlCompat.fromHtml(
+                    getString(R.string.delete_song_x, songs[0].title),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
             }
         }
 
@@ -89,13 +93,19 @@ class DeleteSongsDialog : DialogFragment() {
                     deleteSongsAsyncTask?.cancel(true)
                 }
                 deleteSongsAsyncTask = DeleteSongsAsyncTask(this)
-                deleteSongsAsyncTask?.execute(DeleteSongsAsyncTask.LoadingInfo(requestCode, resultCode, data))
+                deleteSongsAsyncTask?.execute(
+                    DeleteSongsAsyncTask.LoadingInfo(
+                        requestCode,
+                        resultCode,
+                        data
+                    )
+                )
             }
         }
     }
 
     fun deleteSongs(songs: List<Song>, safUris: List<Uri>?) {
-        MusicUtil.deleteTracks(activity!!, songs, safUris) { this.dismiss() }
+        MusicUtil.deleteTracks(requireActivity(), songs, safUris) { this.dismiss() }
     }
 
     companion object {
@@ -106,10 +116,10 @@ class DeleteSongsDialog : DialogFragment() {
             return create(list)
         }
 
-        fun create(songs: ArrayList<Song>): DeleteSongsDialog {
+        fun create(songs: List<Song>): DeleteSongsDialog {
             val dialog = DeleteSongsDialog()
             val args = Bundle()
-            args.putParcelableArrayList("songs", songs)
+            args.putParcelableArrayList("songs", ArrayList(songs))
             dialog.arguments = args
             return dialog
         }

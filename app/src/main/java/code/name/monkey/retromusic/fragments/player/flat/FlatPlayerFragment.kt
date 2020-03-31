@@ -34,17 +34,22 @@ class FlatPlayerFragment : AbsPlayerFragment() {
         get() = lastColor
 
     private fun setUpSubFragments() {
-        flatPlaybackControlsFragment = childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as FlatPlaybackControlsFragment
-        val playerAlbumCoverFragment = childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
+        flatPlaybackControlsFragment =
+            childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as FlatPlaybackControlsFragment
+        val playerAlbumCoverFragment =
+            childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
         playerAlbumCoverFragment.setCallbacks(this)
     }
 
     private fun setUpPlayerToolbar() {
         playerToolbar.inflateMenu(R.menu.menu_player)
-        playerToolbar.setNavigationOnClickListener { _ -> activity!!.onBackPressed() }
+        playerToolbar.setNavigationOnClickListener { _ -> requireActivity().onBackPressed() }
         playerToolbar.setOnMenuItemClickListener(this)
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, ATHUtil.resolveColor(context,
-                R.attr.iconColor), activity)
+        ToolbarContentTintHelper.colorizeToolbar(
+            playerToolbar,
+            ATHUtil.resolveColor(requireContext(), R.attr.colorControlNormal),
+            requireActivity()
+        )
     }
 
     private fun colorize(i: Int) {
@@ -54,16 +59,20 @@ class FlatPlayerFragment : AbsPlayerFragment() {
 
         valueAnimator = ValueAnimator.ofObject(ArgbEvaluator(), android.R.color.transparent, i)
         valueAnimator!!.addUpdateListener { animation ->
-            val drawable = DrawableGradient(GradientDrawable.Orientation.TOP_BOTTOM,
-                    intArrayOf(animation.animatedValue as Int, android.R.color.transparent), 0)
+            val drawable = DrawableGradient(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(animation.animatedValue as Int, android.R.color.transparent), 0
+            )
             colorGradientBackground?.background = drawable
 
         }
         valueAnimator!!.setDuration(ViewUtil.RETRO_MUSIC_ANIM_TIME.toLong()).start()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_flat_player, container, false)
     }
 
@@ -71,7 +80,6 @@ class FlatPlayerFragment : AbsPlayerFragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpPlayerToolbar()
         setUpSubFragments()
-
     }
 
     override fun onShow() {
@@ -90,34 +98,29 @@ class FlatPlayerFragment : AbsPlayerFragment() {
     override fun toolbarIconColor(): Int {
         val isLight = ColorUtil.isColorLight(paletteColor)
         return if (PreferenceUtil.getInstance(requireContext()).adaptiveColor)
-            MaterialValueHelper.getPrimaryTextColor(context, isLight)
+            MaterialValueHelper.getPrimaryTextColor(requireContext(), isLight)
         else
-            ATHUtil.resolveColor(context, R.attr.iconColor)
+            ATHUtil.resolveColor(requireContext(), R.attr.colorControlNormal)
     }
 
     override fun onColorChanged(color: Int) {
         lastColor = color
         flatPlaybackControlsFragment.setDark(color)
-        callbacks!!.onPaletteColorChanged()
-
+        callbacks?.onPaletteColorChanged()
         val isLight = ColorUtil.isColorLight(color)
-
-        //TransitionManager.beginDelayedTransition(mToolbar);
         val iconColor = if (PreferenceUtil.getInstance(requireContext()).adaptiveColor)
-            MaterialValueHelper.getPrimaryTextColor(context!!, isLight)
+            MaterialValueHelper.getPrimaryTextColor(requireContext(), isLight)
         else
-            ATHUtil.resolveColor(context!!, R.attr.iconColor)
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, iconColor, activity)
+            ATHUtil.resolveColor(requireContext(), R.attr.colorControlNormal)
+        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, iconColor, requireActivity())
         if (PreferenceUtil.getInstance(requireContext()).adaptiveColor) {
             colorize(color)
         }
     }
 
-
     override fun onFavoriteToggled() {
         toggleFavorite(MusicPlayerRemote.currentSong)
     }
-
 
     override fun toggleFavorite(song: Song) {
         super.toggleFavorite(song)

@@ -14,7 +14,7 @@
 
 package code.name.monkey.retromusic.adapter.base;
 
-import android.os.Build;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -26,22 +26,21 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractDraggableSwipeableItemViewHolder;
 
-import code.name.monkey.appthemehelper.util.ATHUtil;
 import code.name.monkey.retromusic.R;
 
-public class MediaEntryViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
-    @Nullable
-    public TextView title;
+public class MediaEntryViewHolder extends AbstractDraggableSwipeableItemViewHolder
+        implements View.OnLongClickListener, View.OnClickListener {
 
     @Nullable
-    public TextView text;
+    public View dragView;
 
     @Nullable
-    public TextView time;
+    public View dummyContainer;
 
     @Nullable
-    public TextView imageText;
+    public ImageView image;
 
     @Nullable
     public ViewGroup imageContainer;
@@ -50,28 +49,34 @@ public class MediaEntryViewHolder extends RecyclerView.ViewHolder implements Vie
     public MaterialCardView imageContainerCard;
 
     @Nullable
-    public View menu;
-
-    @Nullable
-    public View dragView;
-
-    @Nullable
-    public View paletteColorContainer;
-
-    @Nullable
-    public RecyclerView recyclerView;
-
-    @Nullable
-    public ImageButton playSongs;
-
-    @Nullable
-    public View mask;
+    public TextView imageText;
 
     @Nullable
     public MaterialCardView imageTextContainer;
 
     @Nullable
-    public ImageView image;
+    public View mask;
+
+    @Nullable
+    public View menu;
+
+    @Nullable
+    public View paletteColorContainer;
+
+    @Nullable
+    public ImageButton playSongs;
+
+    @Nullable
+    public RecyclerView recyclerView;
+
+    @Nullable
+    public TextView text;
+
+    @Nullable
+    public TextView time;
+
+    @Nullable
+    public TextView title;
 
     public MediaEntryViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -81,28 +86,29 @@ public class MediaEntryViewHolder extends RecyclerView.ViewHolder implements Vie
         image = itemView.findViewById(R.id.image);
         time = itemView.findViewById(R.id.time);
 
-        imageText = itemView.findViewById(R.id.image_text);
-        imageContainer = itemView.findViewById(R.id.image_container);
-        imageTextContainer = itemView.findViewById(R.id.image_text_container);
-        imageContainerCard = itemView.findViewById(R.id.image_container_card);
+        imageText = itemView.findViewById(R.id.imageText);
+        imageContainer = itemView.findViewById(R.id.imageContainer);
+        imageTextContainer = itemView.findViewById(R.id.imageTextContainer);
+        imageContainerCard = itemView.findViewById(R.id.imageContainerCard);
 
         menu = itemView.findViewById(R.id.menu);
         dragView = itemView.findViewById(R.id.drag_view);
-        paletteColorContainer = itemView.findViewById(R.id.palette_color_container);
+        paletteColorContainer = itemView.findViewById(R.id.paletteColorContainer);
         recyclerView = itemView.findViewById(R.id.recycler_view);
         mask = itemView.findViewById(R.id.mask);
         playSongs = itemView.findViewById(R.id.playSongs);
+        dummyContainer = itemView.findViewById(R.id.dummy_view);
 
         if (imageContainerCard != null) {
-            imageContainerCard.setCardBackgroundColor(ATHUtil.INSTANCE.resolveColor(itemView.getContext(), R.attr.colorPrimary));
+            imageContainerCard.setCardBackgroundColor(Color.TRANSPARENT);
         }
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
     }
 
     @Override
-    public boolean onLongClick(View v) {
-        return false;
+    public View getSwipeableContainerView() {
+        return null;
     }
 
     @Override
@@ -110,8 +116,16 @@ public class MediaEntryViewHolder extends RecyclerView.ViewHolder implements Vie
 
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        return false;
+    }
+
     public void setImageTransitionName(@NonNull String transitionName) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && image != null) {
+        if (imageContainerCard != null) {
+            imageContainerCard.setTransitionName(transitionName);
+        }
+        if (image != null) {
             image.setTransitionName(transitionName);
         }
     }

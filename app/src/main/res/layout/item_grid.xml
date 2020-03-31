@@ -4,64 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="4dp"
     android:background="?rectSelector"
+    android:clickable="true"
+    android:focusable="true"
     tools:ignore="MissingPrefix">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:orientation="vertical"
         tools:ignore="UnusedAttribute,UselessParent">
 
-        <code.name.monkey.retromusic.views.WidthFitSquareLayout
+        <code.name.monkey.retromusic.views.RetroShapeableImageView
+            android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/image_container_card"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                app:cardUseCompatPadding="true">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    tools:ignore="ContentDescription"
-                    tools:srcCompat="@tools:sample/backgrounds/scenic[18]" />
-            </com.google.android.material.card.MaterialCardView>
-        </code.name.monkey.retromusic.views.WidthFitSquareLayout>
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:retroCornerSize="8dp"
+            tools:ignore="ContentDescription"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical"
-            android:paddingStart="4dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="4dp"
-            android:paddingBottom="8dp">
+            android:padding="8dp">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textAppearance="@style/TextViewSubtitle1"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"
                 tools:text="@string/bug_report_summary" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="4dp"
                 android:singleLine="true"
-                android:textAppearance="@style/TextViewBody2"
+                android:textColor="?android:attr/textColorSecondary"
                 tools:text="@string/bug_report_summary" />
 
         </LinearLayout>

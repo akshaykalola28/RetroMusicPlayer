@@ -1,6 +1,5 @@
 package code.name.monkey.retromusic.adapter.album
 
-import android.app.ActivityOptions
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +18,10 @@ import code.name.monkey.retromusic.util.PreferenceUtil
 import com.bumptech.glide.Glide
 import java.util.*
 
-
-class AlbumCoverPagerAdapter(fm: FragmentManager, private val dataSet: ArrayList<Song>) : CustomFragmentStatePagerAdapter(fm) {
+class AlbumCoverPagerAdapter(
+    fragmentManager: FragmentManager,
+    private val dataSet: ArrayList<Song>
+) : CustomFragmentStatePagerAdapter(fragmentManager) {
 
     private var currentColorReceiver: AlbumCoverFragment.ColorReceiver? = null
     private var currentColorReceiverPosition = -1
@@ -69,7 +70,7 @@ class AlbumCoverPagerAdapter(fm: FragmentManager, private val dataSet: ArrayList
 
         private val layout: Int
             get() {
-                return when (PreferenceUtil.getInstance(activity).albumCoverStyle) {
+                return when (PreferenceUtil.getInstance(requireContext()).albumCoverStyle) {
                     AlbumCoverStyle.NORMAL -> R.layout.fragment_album_cover
                     AlbumCoverStyle.FLAT -> R.layout.fragment_album_flat_cover
                     AlbumCoverStyle.CIRCLE -> R.layout.fragment_album_circle_cover
@@ -84,20 +85,23 @@ class AlbumCoverPagerAdapter(fm: FragmentManager, private val dataSet: ArrayList
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             if (arguments != null) {
-                song = arguments!!.getParcelable(SONG_ARG)!!
+                song = requireArguments().getParcelable(SONG_ARG)!!
             }
         }
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
             val finalLayout = when {
-                PreferenceUtil.getInstance(activity).carouselEffect() -> R.layout.fragment_album_carousel_cover
+                PreferenceUtil.getInstance(requireContext()).carouselEffect() -> R.layout.fragment_album_carousel_cover
                 else -> layout
             }
             val view = inflater.inflate(finalLayout, container, false)
             albumCover = view.findViewById(R.id.player_image)
             albumCover.setOnClickListener {
-                val options = ActivityOptions.makeSceneTransitionAnimation(requireActivity(), it, getString(R.string.transition_lyrics))
-                NavigationUtil.goToLyrics(requireActivity(), options)
+                NavigationUtil.goToLyrics(requireActivity())
             }
             return view
         }
@@ -107,7 +111,6 @@ class AlbumCoverPagerAdapter(fm: FragmentManager, private val dataSet: ArrayList
             loadAlbumCover()
         }
 
-
         override fun onDestroyView() {
             super.onDestroyView()
             colorReceiver = null
@@ -115,13 +118,13 @@ class AlbumCoverPagerAdapter(fm: FragmentManager, private val dataSet: ArrayList
 
         private fun loadAlbumCover() {
             SongGlideRequest.Builder.from(Glide.with(requireContext()), song)
-                    .checkIgnoreMediaStore(activity)
-                    .generatePalette(activity).build()
-                    .into(object : RetroMusicColoredTarget(albumCover) {
-                        override fun onColorReady(color: Int) {
-                            setColor(color)
-                        }
-                    })
+                .checkIgnoreMediaStore(requireContext())
+                .generatePalette(requireContext()).build()
+                .into(object : RetroMusicColoredTarget(albumCover) {
+                    override fun onColorReady(color: Int) {
+                        setColor(color)
+                    }
+                })
         }
 
         private fun setColor(color: Int) {

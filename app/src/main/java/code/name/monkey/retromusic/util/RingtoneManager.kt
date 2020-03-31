@@ -43,18 +43,19 @@ class RingtoneManager(val context: Context) {
             return
         }
 
-
         try {
-            val cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                    arrayOf(MediaStore.MediaColumns.TITLE),
-                    BaseColumns._ID + "=?",
-                    arrayOf(song.id.toString()), null)
+            val cursor = resolver.query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                arrayOf(MediaStore.MediaColumns.TITLE),
+                BaseColumns._ID + "=?",
+                arrayOf(song.id.toString()), null
+            )
             cursor.use { cursorSong ->
                 if (cursorSong != null && cursorSong.count == 1) {
                     cursorSong.moveToFirst()
                     Settings.System.putString(resolver, Settings.System.RINGTONE, uri.toString())
                     val message = context
-                            .getString(R.string.x_has_been_set_as_ringtone, cursorSong.getString(0))
+                        .getString(R.string.x_has_been_set_as_ringtone, cursorSong.getString(0))
                     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -63,7 +64,6 @@ class RingtoneManager(val context: Context) {
     }
 
     companion object {
-        private const val TAG = "RingtoneManager"
 
         fun requiresDialog(context: Context): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -87,6 +87,5 @@ class RingtoneManager(val context: Context) {
                 negativeButton(android.R.string.cancel)
             }
         }
-
     }
 }

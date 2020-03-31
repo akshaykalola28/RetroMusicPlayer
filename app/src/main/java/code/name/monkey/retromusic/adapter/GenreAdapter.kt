@@ -16,39 +16,32 @@ import java.util.*
  */
 
 class GenreAdapter(
-        private val mActivity: Activity,
-        dataSet: ArrayList<Genre>,
-        private val mItemLayoutRes: Int
+    private val activity: Activity,
+    var dataSet: List<Genre>,
+    private val mItemLayoutRes: Int
 ) : RecyclerView.Adapter<GenreAdapter.ViewHolder>() {
-    var dataSet = ArrayList<Genre>()
-        private set
 
-    init {
-        this.dataSet = dataSet
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(mActivity).inflate(mItemLayoutRes, parent, false))
+        return ViewHolder(LayoutInflater.from(activity).inflate(mItemLayoutRes, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val genre = dataSet[position]
-        if (holder.title != null) {
-            holder.title!!.text = genre.name
-        }
-        if (holder.text != null) {
-            holder.text!!.text = String.format(Locale.getDefault(), "%d %s", genre.songCount, if (genre.songCount > 1)
-                mActivity.getString(R.string.songs)
-            else
-                mActivity.getString(R.string.song))
-        }
+        holder.title?.text = genre.name
+        holder.text?.text = String.format(
+            Locale.getDefault(),
+            "%d %s",
+            genre.songCount,
+            if (genre.songCount > 1) activity.getString(R.string.songs) else activity.getString(R.string.song)
+        )
     }
 
     override fun getItemCount(): Int {
         return dataSet.size
     }
 
-    fun swapDataSet(list: ArrayList<Genre>) {
+    fun swapDataSet(list: List<Genre>) {
         dataSet = list
         notifyDataSetChanged()
     }
@@ -57,7 +50,7 @@ class GenreAdapter(
         override fun onClick(v: View?) {
             super.onClick(v)
             val genre = dataSet[adapterPosition]
-            NavigationUtil.goToGenre(mActivity, genre)
+            NavigationUtil.goToGenre(activity, genre)
         }
     }
 }

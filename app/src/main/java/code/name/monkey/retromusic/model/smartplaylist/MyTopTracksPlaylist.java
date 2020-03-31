@@ -27,7 +27,6 @@ import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.loaders.TopAndRecentlyPlayedTracksLoader;
 import code.name.monkey.retromusic.model.Song;
 import code.name.monkey.retromusic.providers.SongPlayCountStore;
-import io.reactivex.Observable;
 
 /**
  * @author Karim Abou Zeid (kabouzeid)
@@ -52,18 +51,6 @@ public class MyTopTracksPlaylist extends AbsSmartPlaylist {
         super(in);
     }
 
-    @NonNull
-    @Override
-    public Observable<ArrayList<Song>> getSongsFlowable(@NotNull @NonNull Context context) {
-        return TopAndRecentlyPlayedTracksLoader.INSTANCE.getTopTracksFlowable(context);
-    }
-
-    @NonNull
-    @Override
-    public ArrayList<Song> getSongs(@NotNull @NonNull Context context) {
-        return TopAndRecentlyPlayedTracksLoader.INSTANCE.getTopTracks(context);
-    }
-
     @Override
     public void clear(@NonNull Context context) {
         SongPlayCountStore.getInstance(context).clear();
@@ -72,5 +59,11 @@ public class MyTopTracksPlaylist extends AbsSmartPlaylist {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    @NonNull
+    @Override
+    public ArrayList<Song> getSongs(@NotNull @NonNull Context context) {
+        return TopAndRecentlyPlayedTracksLoader.INSTANCE.getTopTracks(context);
     }
 }

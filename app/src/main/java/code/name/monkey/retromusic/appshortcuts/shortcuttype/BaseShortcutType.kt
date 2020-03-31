@@ -20,7 +20,6 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.os.Build
 import android.os.Bundle
-
 import code.name.monkey.retromusic.appshortcuts.AppShortcutLauncherActivity
 
 @TargetApi(Build.VERSION_CODES.N_MR1)

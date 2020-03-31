@@ -7,6 +7,11 @@
     android:clickable="true"
     android:focusable="true">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorSurface" />
+
     <include layout="@layout/shadow_statusbar_toolbar" />
 
     <LinearLayout
@@ -30,7 +35,7 @@
             android:paddingEnd="16dp">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/playerTitle"
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
@@ -38,6 +43,7 @@
                 android:focusableInTouchMode="true"
                 android:freezesText="true"
                 android:marqueeRepeatLimit="marquee_forever"
+                android:paddingTop="8dp"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textAppearance="@style/TextViewHeadline6"
@@ -46,13 +52,12 @@
                 tools:text="Title" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/playerText"
+                android:id="@+id/text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:paddingTop="8dp"
                 android:maxLines="1"
-                android:textColor="?colorOnBackground"
+                android:paddingTop="8dp"
                 tools:text="Text" />
         </LinearLayout>
 

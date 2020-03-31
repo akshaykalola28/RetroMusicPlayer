@@ -1,11 +1,12 @@
 package code.name.monkey.retromusic.adapter.playlist
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import code.name.monkey.appthemehelper.ThemeStore
@@ -16,6 +17,8 @@ import code.name.monkey.retromusic.adapter.base.AbsMultiSelectAdapter
 import code.name.monkey.retromusic.adapter.base.MediaEntryViewHolder
 import code.name.monkey.retromusic.dialogs.ClearSmartPlaylistDialog
 import code.name.monkey.retromusic.dialogs.DeletePlaylistDialog
+import code.name.monkey.retromusic.extensions.hide
+import code.name.monkey.retromusic.extensions.show
 import code.name.monkey.retromusic.helper.menu.PlaylistMenuHelper
 import code.name.monkey.retromusic.helper.menu.SongsMenuHelper
 import code.name.monkey.retromusic.interfaces.CabHolder
@@ -29,20 +32,23 @@ import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.NavigationUtil
 import java.util.*
 
-
-class PlaylistAdapter(protected val activity: AppCompatActivity, dataSet: ArrayList<Playlist>,
-                      @param:LayoutRes protected var itemLayoutRes: Int, cabHolder: CabHolder?) : AbsMultiSelectAdapter<PlaylistAdapter.ViewHolder, Playlist>(activity, cabHolder, R.menu.menu_playlists_selection) {
-    var dataSet: ArrayList<Playlist>
-        protected set
-    var songs = ArrayList<Song>()
+class PlaylistAdapter(
+    private val activity: AppCompatActivity,
+    var dataSet: List<Playlist>,
+    private var itemLayoutRes: Int,
+    cabHolder: CabHolder?
+) : AbsMultiSelectAdapter<PlaylistAdapter.ViewHolder, Playlist>(
+    activity,
+    cabHolder,
+    R.menu.menu_playlists_selection
+) {
 
 
     init {
-        this.dataSet = dataSet
         setHasStableIds(true)
     }
 
-    fun swapDataSet(dataSet: ArrayList<Playlist>) {
+    fun swapDataSet(dataSet: List<Playlist>) {
         this.dataSet = dataSet
         notifyDataSetChanged()
     }
@@ -52,48 +58,48 @@ class PlaylistAdapter(protected val activity: AppCompatActivity, dataSet: ArrayL
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(activity)
-                .inflate(itemLayoutRes, parent, false)
+        val view = LayoutInflater.from(activity).inflate(itemLayoutRes, parent, false)
         return createViewHolder(view)
     }
 
-    protected fun createViewHolder(view: View): ViewHolder {
+    fun createViewHolder(view: View): ViewHolder {
         return ViewHolder(view)
     }
 
-    protected fun getPlaylistTitle(playlist: Playlist): String {
-        return playlist.name
+    private fun getPlaylistTitle(playlist: Playlist): String {
+        return if (TextUtils.isEmpty(playlist.name)) "-" else playlist.name
     }
 
-    protected fun getPlaylistText(playlist: Playlist): String {
+    private fun getPlaylistText(playlist: Playlist): String {
         return MusicUtil.getPlaylistInfoString(activity, getSongs(playlist))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         val playlist = dataSet[position]
-        val songs = getSongs(playlist)
         holder.itemView.isActivated = isChecked(playlist)
-
-        if (holder.title != null) {
-            holder.title!!.text = getPlaylistTitle(playlist)
-        }
-        if (holder.text != null) {
-            holder.text!!.text = getPlaylistText(playlist)
-        }
-        if (holder.image != null) {
-            holder.image!!.setImageDrawable(getIconRes(playlist))
+        holder.title?.text = getPlaylistTitle(playlist)
+        holder.text?.text = getPlaylistText(playlist)
+        holder.image?.setImageDrawable(getIconRes(playlist))
+        val isChecked = isChecked(playlist)
+        if (isChecked) {
+            holder.menu?.hide()
+        } else {
+            holder.menu?.show()
         }
     }
 
     private fun getIconRes(playlist: Playlist): Drawable {
-        if (playlist is AbsSmartPlaylist) {
-            return TintHelper.createTintedDrawable(activity, playlist.iconRes, ATHUtil.resolveColor(activity, R.attr.iconColor))!!
-        }
         return if (MusicUtil.isFavoritePlaylist(activity, playlist))
-            TintHelper.createTintedDrawable(activity, R.drawable.ic_favorite_white_24dp, ThemeStore.accentColor(activity))!!
-        else
-            TintHelper.createTintedDrawable(activity, R.drawable.ic_playlist_play_white_24dp, ATHUtil.resolveColor(activity, R.attr.iconColor))!!
+            TintHelper.createTintedDrawable(
+                activity,
+                R.drawable.ic_favorite_white_24dp,
+                ThemeStore.accentColor(activity)
+            )
+        else TintHelper.createTintedDrawable(
+            activity,
+            R.drawable.ic_playlist_play_white_24dp,
+            ATHUtil.resolveColor(activity, R.attr.colorControlNormal)
+        )
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -119,9 +125,9 @@ class PlaylistAdapter(protected val activity: AppCompatActivity, dataSet: ArrayL
                 while (i < selection.size) {
                     val playlist = selection[i]
                     if (playlist is AbsSmartPlaylist) {
-                        ClearSmartPlaylistDialog.create(playlist)
-                                .show(activity.supportFragmentManager,
-                                        "CLEAR_PLAYLIST_" + playlist.name)
+                        ClearSmartPlaylistDialog.create(playlist).show(
+                            activity.supportFragmentManager, "CLEAR_PLAYLIST_" + playlist.name
+                        )
                         selection.remove(playlist)
                         i--
                     }
@@ -129,10 +135,14 @@ class PlaylistAdapter(protected val activity: AppCompatActivity, dataSet: ArrayL
                 }
                 if (selection.size > 0) {
                     DeletePlaylistDialog.create(selection)
-                            .show(activity.supportFragmentManager, "DELETE_PLAYLIST")
+                        .show(activity.supportFragmentManager, "DELETE_PLAYLIST")
                 }
             }
-            else -> SongsMenuHelper.handleMenuClick(activity, getSongList(selection), menuItem.itemId)
+            else -> SongsMenuHelper.handleMenuClick(
+                activity,
+                getSongList(selection),
+                menuItem.itemId
+            )
         }
     }
 
@@ -158,44 +168,45 @@ class PlaylistAdapter(protected val activity: AppCompatActivity, dataSet: ArrayL
         return songs
     }
 
-
     inner class ViewHolder(itemView: View) : MediaEntryViewHolder(itemView) {
         init {
 
             image?.apply {
-                val iconPadding = activity.resources.getDimensionPixelSize(R.dimen.list_item_image_icon_padding)
+                val iconPadding =
+                    activity.resources.getDimensionPixelSize(R.dimen.list_item_image_icon_padding)
                 setPadding(iconPadding, iconPadding, iconPadding, iconPadding)
-                //setColorFilter(ATHUtil.resolveColor(activity, R.attr.iconColor), PorterDuff.Mode.SRC_IN)
             }
 
             menu?.setOnClickListener { view ->
                 val playlist = dataSet[adapterPosition]
                 val popupMenu = PopupMenu(activity, view)
-                popupMenu.inflate(if (itemViewType == SMART_PLAYLIST)
-                    R.menu.menu_item_smart_playlist
-                else
-                    R.menu.menu_item_playlist)
+                popupMenu.inflate(
+                    if (itemViewType == SMART_PLAYLIST) R.menu.menu_item_smart_playlist
+                    else R.menu.menu_item_playlist
+                )
                 if (playlist is LastAddedPlaylist) {
                     popupMenu.menu.findItem(R.id.action_clear_playlist).isVisible = false
                 }
                 popupMenu.setOnMenuItemClickListener { item ->
                     if (item.itemId == R.id.action_clear_playlist) {
                         if (playlist is AbsSmartPlaylist) {
-                            ClearSmartPlaylistDialog.create(playlist)
-                                    .show(activity.supportFragmentManager,
-                                            "CLEAR_SMART_PLAYLIST_" + playlist.name)
+                            ClearSmartPlaylistDialog.create(playlist).show(
+                                activity.supportFragmentManager,
+                                "CLEAR_SMART_PLAYLIST_" + playlist.name
+                            )
                             return@setOnMenuItemClickListener true
                         }
                     }
                     PlaylistMenuHelper.handleMenuClick(
-                            activity, dataSet[adapterPosition], item)
+                        activity, dataSet[adapterPosition], item
+                    )
                 }
                 popupMenu.show()
             }
 
             imageTextContainer?.apply {
                 cardElevation = 0f
-                setCardBackgroundColor(ATHUtil.resolveColor(activity, R.attr.colorPrimary))
+                setCardBackgroundColor(Color.TRANSPARENT)
             }
         }
 
@@ -215,9 +226,7 @@ class PlaylistAdapter(protected val activity: AppCompatActivity, dataSet: ArrayL
     }
 
     companion object {
-
         val TAG: String = PlaylistAdapter::class.java.simpleName
-
         private const val SMART_PLAYLIST = 0
         private const val DEFAULT_PLAYLIST = 1
     }

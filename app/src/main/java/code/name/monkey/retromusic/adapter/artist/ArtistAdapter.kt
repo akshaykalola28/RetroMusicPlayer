@@ -7,13 +7,13 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.MaterialValueHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.base.AbsMultiSelectAdapter
 import code.name.monkey.retromusic.adapter.base.MediaEntryViewHolder
+import code.name.monkey.retromusic.extensions.hide
 import code.name.monkey.retromusic.glide.ArtistGlideRequest
 import code.name.monkey.retromusic.glide.RetroMusicColoredTarget
 import code.name.monkey.retromusic.helper.menu.SongsMenuHelper
@@ -23,24 +23,24 @@ import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.NavigationUtil
 import com.bumptech.glide.Glide
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+import me.zhanghai.android.fastscroll.PopupTextProvider
 import java.util.*
 
+class ArtistAdapter(
+    val activity: AppCompatActivity,
+    var dataSet: List<Artist>,
+    var itemLayoutRes: Int,
+    cabHolder: CabHolder?
+) : AbsMultiSelectAdapter<ArtistAdapter.ViewHolder, Artist>(
+    activity, cabHolder, R.menu.menu_media_selection
+), PopupTextProvider {
 
-class ArtistAdapter(val activity: AppCompatActivity,
-                    var dataSet: ArrayList<Artist>,
-                    @LayoutRes var itemLayoutRes: Int,
-                    var usePalette: Boolean,
-                    cabHolder: CabHolder?
-) : AbsMultiSelectAdapter<ArtistAdapter.ViewHolder, Artist>(activity, cabHolder, R.menu.menu_media_selection), FastScrollRecyclerView.SectionedAdapter {
-
-    fun swapDataSet(dataSet: ArrayList<Artist>) {
-        this.dataSet = dataSet
-        notifyDataSetChanged()
+    init {
+        this.setHasStableIds(true)
     }
 
-    fun usePalette(usePalette: Boolean) {
-        this.usePalette = usePalette
+    fun swapDataSet(dataSet: List<Artist>) {
+        this.dataSet = dataSet
         notifyDataSetChanged()
     }
 
@@ -62,16 +62,22 @@ class ArtistAdapter(val activity: AppCompatActivity,
         val isChecked = isChecked(artist)
         holder.itemView.isActivated = isChecked
         holder.title?.text = artist.name
-        holder.text?.visibility = View.GONE
+        holder.text?.hide()
         loadArtistImage(artist, holder)
     }
 
     fun setColors(color: Int, holder: ViewHolder) {
         if (holder.paletteColorContainer != null) {
             holder.paletteColorContainer?.setBackgroundColor(color)
-            holder.title?.setTextColor(MaterialValueHelper.getPrimaryTextColor(activity, ColorUtil.isColorLight(color)))
+            holder.title?.setTextColor(
+                MaterialValueHelper.getPrimaryTextColor(
+                    activity, ColorUtil.isColorLight(
+                        color
+                    )
+                )
+            )
         }
-
+        holder.imageContainerCard?.setCardBackgroundColor(color)
         holder.mask?.backgroundTintList = ColorStateList.valueOf(color)
     }
 
@@ -80,17 +86,18 @@ class ArtistAdapter(val activity: AppCompatActivity,
             return
         }
         ArtistGlideRequest.Builder.from(Glide.with(activity), artist)
-                .generatePalette(activity).build()
-                .into(object : RetroMusicColoredTarget(holder.image!!) {
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        super.onLoadCleared(placeholder)
-                        setColors(defaultFooterColor, holder)
-                    }
+            .generatePalette(activity)
+            .build()
+            .into(object : RetroMusicColoredTarget(holder.image!!) {
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    super.onLoadCleared(placeholder)
+                    setColors(defaultFooterColor, holder)
+                }
 
-                    override fun onColorReady(color: Int) {
-                        setColors(color, holder)
-                    }
-                })
+                override fun onColorReady(color: Int) {
+                    setColors(color, holder)
+                }
+            })
     }
 
     override fun getItemCount(): Int {
@@ -105,8 +112,9 @@ class ArtistAdapter(val activity: AppCompatActivity,
         return artist.name
     }
 
-    override fun onMultipleItemAction(menuItem: MenuItem,
-                                      selection: ArrayList<Artist>) {
+    override fun onMultipleItemAction(
+        menuItem: MenuItem, selection: ArrayList<Artist>
+    ) {
         SongsMenuHelper.handleMenuClick(activity, getSongList(selection), menuItem.itemId)
     }
 
@@ -118,17 +126,19 @@ class ArtistAdapter(val activity: AppCompatActivity,
         return songs
     }
 
-    override fun getSectionName(position: Int): String {
+    override fun getPopupText(position: Int): String {
+        return getSectionName(position)
+    }
+
+    private fun getSectionName(position: Int): String {
         return MusicUtil.getSectionName(dataSet[position].name)
     }
 
     inner class ViewHolder(itemView: View) : MediaEntryViewHolder(itemView) {
 
         init {
-            setImageTransitionName(activity.getString(code.name.monkey.retromusic.R.string.transition_artist_image))
-            if (menu != null) {
-                menu!!.visibility = View.GONE
-            }
+            setImageTransitionName(activity.getString(R.string.transition_artist_image))
+            menu?.visibility = View.GONE
         }
 
         override fun onClick(v: View?) {
@@ -136,8 +146,14 @@ class ArtistAdapter(val activity: AppCompatActivity,
             if (isInQuickSelectMode) {
                 toggleChecked(adapterPosition)
             } else {
-                val activityOptions = ActivityOptions.makeSceneTransitionAnimation(activity, image, activity.getString(R.string.transition_artist_image))
-                NavigationUtil.goToArtistOptions(activity, dataSet[adapterPosition].id, activityOptions)
+                val activityOptions = ActivityOptions.makeSceneTransitionAnimation(
+                    activity,
+                    imageContainerCard ?: image,
+                    "${activity.getString(R.string.transition_artist_image)}_${dataSet[adapterPosition].id}"
+                )
+                NavigationUtil.goToArtistOptions(
+                    activity, dataSet[adapterPosition].id, activityOptions
+                )
             }
         }
 

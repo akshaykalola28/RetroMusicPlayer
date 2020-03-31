@@ -14,16 +14,19 @@
 
 package code.name.monkey.retromusic.mvp.presenter
 
+import code.name.monkey.retromusic.Result.Error
+import code.name.monkey.retromusic.Result.Success
 import code.name.monkey.retromusic.model.Artist
 import code.name.monkey.retromusic.mvp.BaseView
 import code.name.monkey.retromusic.mvp.Presenter
 import code.name.monkey.retromusic.mvp.PresenterImpl
 import code.name.monkey.retromusic.providers.interfaces.Repository
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 interface ArtistsView : BaseView {
-    fun artists(artists: ArrayList<Artist>)
+    fun artists(artists: List<Artist>)
 }
 
 interface ArtistsPresenter : Presenter<ArtistsView> {
@@ -31,19 +34,26 @@ interface ArtistsPresenter : Presenter<ArtistsView> {
     fun loadArtists()
 
     class ArtistsPresenterImpl @Inject constructor(
-            private val repository: Repository
-    ) : PresenterImpl<ArtistsView>(), ArtistsPresenter {
+        private val repository: Repository
+    ) : PresenterImpl<ArtistsView>(), ArtistsPresenter, CoroutineScope {
 
-        private var disposable: Disposable? = null
+        private val job = Job()
+
+        override val coroutineContext: CoroutineContext
+            get() = Dispatchers.IO + job
 
         override fun detachView() {
             super.detachView()
-            disposable?.dispose()
+            job.cancel()
         }
 
         override fun loadArtists() {
-            disposable = repository.allArtistsFlowable
-                    .subscribe({ view?.artists(it) }, { t -> println(t) })
+            launch {
+                when (val result = repository.allArtists()) {
+                    is Success -> withContext(Dispatchers.Main) { view?.artists(result.data) }
+                    is Error -> withContext(Dispatchers.Main) { view?.showEmptyView() }
+                }
+            }
         }
     }
 }

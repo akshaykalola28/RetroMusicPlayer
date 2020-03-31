@@ -16,7 +16,7 @@ package code.name.monkey.retromusic.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Html
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.R.string
@@ -28,35 +28,38 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import java.util.*
 
-
 class DeletePlaylistDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val playlists = arguments!!.getParcelableArrayList<Playlist>("playlist")
+        val playlists = requireArguments().getParcelableArrayList<Playlist>("playlist")
         val title: Int
         val content: CharSequence
         //noinspection ConstantConditions
         if (playlists!!.size > 1) {
             title = string.delete_playlists_title
-            content = Html.fromHtml(getString(string.delete_x_playlists, playlists.size))
+            content = HtmlCompat.fromHtml(
+                getString(string.delete_x_playlists, playlists.size),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         } else {
             title = string.delete_playlist_title
-            content = Html.fromHtml(getString(string.delete_playlist_x, playlists[0].name))
+            content = HtmlCompat.fromHtml(
+                getString(string.delete_playlist_x, playlists[0].name),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         }
 
         return MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
-                .show {
-                    cornerRadius(PreferenceUtil.getInstance(requireContext()).dialogCorner)
-                    title(title)
-                    message(text = content)
-                    negativeButton(android.R.string.cancel)
-                    positiveButton(R.string.action_delete) {
-                        if (activity == null)
-                            return@positiveButton
-                        PlaylistsUtil.deletePlaylists(activity!!, playlists)
-                    }
-                    negativeButton(android.R.string.cancel)
+            .show {
+                cornerRadius(PreferenceUtil.getInstance(requireContext()).dialogCorner)
+                title(title)
+                message(text = content)
+                negativeButton(android.R.string.cancel)
+                positiveButton(R.string.action_delete) {
+                    PlaylistsUtil.deletePlaylists(requireContext(), playlists)
                 }
+                negativeButton(android.R.string.cancel)
+            }
     }
 
     companion object {
@@ -75,5 +78,4 @@ class DeletePlaylistDialog : DialogFragment() {
             return dialog
         }
     }
-
 }

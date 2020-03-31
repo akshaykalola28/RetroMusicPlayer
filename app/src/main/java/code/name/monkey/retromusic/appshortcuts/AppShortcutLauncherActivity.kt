@@ -29,7 +29,6 @@ import code.name.monkey.retromusic.model.smartplaylist.ShuffleAllPlaylist
 import code.name.monkey.retromusic.service.MusicService
 import code.name.monkey.retromusic.service.MusicService.*
 
-
 class AppShortcutLauncherActivity : Activity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,18 +44,21 @@ class AppShortcutLauncherActivity : Activity() {
 
         when (shortcutType) {
             SHORTCUT_TYPE_SHUFFLE_ALL -> {
-                startServiceWithPlaylist(MusicService.SHUFFLE_MODE_SHUFFLE,
-                        ShuffleAllPlaylist(applicationContext))
+                startServiceWithPlaylist(
+                    MusicService.SHUFFLE_MODE_SHUFFLE, ShuffleAllPlaylist(applicationContext)
+                )
                 DynamicShortcutManager.reportShortcutUsed(this, ShuffleAllShortcutType.id)
             }
             SHORTCUT_TYPE_TOP_TRACKS -> {
-                startServiceWithPlaylist(MusicService.SHUFFLE_MODE_NONE,
-                        MyTopTracksPlaylist(applicationContext))
+                startServiceWithPlaylist(
+                    MusicService.SHUFFLE_MODE_NONE, MyTopTracksPlaylist(applicationContext)
+                )
                 DynamicShortcutManager.reportShortcutUsed(this, TopTracksShortcutType.id)
             }
             SHORTCUT_TYPE_LAST_ADDED -> {
-                startServiceWithPlaylist(MusicService.SHUFFLE_MODE_NONE,
-                        LastAddedPlaylist(applicationContext))
+                startServiceWithPlaylist(
+                    MusicService.SHUFFLE_MODE_NONE, LastAddedPlaylist(applicationContext)
+                )
                 DynamicShortcutManager.reportShortcutUsed(this, LastAddedShortcutType.id)
             }
             SHORTCUT_TYPE_SEARCH -> {

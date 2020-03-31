@@ -33,6 +33,7 @@ import static code.name.monkey.retromusic.service.MusicService.TRACK_ENDED;
 import static code.name.monkey.retromusic.service.MusicService.TRACK_WENT_TO_NEXT;
 
 class PlaybackHandler extends Handler {
+
     @NonNull
     private final WeakReference<MusicService> mService;
     private float currentDuckVolume = 1.0f;
@@ -79,9 +80,14 @@ class PlaybackHandler extends Handler {
                 break;
 
             case TRACK_WENT_TO_NEXT:
-                if (service.getRepeatMode() == REPEAT_MODE_NONE && service.isLastTrack()) {
+                if (service.pendingQuit || service.getRepeatMode() == REPEAT_MODE_NONE && service.isLastTrack()) {
                     service.pause();
                     service.seek(0);
+                    if (service.pendingQuit) {
+                        service.pendingQuit = false;
+                        service.quit();
+                        break;
+                    }
                 } else {
                     service.position = service.nextPosition;
                     service.prepareNextImpl();

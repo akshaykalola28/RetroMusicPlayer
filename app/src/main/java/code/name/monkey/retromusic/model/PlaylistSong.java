@@ -23,8 +23,10 @@ import kotlinx.android.parcel.Parcelize;
  */
 @Parcelize
 public class PlaylistSong extends Song {
-    final int playlistId;
+
     final int idInPlayList;
+
+    final int playlistId;
 
     public PlaylistSong(int id,
                         @NotNull String title,
@@ -40,16 +42,17 @@ public class PlaylistSong extends Song {
                         int playlistId,
                         int idInPlayList,
                         @NotNull String composer) {
-        super(id, title, trackNumber, year, duration, data, dateModified, albumId, albumName, artistId, artistName, composer);
+        super(id, title, trackNumber, year, duration, data, dateModified, albumId, albumName, artistId, artistName,
+                composer);
         this.playlistId = playlistId;
         this.idInPlayList = idInPlayList;
     }
 
-    public int getPlaylistId() {
-        return playlistId;
-    }
-
     public int getIdInPlayList() {
         return idInPlayList;
+    }
+
+    public int getPlaylistId() {
+        return playlistId;
     }
 }

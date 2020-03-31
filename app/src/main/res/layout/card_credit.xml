@@ -13,7 +13,12 @@
 
         <code.name.monkey.appthemehelper.common.views.ATEAccentTextView
             android:id="@+id/sb1"
-            style="@style/SubTitleTextAppearance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="?attr/listPreferredItemPaddingStart"
+            android:paddingTop="?attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?attr/listPreferredItemPaddingEnd"
+            android:paddingBottom="?attr/listPreferredItemPaddingEnd"
             android:text="@string/credit_title"
             android:textAppearance="@style/TextViewOverline"
             android:textColor="?colorAccent"
@@ -27,6 +32,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:overScrollMode="never"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sb1" />

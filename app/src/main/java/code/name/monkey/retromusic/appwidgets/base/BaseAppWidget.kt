@@ -39,8 +39,9 @@ abstract class BaseAppWidget : AppWidgetProvider() {
     /**
      * {@inheritDoc}
      */
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager,
-                          appWidgetIds: IntArray) {
+    override fun onUpdate(
+        context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray
+    ) {
         defaultAppWidget(context, appWidgetIds)
         val updateIntent = Intent(APP_WIDGET_UPDATE)
         updateIntent.putExtra(EXTRA_APP_WIDGET_NAME, NAME)
@@ -60,8 +61,9 @@ abstract class BaseAppWidget : AppWidgetProvider() {
         }
     }
 
-    protected fun pushUpdate(context: Context, appWidgetIds: IntArray?,
-                             views: RemoteViews) {
+    protected fun pushUpdate(
+        context: Context, appWidgetIds: IntArray?, views: RemoteViews
+    ) {
         val appWidgetManager = AppWidgetManager.getInstance(context)
         if (appWidgetIds != null) {
             appWidgetManager.updateAppWidget(appWidgetIds, views)
@@ -73,15 +75,19 @@ abstract class BaseAppWidget : AppWidgetProvider() {
     /**
      * Check against [AppWidgetManager] if there are any instances of this widget.
      */
-    protected fun hasInstances(context: Context): Boolean {
+    private fun hasInstances(context: Context): Boolean {
         val appWidgetManager = AppWidgetManager.getInstance(context)
-        val mAppWidgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context,
-                javaClass))
-        return mAppWidgetIds.size > 0
+        val mAppWidgetIds = appWidgetManager.getAppWidgetIds(
+            ComponentName(
+                context, javaClass
+            )
+        )
+        return mAppWidgetIds.isNotEmpty()
     }
 
-    protected fun buildPendingIntent(context: Context, action: String,
-                                     serviceName: ComponentName): PendingIntent {
+    protected fun buildPendingIntent(
+        context: Context, action: String, serviceName: ComponentName
+    ): PendingIntent {
         val intent = Intent(action)
         intent.component = serviceName
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -97,7 +103,7 @@ abstract class BaseAppWidget : AppWidgetProvider() {
 
     protected fun getAlbumArtDrawable(resources: Resources, bitmap: Bitmap?): Drawable {
         return if (bitmap == null) {
-            ContextCompat.getDrawable(App.getContext(), R.drawable.default_album_art)!!
+            ContextCompat.getDrawable(App.getContext(), R.drawable.default_audio_art)!!
         } else {
             BitmapDrawable(resources, bitmap)
         }
@@ -117,9 +123,15 @@ abstract class BaseAppWidget : AppWidgetProvider() {
 
         const val NAME: String = "app_widget"
 
-
-        fun createRoundedBitmap(drawable: Drawable?, width: Int, height: Int, tl: Float,
-                                tr: Float, bl: Float, br: Float): Bitmap? {
+        fun createRoundedBitmap(
+            drawable: Drawable?,
+            width: Int,
+            height: Int,
+            tl: Float,
+            tr: Float,
+            bl: Float,
+            br: Float
+        ): Bitmap? {
             if (drawable == null) {
                 return null
             }
@@ -135,21 +147,30 @@ abstract class BaseAppWidget : AppWidgetProvider() {
             val paint = Paint()
             paint.shader = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
             paint.isAntiAlias = true
-            canvas.drawPath(composeRoundedRectPath(RectF(0f, 0f, width.toFloat(), height.toFloat()), tl, tr, bl, br), paint)
+            canvas.drawPath(
+                composeRoundedRectPath(
+                    RectF(0f, 0f, width.toFloat(), height.toFloat()), tl, tr, bl, br
+                ), paint
+            )
 
             return rounded
         }
 
         fun createBitmap(drawable: Drawable, sizeMultiplier: Float): Bitmap {
-            val bitmap = Bitmap.createBitmap((drawable.intrinsicWidth * sizeMultiplier).toInt(),
-                    (drawable.intrinsicHeight * sizeMultiplier).toInt(), Bitmap.Config.ARGB_8888)
+            val bitmap = Bitmap.createBitmap(
+                (drawable.intrinsicWidth * sizeMultiplier).toInt(),
+                (drawable.intrinsicHeight * sizeMultiplier).toInt(),
+                Bitmap.Config.ARGB_8888
+            )
             val c = Canvas(bitmap)
             drawable.setBounds(0, 0, c.width, c.height)
             drawable.draw(c)
             return bitmap
         }
 
-        protected fun composeRoundedRectPath(rect: RectF, tl: Float, tr: Float, bl: Float, br: Float): Path {
+        protected fun composeRoundedRectPath(
+            rect: RectF, tl: Float, tr: Float, bl: Float, br: Float
+        ): Path {
             val path = Path()
             path.moveTo(rect.left + tl, rect.top)
             path.lineTo(rect.right - tr, rect.top)

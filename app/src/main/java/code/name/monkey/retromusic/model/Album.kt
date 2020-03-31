@@ -16,8 +16,8 @@ package code.name.monkey.retromusic.model
 
 import java.util.*
 
-
 class Album {
+
     val songs: ArrayList<Song>?
 
     val id: Int

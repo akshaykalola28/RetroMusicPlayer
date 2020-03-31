@@ -12,34 +12,25 @@ import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.BuildConfig
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsBaseActivity
-import code.name.monkey.retromusic.extensions.applyToolbar
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.TransactionDetails
 import kotlinx.android.synthetic.main.activity_pro_version.*
 import java.lang.ref.WeakReference
 
-
 class PurchaseActivity : AbsBaseActivity(), BillingProcessor.IBillingHandler {
-
 
     private lateinit var billingProcessor: BillingProcessor
     private var restorePurchaseAsyncTask: AsyncTask<*, *, *>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setDrawUnderStatusBar()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pro_version)
-        setDrawUnderStatusBar()
-
         setStatusbarColorAuto()
-        setNavigationBarColorPrimary()
-        setTaskDescriptionColorAuto()
+        setNavigationbarColorAuto()
         setLightNavigationBar(true)
-
-        val primaryColor = ATHUtil.resolveColor(this, R.attr.colorPrimary)
-        toolbar.setBackgroundColor(primaryColor)
-        appBarLayout.setBackgroundColor(primaryColor)
-
-        applyToolbar(toolbar)
+        toolbar.setBackgroundColor(ATHUtil.resolveColor(this, R.attr.colorSurface))
+        setSupportActionBar(toolbar)
 
         restoreButton.isEnabled = false
         purchaseButton.isEnabled = false
@@ -67,7 +58,6 @@ class PurchaseActivity : AbsBaseActivity(), BillingProcessor.IBillingHandler {
         restorePurchaseAsyncTask = RestorePurchaseAsyncTask(this).execute()
     }
 
-
     override fun onProductPurchased(productId: String, details: TransactionDetails?) {
         Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
         setResult(RESULT_OK)
@@ -75,7 +65,11 @@ class PurchaseActivity : AbsBaseActivity(), BillingProcessor.IBillingHandler {
 
     override fun onPurchaseHistoryRestored() {
         if (App.isProVersion()) {
-            Toast.makeText(this, R.string.restored_previous_purchase_please_restart, Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                R.string.restored_previous_purchase_please_restart,
+                Toast.LENGTH_LONG
+            ).show()
             setResult(RESULT_OK)
         } else {
             Toast.makeText(this, R.string.no_purchase_found, Toast.LENGTH_SHORT).show()
@@ -86,12 +80,10 @@ class PurchaseActivity : AbsBaseActivity(), BillingProcessor.IBillingHandler {
         Log.e(TAG, "Billing error: code = $errorCode", error)
     }
 
-
     override fun onBillingInitialized() {
         restoreButton.isEnabled = true
         purchaseButton.isEnabled = true
     }
-
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (!billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
@@ -111,15 +103,19 @@ class PurchaseActivity : AbsBaseActivity(), BillingProcessor.IBillingHandler {
         super.onDestroy()
     }
 
-    private class RestorePurchaseAsyncTask internal constructor(purchaseActivity: PurchaseActivity) : AsyncTask<Void, Void, Boolean>() {
+    private class RestorePurchaseAsyncTask internal constructor(purchaseActivity: PurchaseActivity) :
+        AsyncTask<Void, Void, Boolean>() {
 
-        private val buyActivityWeakReference: WeakReference<PurchaseActivity> = WeakReference(purchaseActivity)
+        private val buyActivityWeakReference: WeakReference<PurchaseActivity> = WeakReference(
+            purchaseActivity
+        )
 
         override fun onPreExecute() {
             super.onPreExecute()
             val purchaseActivity = buyActivityWeakReference.get()
             if (purchaseActivity != null) {
-                Toast.makeText(purchaseActivity, R.string.restoring_purchase, Toast.LENGTH_SHORT).show()
+                Toast.makeText(purchaseActivity, R.string.restoring_purchase, Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 cancel(false)
             }
@@ -144,7 +140,11 @@ class PurchaseActivity : AbsBaseActivity(), BillingProcessor.IBillingHandler {
             if (b) {
                 purchaseActivity.onPurchaseHistoryRestored()
             } else {
-                Toast.makeText(purchaseActivity, R.string.could_not_restore_purchase, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    purchaseActivity,
+                    R.string.could_not_restore_purchase,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

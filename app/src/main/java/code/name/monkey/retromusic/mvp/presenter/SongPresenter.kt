@@ -14,40 +14,50 @@
 
 package code.name.monkey.retromusic.mvp.presenter
 
+import code.name.monkey.retromusic.Result
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.mvp.Presenter
 import code.name.monkey.retromusic.mvp.PresenterImpl
 import code.name.monkey.retromusic.providers.interfaces.Repository
-import io.reactivex.disposables.Disposable
-import java.util.*
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by hemanths on 10/08/17.
  */
 interface SongView {
-    fun songs(songs: ArrayList<Song>)
+
+    fun songs(songs: List<Song>)
 
     fun showEmptyView()
 }
 
 interface SongPresenter : Presenter<SongView> {
+
     fun loadSongs()
 
     class SongPresenterImpl @Inject constructor(
-            private val repository: Repository
-    ) : PresenterImpl<SongView>(), SongPresenter {
+        private val repository: Repository
+    ) : PresenterImpl<SongView>(), SongPresenter, CoroutineScope {
 
-        private var disposable: Disposable? = null
+        private var job: Job = Job()
+
+        override val coroutineContext: CoroutineContext
+            get() = Dispatchers.IO + job
 
         override fun loadSongs() {
-            disposable = repository.allSongsFlowable
-                    .subscribe({ view?.songs(it) }, { t -> print(t) })
+            launch {
+                when (val songs = repository.allSongs()) {
+                    is Result.Success -> withContext(Dispatchers.Main) { view?.songs(songs.data) }
+                    is Result.Error -> withContext(Dispatchers.Main) { view?.showEmptyView() }
+                }
+            }
         }
 
         override fun detachView() {
             super.detachView()
-            disposable?.dispose()
+            job.cancel()
         }
     }
 }

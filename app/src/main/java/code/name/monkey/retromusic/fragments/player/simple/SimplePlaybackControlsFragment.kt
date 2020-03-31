@@ -12,11 +12,13 @@ import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.MaterialValueHelper
 import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.extensions.hide
+import code.name.monkey.retromusic.extensions.show
+import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.helper.MusicProgressViewUpdateHelper
 import code.name.monkey.retromusic.helper.PlayPauseButtonOnClickHandler
 import code.name.monkey.retromusic.service.MusicService
-import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import kotlinx.android.synthetic.main.fragment_simple_controls_fragment.*
@@ -30,7 +32,6 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
     private var lastPlaybackControlsColor: Int = 0
     private var lastDisabledPlaybackControlsColor: Int = 0
     private lateinit var progressViewUpdateHelper: MusicProgressViewUpdateHelper
-
 
     override fun onPlayStateChanged() {
         updatePlayPauseDrawableState()
@@ -56,8 +57,11 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
         progressViewUpdateHelper = MusicProgressViewUpdateHelper(this)
     }
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_simple_controls_fragment, container, false)
     }
 
@@ -74,7 +78,7 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpMusicControllers()
-
+        title.isSelected = true
         playPauseButton.setOnClickListener {
             if (MusicPlayerRemote.isPlaying) {
                 MusicPlayerRemote.pauseSong()
@@ -110,8 +114,14 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
 
     override fun updateShuffleState() {
         when (MusicPlayerRemote.shuffleMode) {
-            MusicService.SHUFFLE_MODE_SHUFFLE -> shuffleButton.setColorFilter(lastPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
-            else -> shuffleButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+            MusicService.SHUFFLE_MODE_SHUFFLE -> shuffleButton.setColorFilter(
+                lastPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
+            else -> shuffleButton.setColorFilter(
+                lastDisabledPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
         }
     }
 
@@ -123,7 +133,10 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
         when (MusicPlayerRemote.repeatMode) {
             MusicService.REPEAT_MODE_NONE -> {
                 repeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
-                repeatButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+                repeatButton.setColorFilter(
+                    lastDisabledPlaybackControlsColor,
+                    PorterDuff.Mode.SRC_IN
+                )
             }
             MusicService.REPEAT_MODE_ALL -> {
                 repeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
@@ -140,21 +153,27 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
         val song = MusicPlayerRemote.currentSong
         title.text = song.title
         text.text = song.artistName
+
+        if (PreferenceUtil.getInstance(requireContext()).isSongInfo) {
+            songInfo.text = getSongInfo(song)
+            songInfo.show()
+        } else {
+            songInfo.hide()
+        }
     }
 
     override fun onPlayingMetaChanged() {
         super.onPlayingMetaChanged()
         updateSong()
-
     }
 
     public override fun show() {
         playPauseButton!!.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .rotation(360f)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
+            .scaleX(1f)
+            .scaleY(1f)
+            .rotation(360f)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
     }
 
     public override fun hide() {
@@ -168,23 +187,26 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
     }
 
     override fun setUpProgressSlider() {
-
     }
 
-
     override fun onUpdateProgressViews(progress: Int, total: Int) {
-        songCurrentProgress!!.text = String.format("%s / %s", MusicUtil.getReadableDurationString(progress.toLong()),
-                MusicUtil.getReadableDurationString(total.toLong()))
+        songCurrentProgress!!.text = String.format(
+            "%s / %s",
+            MusicUtil.getReadableDurationString(progress.toLong()),
+            MusicUtil.getReadableDurationString(total.toLong())
+        )
     }
 
     override fun setDark(color: Int) {
         val colorBg = ATHUtil.resolveColor(context!!, android.R.attr.colorBackground)
         if (ColorUtil.isColorLight(colorBg)) {
             lastPlaybackControlsColor = MaterialValueHelper.getSecondaryTextColor(context!!, true)
-            lastDisabledPlaybackControlsColor = MaterialValueHelper.getSecondaryDisabledTextColor(context!!, true)
+            lastDisabledPlaybackControlsColor =
+                MaterialValueHelper.getSecondaryDisabledTextColor(context!!, true)
         } else {
             lastPlaybackControlsColor = MaterialValueHelper.getPrimaryTextColor(context!!, false)
-            lastDisabledPlaybackControlsColor = MaterialValueHelper.getPrimaryDisabledTextColor(context!!, false)
+            lastDisabledPlaybackControlsColor =
+                MaterialValueHelper.getPrimaryDisabledTextColor(context!!, false)
         }
 
         val colorFinal = if (PreferenceUtil.getInstance(requireContext()).adaptiveColor) {
@@ -195,7 +217,11 @@ class SimplePlaybackControlsFragment : AbsPlayerControlsFragment() {
 
         volumeFragment?.setTintable(colorFinal)
 
-        TintHelper.setTintAuto(playPauseButton, MaterialValueHelper.getPrimaryTextColor(context!!, ColorUtil.isColorLight(colorFinal)), false)
+        TintHelper.setTintAuto(
+            playPauseButton,
+            MaterialValueHelper.getPrimaryTextColor(context!!, ColorUtil.isColorLight(colorFinal)),
+            false
+        )
         TintHelper.setTintAuto(playPauseButton, colorFinal, true)
         text.setTextColor(colorFinal)
 

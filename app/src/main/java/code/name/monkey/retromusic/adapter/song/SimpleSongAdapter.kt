@@ -2,21 +2,21 @@ package code.name.monkey.retromusic.adapter.song
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import code.name.monkey.retromusic.interfaces.CabHolder
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.util.MusicUtil
 import java.util.*
 
+class SimpleSongAdapter(
+    context: AppCompatActivity,
+    songs: ArrayList<Song>,
+    layoutRes: Int,
+    cabHolder: CabHolder?
+) : SongAdapter(context, songs, layoutRes, cabHolder) {
 
-class SimpleSongAdapter(context: AppCompatActivity,
-                        songs: ArrayList<Song>,
-                        @LayoutRes i: Int) : SongAdapter(context, songs, i, false, null) {
-
-
-    override fun swapDataSet(dataSet: ArrayList<Song>) {
-        this.dataSet.clear()
-        this.dataSet = dataSet
+    override fun swapDataSet(dataSet: List<Song>) {
+        this.dataSet = dataSet.toMutableList()
         notifyDataSetChanged()
     }
 

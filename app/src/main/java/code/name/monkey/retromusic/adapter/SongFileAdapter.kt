@@ -12,36 +12,38 @@ import code.name.monkey.retromusic.adapter.base.AbsMultiSelectAdapter
 import code.name.monkey.retromusic.adapter.base.MediaEntryViewHolder
 import code.name.monkey.retromusic.glide.audiocover.AudioFileCover
 import code.name.monkey.retromusic.interfaces.CabHolder
+import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.RetroUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.signature.MediaStoreSignature
-import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+import me.zhanghai.android.fastscroll.PopupTextProvider
 import java.io.File
 import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.log10
 import kotlin.math.pow
 
-
 class SongFileAdapter(
-        private val activity: AppCompatActivity,
-        private var dataSet: List<File>?,
-        private val itemLayoutRes: Int,
-        private val callbacks: Callbacks?,
-        cabHolder: CabHolder?
-) : AbsMultiSelectAdapter<SongFileAdapter.ViewHolder, File>(activity, cabHolder, R.menu.menu_media_selection), FastScrollRecyclerView.SectionedAdapter {
+    private val activity: AppCompatActivity,
+    private var dataSet: List<File>,
+    private val itemLayoutRes: Int,
+    private val callbacks: Callbacks?,
+    cabHolder: CabHolder?
+) : AbsMultiSelectAdapter<SongFileAdapter.ViewHolder, File>(
+    activity, cabHolder, R.menu.menu_media_selection
+), PopupTextProvider {
 
     init {
         this.setHasStableIds(true)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (dataSet!![position].isDirectory) FOLDER else FILE
+        return if (dataSet[position].isDirectory) FOLDER else FILE
     }
 
     override fun getItemId(position: Int): Long {
-        return dataSet!![position].hashCode().toLong()
+        return dataSet[position].hashCode().toLong()
     }
 
     fun swapDataSet(songFiles: List<File>) {
@@ -54,18 +56,14 @@ class SongFileAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, index: Int) {
-        val file = dataSet!![index]
-
+        val file = dataSet[index]
         holder.itemView.isActivated = isChecked(file)
-
-        if (holder.title != null) {
-            holder.title!!.text = getFileTitle(file)
-        }
+        holder.title?.text = getFileTitle(file)
         if (holder.text != null) {
             if (holder.itemViewType == FILE) {
-                holder.text!!.text = getFileText(file)
+                holder.text?.text = getFileText(file)
             } else {
-                holder.text!!.visibility = View.GONE
+                holder.text?.visibility = View.GONE
             }
         }
 
@@ -83,33 +81,35 @@ class SongFileAdapter(
     }
 
     private fun loadFileImage(file: File, holder: ViewHolder) {
-        val iconColor = ATHUtil.resolveColor(activity, R.attr.iconColor)
+        val iconColor = ATHUtil.resolveColor(activity, R.attr.colorControlNormal)
         if (file.isDirectory) {
             holder.image?.let {
                 it.setColorFilter(iconColor, PorterDuff.Mode.SRC_IN)
                 it.setImageResource(R.drawable.ic_folder_white_24dp)
             }
-            holder.imageTextContainer?.setCardBackgroundColor(ATHUtil.resolveColor(activity, R.attr.colorPrimary))
-
+            holder.imageTextContainer?.setCardBackgroundColor(
+                ATHUtil.resolveColor(
+                    activity,
+                    R.attr.colorSurface
+                )
+            )
         } else {
-            val error = RetroUtil.getTintedVectorDrawable(activity, R.drawable.ic_file_music_white_24dp, iconColor)
-            Glide.with(activity)
-                    .load(AudioFileCover(file.path))
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .error(error)
-                    .placeholder(error)
-                    .animate(android.R.anim.fade_in)
-                    .signature(MediaStoreSignature("", file.lastModified(), 0))
-                    .into(holder.image)
+            val error = RetroUtil.getTintedVectorDrawable(
+                activity, R.drawable.ic_file_music_white_24dp, iconColor
+            )
+            Glide.with(activity).load(AudioFileCover(file.path))
+                .diskCacheStrategy(DiskCacheStrategy.NONE).error(error).placeholder(error)
+                .animate(android.R.anim.fade_in)
+                .signature(MediaStoreSignature("", file.lastModified(), 0)).into(holder.image)
         }
     }
 
     override fun getItemCount(): Int {
-        return dataSet!!.size
+        return dataSet.size
     }
 
     override fun getIdentifier(position: Int): File? {
-        return dataSet!![position]
+        return dataSet[position]
     }
 
     override fun getName(`object`: File): String {
@@ -121,8 +121,12 @@ class SongFileAdapter(
         callbacks.onMultipleItemAction(menuItem, selection)
     }
 
-    override fun getSectionName(position: Int): String {
-        return dataSet!![position].name[0].toString().toUpperCase()
+    override fun getPopupText(position: Int): String {
+        return getSectionName(position)
+    }
+
+    private fun getSectionName(position: Int): String {
+        return MusicUtil.getSectionName(dataSet[position].name)
     }
 
     interface Callbacks {
@@ -137,10 +141,10 @@ class SongFileAdapter(
 
         init {
             if (menu != null && callbacks != null) {
-                menu!!.setOnClickListener { v ->
+                menu?.setOnClickListener { v ->
                     val position = adapterPosition
                     if (isPositionInRange(position)) {
-                        callbacks.onFileMenuClicked(dataSet!![position], v)
+                        callbacks.onFileMenuClicked(dataSet[position], v)
                     }
                 }
             }
@@ -155,7 +159,7 @@ class SongFileAdapter(
                 if (isInQuickSelectMode) {
                     toggleChecked(position)
                 } else {
-                    callbacks?.onFileSelected(dataSet!![position])
+                    callbacks?.onFileSelected(dataSet[position])
                 }
             }
         }
@@ -166,7 +170,7 @@ class SongFileAdapter(
         }
 
         private fun isPositionInRange(position: Int): Boolean {
-            return position >= 0 && position < dataSet!!.size
+            return position >= 0 && position < dataSet.size
         }
     }
 

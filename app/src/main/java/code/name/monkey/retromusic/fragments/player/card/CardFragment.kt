@@ -62,8 +62,10 @@ class CardFragment : AbsPlayerFragment() {
         toggleFavorite(MusicPlayerRemote.currentSong)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         return inflater.inflate(R.layout.fragment_card_player, container, false)
     }
@@ -75,19 +77,20 @@ class CardFragment : AbsPlayerFragment() {
     }
 
     private fun setUpSubFragments() {
-        playbackControlsFragment = childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as CardPlaybackControlsFragment
-        val playerAlbumCoverFragment = childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
+        playbackControlsFragment =
+            childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as CardPlaybackControlsFragment
+        val playerAlbumCoverFragment =
+            childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
         playerAlbumCoverFragment.setCallbacks(this)
         playerAlbumCoverFragment.removeSlideEffect()
     }
 
     private fun setUpPlayerToolbar() {
         playerToolbar.inflateMenu(R.menu.menu_player)
-        playerToolbar.setNavigationOnClickListener { activity!!.onBackPressed() }
+        playerToolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
         playerToolbar.setOnMenuItemClickListener(this)
 
         ToolbarContentTintHelper.colorizeToolbar(playerToolbar, Color.WHITE, activity)
-
     }
 
     override fun onServiceConnected() {
@@ -107,6 +110,4 @@ class CardFragment : AbsPlayerFragment() {
             return fragment
         }
     }
-
-
 }

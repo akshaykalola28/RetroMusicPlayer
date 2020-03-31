@@ -16,40 +16,44 @@ import kotlinx.android.synthetic.main.fragment_tiny_controls_fragment.*
 class TinyPlaybackControlsFragment : AbsPlayerControlsFragment() {
 
     override fun show() {
-
     }
 
     override fun hide() {
-
     }
 
     override fun setUpProgressSlider() {
-
     }
 
     override fun setDark(color: Int) {
 
         if (ColorUtil.isColorLight(color)) {
-            lastPlaybackControlsColor = MaterialValueHelper.getSecondaryTextColor(requireContext(), true)
-            lastDisabledPlaybackControlsColor = MaterialValueHelper.getSecondaryDisabledTextColor(requireContext(), true)
+            lastPlaybackControlsColor =
+                MaterialValueHelper.getSecondaryTextColor(requireContext(), true)
+            lastDisabledPlaybackControlsColor =
+                MaterialValueHelper.getSecondaryDisabledTextColor(requireContext(), true)
         } else {
-            lastPlaybackControlsColor = MaterialValueHelper.getPrimaryTextColor(requireContext(), false)
-            lastDisabledPlaybackControlsColor = MaterialValueHelper.getPrimaryDisabledTextColor(requireContext(), false)
+            lastPlaybackControlsColor =
+                MaterialValueHelper.getPrimaryTextColor(requireContext(), false)
+            lastDisabledPlaybackControlsColor =
+                MaterialValueHelper.getPrimaryDisabledTextColor(requireContext(), false)
         }
 
-        updateRepeatState();
-        updateShuffleState();
+        updateRepeatState()
+        updateShuffleState()
     }
 
     override fun onUpdateProgressViews(progress: Int, total: Int) {
-
     }
 
     private var lastPlaybackControlsColor: Int = 0
     private var lastDisabledPlaybackControlsColor: Int = 0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_tiny_controls_fragment, container, false);
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_tiny_controls_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,8 +77,14 @@ class TinyPlaybackControlsFragment : AbsPlayerControlsFragment() {
 
     override fun updateShuffleState() {
         when (MusicPlayerRemote.shuffleMode) {
-            MusicService.SHUFFLE_MODE_SHUFFLE -> playerShuffleButton.setColorFilter(lastPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
-            else -> playerShuffleButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+            MusicService.SHUFFLE_MODE_SHUFFLE -> playerShuffleButton.setColorFilter(
+                lastPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
+            else -> playerShuffleButton.setColorFilter(
+                lastDisabledPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
         }
     }
 
@@ -82,7 +92,10 @@ class TinyPlaybackControlsFragment : AbsPlayerControlsFragment() {
         when (MusicPlayerRemote.repeatMode) {
             MusicService.REPEAT_MODE_NONE -> {
                 playerRepeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
-                playerRepeatButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+                playerRepeatButton.setColorFilter(
+                    lastDisabledPlaybackControlsColor,
+                    PorterDuff.Mode.SRC_IN
+                )
             }
             MusicService.REPEAT_MODE_ALL -> {
                 playerRepeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
@@ -107,4 +120,5 @@ class TinyPlaybackControlsFragment : AbsPlayerControlsFragment() {
     override fun onShuffleModeChanged() {
         updateShuffleState()
     }
+
 }

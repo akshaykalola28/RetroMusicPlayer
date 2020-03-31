@@ -47,7 +47,13 @@ private const val RESULT_INVALID_TOKEN = "RESULT_INVALID_TOKEN"
 private const val RESULT_ISSUES_NOT_ENABLED = "RESULT_ISSUES_NOT_ENABLED"
 private const val RESULT_UNKNOWN = "RESULT_UNKNOWN"
 
-@StringDef(RESULT_SUCCESS, RESULT_BAD_CREDENTIALS, RESULT_INVALID_TOKEN, RESULT_ISSUES_NOT_ENABLED, RESULT_UNKNOWN)
+@StringDef(
+    RESULT_SUCCESS,
+    RESULT_BAD_CREDENTIALS,
+    RESULT_INVALID_TOKEN,
+    RESULT_ISSUES_NOT_ENABLED,
+    RESULT_UNKNOWN
+)
 @Retention(AnnotationRetention.SOURCE)
 private annotation class Result
 
@@ -56,17 +62,16 @@ open class BugReportActivity : AbsThemeActivity() {
     private var deviceInfo: DeviceInfo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setDrawUnderStatusBar()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bug_report)
-
         setStatusbarColorAuto()
         setNavigationbarColorAuto()
         setTaskDescriptionColorAuto()
 
         initViews()
 
-        if (TextUtils.isEmpty(title))
-            setTitle(R.string.report_an_issue)
+        if (TextUtils.isEmpty(title)) setTitle(R.string.report_an_issue)
 
         deviceInfo = DeviceInfo(this)
         airTextDeviceInfo.text = deviceInfo.toString()
@@ -74,7 +79,7 @@ open class BugReportActivity : AbsThemeActivity() {
 
     private fun initViews() {
         val accentColor = ThemeStore.accentColor(this)
-        val primaryColor = ATHUtil.resolveColor(this, R.attr.colorPrimary)
+        val primaryColor = ATHUtil.resolveColor(this, R.attr.colorSurface)
         toolbar.setBackgroundColor(primaryColor)
         setSupportActionBar(toolbar)
         ToolbarContentTintHelper.colorBackButton(toolbar)
@@ -150,8 +155,12 @@ open class BugReportActivity : AbsThemeActivity() {
     private fun copyDeviceInfoToClipBoard() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(getString(R.string.device_info), deviceInfo?.toMarkdown())
-        clipboard.primaryClip = clip
-        Toast.makeText(this@BugReportActivity, R.string.copied_device_info_to_clipboard, Toast.LENGTH_LONG).show()
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(
+            this@BugReportActivity,
+            R.string.copied_device_info_to_clipboard,
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun validateInput(): Boolean {
@@ -222,11 +231,15 @@ open class BugReportActivity : AbsThemeActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private class ReportIssueAsyncTask private constructor(activity: Activity, private val report: Report, private val target: GithubTarget,
-                                                           private val login: GithubLogin) : DialogAsyncTask<Void, Void, String>(activity) {
+    private class ReportIssueAsyncTask private constructor(
+        activity: Activity,
+        private val report: Report,
+        private val target: GithubTarget,
+        private val login: GithubLogin
+    ) : DialogAsyncTask<Void, Void, String>(activity) {
+
         override fun createDialog(context: Context): Dialog {
-            return AlertDialog.Builder(context)
-                    .show()
+            return AlertDialog.Builder(context).show()
         }
 
         @Result
@@ -256,7 +269,6 @@ open class BugReportActivity : AbsThemeActivity() {
                 e.printStackTrace()
                 return RESULT_UNKNOWN
             }
-
         }
 
         override fun onPostExecute(@Result result: String) {
@@ -299,7 +311,12 @@ open class BugReportActivity : AbsThemeActivity() {
 
         companion object {
 
-            fun report(activity: Activity, report: Report, target: GithubTarget, login: GithubLogin) {
+            fun report(
+                activity: Activity,
+                report: Report,
+                target: GithubTarget,
+                login: GithubLogin
+            ) {
                 ReportIssueAsyncTask(activity, report, target, login).execute()
             }
         }

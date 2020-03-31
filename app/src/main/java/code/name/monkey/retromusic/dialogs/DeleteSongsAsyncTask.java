@@ -42,9 +42,9 @@ import code.name.monkey.retromusic.util.SAFUtil;
  * Created by hemanths on 2019-07-31.
  */
 public class DeleteSongsAsyncTask extends DialogAsyncTask<DeleteSongsAsyncTask.LoadingInfo, Integer, Void> {
-    private WeakReference<DeleteSongsDialog> dialogReference;
-    private WeakReference<FragmentActivity> activityWeakReference;
 
+    private WeakReference<FragmentActivity> activityWeakReference;
+    private WeakReference<DeleteSongsDialog> dialogReference;
 
     public DeleteSongsAsyncTask(@NonNull DeleteSongsDialog dialog) {
         super(dialog.getActivity());
@@ -82,7 +82,8 @@ public class DeleteSongsAsyncTask extends DialogAsyncTask<DeleteSongsAsyncTask.L
                         if (SAFUtil.isSDCardAccessGranted(fragmentActivity)) {
                             dialog.deleteSongs(info.songs, null);
                         } else {
-                            dialog.startActivityForResult(new Intent(fragmentActivity, SAFGuideActivity.class), SAFGuideActivity.REQUEST_CODE_SAF_GUIDE);
+                            dialog.startActivityForResult(new Intent(fragmentActivity, SAFGuideActivity.class),
+                                    SAFGuideActivity.REQUEST_CODE_SAF_GUIDE);
                         }
                     } else {
                         Log.i("Hmm", "doInBackground: kitkat delete songs");
@@ -100,7 +101,8 @@ public class DeleteSongsAsyncTask extends DialogAsyncTask<DeleteSongsAsyncTask.L
                         break;
                     case SAFUtil.REQUEST_SAF_PICK_FILE:
                         if (info.resultCode == Activity.RESULT_OK) {
-                            dialog.deleteSongs(Collections.singletonList(dialog.currentSong), Collections.singletonList(info.intent.getData()));
+                            dialog.deleteSongs(Collections.singletonList(dialog.currentSong),
+                                    Collections.singletonList(info.intent.getData()));
                         }
                         break;
                 }
@@ -113,14 +115,18 @@ public class DeleteSongsAsyncTask extends DialogAsyncTask<DeleteSongsAsyncTask.L
     }
 
     public static class LoadingInfo {
+
+        public Intent intent;
+
         public boolean isIntent;
 
-        public List<Song> songs;
+        public int requestCode;
+
+        public int resultCode;
+
         public List<Uri> safUris;
 
-        public int requestCode;
-        public int resultCode;
-        public Intent intent;
+        public List<Song> songs;
 
         public LoadingInfo(List<Song> songs, List<Uri> safUris) {
             this.isIntent = false;

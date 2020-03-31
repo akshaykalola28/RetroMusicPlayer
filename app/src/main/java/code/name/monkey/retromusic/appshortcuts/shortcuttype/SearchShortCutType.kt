@@ -31,10 +31,13 @@ class SearchShortCutType(context: Context) : BaseShortcutType(context) {
     }
 
     override val shortcutInfo: ShortcutInfo
-        get() = ShortcutInfo.Builder(context, id)
-                .setShortLabel(context.getString(R.string.action_search))
-                .setLongLabel(context.getString(R.string.search_hint))
-                .setIcon(AppShortcutIconGenerator.generateThemedIcon(context, R.drawable.ic_app_shortcut_search))
-                .setIntent(getPlaySongsIntent(AppShortcutLauncherActivity.SHORTCUT_TYPE_SEARCH))
-                .build()
+        get() = ShortcutInfo.Builder(
+            context,
+            id
+        ).setShortLabel(context.getString(R.string.action_search)).setLongLabel(context.getString(R.string.search_hint)).setIcon(
+            AppShortcutIconGenerator.generateThemedIcon(
+                context,
+                R.drawable.ic_app_shortcut_search
+            )
+        ).setIntent(getPlaySongsIntent(AppShortcutLauncherActivity.SHORTCUT_TYPE_SEARCH)).build()
 }

@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.ATHUtil
 import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.extensions.textColorPrimary
+import code.name.monkey.retromusic.extensions.textColorSecondary
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
 import code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
@@ -53,7 +54,13 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
             lyricsLine1.visibility = View.VISIBLE
             lyricsLine2.visibility = View.VISIBLE
 
-            lyricsLine2.measure(View.MeasureSpec.makeMeasureSpec(lyricsLine2.measuredWidth, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED)
+            lyricsLine2.measure(
+                View.MeasureSpec.makeMeasureSpec(
+                    lyricsLine2.measuredWidth,
+                    View.MeasureSpec.EXACTLY
+                ),
+                View.MeasureSpec.UNSPECIFIED
+            )
             val h: Float = lyricsLine2.measuredHeight.toFloat()
 
             lyricsLine1.alpha = 1f
@@ -75,12 +82,13 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
     }
 
     private fun hideLyricsLayout() {
-        lyricsLayout.animate().alpha(0f).setDuration(VISIBILITY_ANIM_DURATION).withEndAction(Runnable {
-            if (!isLyricsLayoutBound()) return@Runnable
-            lyricsLayout.visibility = View.GONE
-            lyricsLine1.text = null
-            lyricsLine2.text = null
-        })
+        lyricsLayout.animate().alpha(0f).setDuration(VISIBILITY_ANIM_DURATION)
+            .withEndAction(Runnable {
+                if (!isLyricsLayoutBound()) return@Runnable
+                lyricsLayout.visibility = View.GONE
+                lyricsLine1.text = null
+                lyricsLine2.text = null
+            })
     }
 
     override fun setLyrics(l: Lyrics?) {
@@ -112,7 +120,11 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
     private var lastColor: Int = 0
     private lateinit var playbackControlsFragment: AdaptivePlaybackControlsFragment
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_adaptive_player, container, false)
     }
 
@@ -130,8 +142,10 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
     }
 
     private fun setUpSubFragments() {
-        playbackControlsFragment = childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as AdaptivePlaybackControlsFragment
-        val playerAlbumCoverFragment = childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
+        playbackControlsFragment =
+            childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as AdaptivePlaybackControlsFragment
+        val playerAlbumCoverFragment =
+            childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
         playerAlbumCoverFragment.apply {
             removeSlideEffect()
             setCallbacks(this@AdaptiveFragment)
@@ -143,9 +157,9 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
         playerToolbar.apply {
             inflateMenu(R.menu.menu_player)
             setNavigationOnClickListener { requireActivity().onBackPressed() }
-            ToolbarContentTintHelper.colorizeToolbar(this, primaryColor, activity)
-            setTitleTextColor(primaryColor)
-            setSubtitleTextColor(ThemeStore.textColorSecondary(context!!))
+            ToolbarContentTintHelper.colorizeToolbar(this, primaryColor, requireActivity())
+            setTitleTextColor(textColorPrimary(requireContext()))
+            setSubtitleTextColor(textColorSecondary(requireContext()))
             setOnMenuItemClickListener(this@AdaptiveFragment)
         }
     }
@@ -183,8 +197,12 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
     override fun onColorChanged(color: Int) {
         playbackControlsFragment.setDark(color)
         lastColor = color
-        callbacks!!.onPaletteColorChanged()
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, ATHUtil.resolveColor(context, R.attr.iconColor), activity)
+        callbacks?.onPaletteColorChanged()
+        ToolbarContentTintHelper.colorizeToolbar(
+            playerToolbar,
+            ATHUtil.resolveColor(requireContext(), R.attr.colorControlNormal),
+            requireActivity()
+        )
     }
 
     override fun onShow() {
@@ -201,10 +219,9 @@ class AdaptiveFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Call
     }
 
     override fun toolbarIconColor(): Int {
-        return ATHUtil.resolveColor(context, R.attr.iconColor)
+        return ATHUtil.resolveColor(requireContext(), R.attr.colorControlNormal)
     }
 
     override val paletteColor: Int
         get() = lastColor
-
 }

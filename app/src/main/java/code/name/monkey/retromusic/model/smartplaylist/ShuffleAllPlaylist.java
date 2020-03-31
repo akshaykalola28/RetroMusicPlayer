@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.loaders.SongLoader;
 import code.name.monkey.retromusic.model.Song;
-import io.reactivex.Observable;
 
 public class ShuffleAllPlaylist extends AbsSmartPlaylist {
 
@@ -48,18 +47,6 @@ public class ShuffleAllPlaylist extends AbsSmartPlaylist {
         super(in);
     }
 
-    @NonNull
-    @Override
-    public Observable<ArrayList<Song>> getSongsFlowable(@NotNull @NonNull Context context) {
-        return SongLoader.INSTANCE.getAllSongsFlowable(context);
-    }
-
-    @NonNull
-    @Override
-    public ArrayList<Song> getSongs(@NotNull Context context) {
-        return SongLoader.INSTANCE.getAllSongs(context);
-    }
-
     @Override
     public void clear(@NonNull Context context) {
         // Shuffle all is not a real "Smart Playlist"
@@ -68,5 +55,11 @@ public class ShuffleAllPlaylist extends AbsSmartPlaylist {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    @NonNull
+    @Override
+    public ArrayList<Song> getSongs(@NotNull Context context) {
+        return SongLoader.INSTANCE.getAllSongs(context);
     }
 }

@@ -14,39 +14,50 @@
 
 package code.name.monkey.retromusic.mvp.presenter
 
+import code.name.monkey.retromusic.Result.Error
+import code.name.monkey.retromusic.Result.Success
 import code.name.monkey.retromusic.model.Playlist
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.mvp.BaseView
 import code.name.monkey.retromusic.mvp.Presenter
 import code.name.monkey.retromusic.mvp.PresenterImpl
 import code.name.monkey.retromusic.providers.interfaces.Repository
-import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by hemanths on 20/08/17.
  */
 interface PlaylistSongsView : BaseView {
-    fun songs(songs: ArrayList<Song>)
+
+    fun songs(songs: List<Song>)
 }
 
 interface PlaylistSongsPresenter : Presenter<PlaylistSongsView> {
     fun loadPlaylistSongs(playlist: Playlist)
 
     class PlaylistSongsPresenterImpl @Inject constructor(
-            private val repository: Repository
-    ) : PresenterImpl<PlaylistSongsView>(), PlaylistSongsPresenter {
+        private val repository: Repository
+    ) : PresenterImpl<PlaylistSongsView>(), PlaylistSongsPresenter, CoroutineScope {
 
-        private var disposable: Disposable? = null
+        private var job: Job = Job()
+
+        override val coroutineContext: CoroutineContext
+            get() = Dispatchers.IO + job
 
         override fun loadPlaylistSongs(playlist: Playlist) {
-            disposable = repository.getPlaylistSongsFlowable(playlist)
-                    .subscribe({ view?.songs(it) }, { t -> println(t) })
+            launch {
+                when (val songs = repository.getPlaylistSongs(playlist)) {
+                    is Success -> withContext(Dispatchers.Main) { view?.songs(songs.data) }
+                    is Error -> withContext(Dispatchers.Main) { view?.showEmptyView() }
+                }
+            }
         }
 
         override fun detachView() {
             super.detachView()
-            disposable?.dispose()
+            job.cancel()
         }
     }
 }

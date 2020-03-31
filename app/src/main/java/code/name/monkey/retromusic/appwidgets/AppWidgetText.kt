@@ -34,12 +34,40 @@ class AppWidgetText : BaseAppWidget() {
     override fun defaultAppWidget(context: Context, appWidgetIds: IntArray) {
         val appWidgetView = RemoteViews(context.packageName, R.layout.app_widget_text)
 
-        appWidgetView.setImageViewBitmap(R.id.button_next, createBitmap(RetroUtil.getTintedVectorDrawable(context, R.drawable.ic_skip_next_white_24dp, ContextCompat.getColor(context, R.color.md_white_1000))!!, 1f))
-        appWidgetView.setImageViewBitmap(R.id.button_prev, createBitmap(RetroUtil.getTintedVectorDrawable(context, R.drawable.ic_skip_previous_white_24dp, ContextCompat.getColor(context, R.color.md_white_1000))!!, 1f))
-        appWidgetView.setImageViewBitmap(R.id.button_toggle_play_pause, createBitmap(RetroUtil.getTintedVectorDrawable(context, R.drawable.ic_play_arrow_white_32dp, ContextCompat.getColor(context, R.color.md_white_1000))!!, 1f))
+        appWidgetView.setImageViewBitmap(
+            R.id.button_next, createBitmap(
+                RetroUtil.getTintedVectorDrawable(
+                    context, R.drawable.ic_skip_next_white_24dp, ContextCompat.getColor(
+                        context, R.color.md_white_1000
+                    )
+                )!!, 1f
+            )
+        )
+        appWidgetView.setImageViewBitmap(
+            R.id.button_prev, createBitmap(
+                RetroUtil.getTintedVectorDrawable(
+                    context, R.drawable.ic_skip_previous_white_24dp, ContextCompat.getColor(
+                        context, R.color.md_white_1000
+                    )
+                )!!, 1f
+            )
+        )
+        appWidgetView.setImageViewBitmap(
+            R.id.button_toggle_play_pause, createBitmap(
+                RetroUtil.getTintedVectorDrawable(
+                    context, R.drawable.ic_play_arrow_white_32dp, ContextCompat.getColor(
+                        context, R.color.md_white_1000
+                    )
+                )!!, 1f
+            )
+        )
 
-        appWidgetView.setTextColor(R.id.title, ContextCompat.getColor(context, R.color.md_white_1000))
-        appWidgetView.setTextColor(R.id.text, ContextCompat.getColor(context, R.color.md_white_1000))
+        appWidgetView.setTextColor(
+            R.id.title, ContextCompat.getColor(context, R.color.md_white_1000)
+        )
+        appWidgetView.setTextColor(
+            R.id.text, ContextCompat.getColor(context, R.color.md_white_1000)
+        )
 
         linkButtons(context, appWidgetView)
         pushUpdate(context, appWidgetIds, appWidgetView)
@@ -91,13 +119,39 @@ class AppWidgetText : BaseAppWidget() {
         linkButtons(service, appWidgetView)
 
         // Set correct drawable for pause state
-        val playPauseRes = if (isPlaying)
-            R.drawable.ic_pause_white_24dp
-        else
-            R.drawable.ic_play_arrow_white_32dp
-        appWidgetView.setImageViewBitmap(R.id.button_toggle_play_pause, createBitmap(RetroUtil.getTintedVectorDrawable(App.getContext(), playPauseRes, ContextCompat.getColor(App.getContext(), R.color.md_white_1000))!!, 1f))
-        appWidgetView.setImageViewBitmap(R.id.button_next, createBitmap(RetroUtil.getTintedVectorDrawable(App.getContext(), R.drawable.ic_skip_next_white_24dp, ContextCompat.getColor(App.getContext(), R.color.md_white_1000))!!, 1f))
-        appWidgetView.setImageViewBitmap(R.id.button_prev, createBitmap(RetroUtil.getTintedVectorDrawable(App.getContext(), R.drawable.ic_skip_previous_white_24dp, ContextCompat.getColor(App.getContext(), R.color.md_white_1000))!!, 1f))
+        val playPauseRes = if (isPlaying) R.drawable.ic_pause_white_24dp
+        else R.drawable.ic_play_arrow_white_32dp
+        appWidgetView.setImageViewBitmap(
+            R.id.button_toggle_play_pause, createBitmap(
+                RetroUtil.getTintedVectorDrawable(
+                    App.getContext(), playPauseRes, ContextCompat.getColor(
+                        App.getContext(), R.color.md_white_1000
+                    )
+                )!!, 1f
+            )
+        )
+        appWidgetView.setImageViewBitmap(
+            R.id.button_next, createBitmap(
+                RetroUtil.getTintedVectorDrawable(
+                    App.getContext(),
+                    R.drawable.ic_skip_next_white_24dp,
+                    ContextCompat.getColor(
+                        App.getContext(), R.color.md_white_1000
+                    )
+                )!!, 1f
+            )
+        )
+        appWidgetView.setImageViewBitmap(
+            R.id.button_prev, createBitmap(
+                RetroUtil.getTintedVectorDrawable(
+                    App.getContext(),
+                    R.drawable.ic_skip_previous_white_24dp,
+                    ContextCompat.getColor(
+                        App.getContext(), R.color.md_white_1000
+                    )
+                )!!, 1f
+            )
+        )
 
 
 
@@ -110,7 +164,6 @@ class AppWidgetText : BaseAppWidget() {
         const val NAME: String = "app_widget_text"
 
         private var mInstance: AppWidgetText? = null
-
 
         val instance: AppWidgetText
             @Synchronized get() {

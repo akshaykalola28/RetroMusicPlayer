@@ -1,5 +1,6 @@
 package code.name.monkey.retromusic.fragments.player.full
 
+import android.app.ActivityOptions
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,10 +25,11 @@ import code.name.monkey.retromusic.model.lyrics.AbsSynchronizedLyrics
 import code.name.monkey.retromusic.model.lyrics.Lyrics
 import code.name.monkey.retromusic.util.NavigationUtil
 import com.bumptech.glide.Glide
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_full.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FullPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Callback {
     private lateinit var lyricsLayout: FrameLayout
@@ -61,7 +63,13 @@ class FullPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
             lyricsLine1.visibility = View.VISIBLE
             lyricsLine2.visibility = View.VISIBLE
 
-            lyricsLine2.measure(View.MeasureSpec.makeMeasureSpec(lyricsLine2.measuredWidth, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED)
+            lyricsLine2.measure(
+                View.MeasureSpec.makeMeasureSpec(
+                    lyricsLine2.measuredWidth,
+                    View.MeasureSpec.EXACTLY
+                ),
+                View.MeasureSpec.UNSPECIFIED
+            )
             val h: Float = lyricsLine2.measuredHeight.toFloat()
 
             lyricsLine1.alpha = 1f
@@ -83,12 +91,13 @@ class FullPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
     }
 
     private fun hideLyricsLayout() {
-        lyricsLayout.animate().alpha(0f).setDuration(VISIBILITY_ANIM_DURATION).withEndAction(Runnable {
-            if (!isLyricsLayoutBound()) return@Runnable
-            lyricsLayout.visibility = View.GONE
-            lyricsLine1.text = null
-            lyricsLine2.text = null
-        })
+        lyricsLayout.animate().alpha(0f).setDuration(VISIBILITY_ANIM_DURATION)
+            .withEndAction(Runnable {
+                if (!isLyricsLayoutBound()) return@Runnable
+                lyricsLayout.visibility = View.GONE
+                lyricsLine1.text = null
+                lyricsLine2.text = null
+            })
     }
 
     override fun setLyrics(l: Lyrics?) {
@@ -119,12 +128,14 @@ class FullPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
 
     private fun setUpPlayerToolbar() {
         playerToolbar.apply {
-            setNavigationOnClickListener { activity!!.onBackPressed() }
+            setNavigationOnClickListener { requireActivity().onBackPressed() }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_full, container, false)
     }
 
@@ -145,24 +156,36 @@ class FullPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
 
     private fun setupArtist() {
         artistImage.setOnClickListener {
-            NavigationUtil.goToArtist(requireActivity(), MusicPlayerRemote.currentSong.artistId)
+            val transitionName =
+                "${getString(R.string.transition_artist_image)}_${MusicPlayerRemote.currentSong.artistId}"
+            val activityOptions =
+                ActivityOptions.makeSceneTransitionAnimation(
+                    requireActivity(),
+                    artistImage,
+                    transitionName
+                )
+            NavigationUtil.goToArtistOptions(
+                requireActivity(),
+                MusicPlayerRemote.currentSong.artistId,
+                activityOptions
+            )
         }
     }
 
     private fun setUpSubFragments() {
-        fullPlaybackControlsFragment = childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as FullPlaybackControlsFragment
+        fullPlaybackControlsFragment =
+            childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as FullPlaybackControlsFragment
 
-        val playerAlbumCoverFragment = childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
+        val playerAlbumCoverFragment =
+            childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
         playerAlbumCoverFragment.setCallbacks(this)
         playerAlbumCoverFragment.removeSlideEffect()
     }
 
     override fun onShow() {
-
     }
 
     override fun onHide() {
-
     }
 
     override fun onBackPressed(): Boolean {
@@ -176,7 +199,7 @@ class FullPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
     override fun onColorChanged(color: Int) {
         lastColor = color
         fullPlaybackControlsFragment.setDark(color)
-        callbacks!!.onPaletteColorChanged()
+        callbacks?.onPaletteColorChanged()
         ToolbarContentTintHelper.colorizeToolbar(playerToolbar, Color.WHITE, activity)
     }
 
@@ -207,24 +230,22 @@ class FullPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
     override fun onDestroyView() {
         super.onDestroyView()
         progressViewUpdateHelper.stop()
-        compositeDisposable.dispose()
     }
 
-    private val compositeDisposable = CompositeDisposable()
-
     private fun updateArtistImage() {
-        compositeDisposable.addAll(ArtistLoader.getArtistFlowable(context!!, MusicPlayerRemote.currentSong.artistId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    ArtistGlideRequest.Builder.from(Glide.with(requireContext()), it)
-                            .generatePalette(requireContext())
-                            .build().into(object : RetroMusicColoredTarget(artistImage) {
-                                override fun onColorReady(color: Int) {
-
-                                }
-                            })
-                })
+        CoroutineScope(Dispatchers.IO).launch {
+            val artist =
+                ArtistLoader.getArtist(requireContext(), MusicPlayerRemote.currentSong.artistId)
+            withContext(Dispatchers.Main) {
+                ArtistGlideRequest.Builder.from(Glide.with(requireContext()), artist)
+                    .generatePalette(requireContext())
+                    .build()
+                    .into(object : RetroMusicColoredTarget(artistImage) {
+                        override fun onColorReady(color: Int) {
+                        }
+                    })
+            }
+        }
     }
 
     override fun onQueueChanged() {

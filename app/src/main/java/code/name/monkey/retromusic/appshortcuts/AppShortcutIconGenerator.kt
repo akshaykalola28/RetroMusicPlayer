@@ -22,7 +22,6 @@ import android.graphics.drawable.Icon
 import android.graphics.drawable.LayerDrawable
 import android.os.Build
 import android.util.TypedValue
-
 import androidx.annotation.RequiresApi
 import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
@@ -41,9 +40,11 @@ object AppShortcutIconGenerator {
 
     private fun generateDefaultThemedIcon(context: Context, iconId: Int): Icon {
         // Return an Icon of iconId with default colors
-        return generateThemedIcon(context, iconId,
-                context.getColor(R.color.app_shortcut_default_foreground),
-                context.getColor(R.color.app_shortcut_default_background)
+        return generateThemedIcon(
+            context,
+            iconId,
+            context.getColor(R.color.app_shortcut_default_foreground),
+            context.getColor(R.color.app_shortcut_default_background)
         )
     }
 
@@ -53,16 +54,19 @@ object AppShortcutIconGenerator {
         context.theme.resolveAttribute(android.R.attr.colorBackground, typedColorBackground, true)
 
         // Return an Icon of iconId with those colors
-        return generateThemedIcon(context, iconId,
-                ThemeStore.accentColor(context),
-                typedColorBackground.data
+        return generateThemedIcon(
+            context, iconId, ThemeStore.accentColor(context), typedColorBackground.data
         )
     }
 
-    private fun generateThemedIcon(context: Context, iconId: Int, foregroundColor: Int, backgroundColor: Int): Icon {
+    private fun generateThemedIcon(
+        context: Context, iconId: Int, foregroundColor: Int, backgroundColor: Int
+    ): Icon {
         // Get and tint foreground and background drawables
         val vectorDrawable = RetroUtil.getTintedVectorDrawable(context, iconId, foregroundColor)
-        val backgroundDrawable = RetroUtil.getTintedVectorDrawable(context, R.drawable.ic_app_shortcut_background, backgroundColor)
+        val backgroundDrawable = RetroUtil.getTintedVectorDrawable(
+            context, R.drawable.ic_app_shortcut_background, backgroundColor
+        )
 
         // Squash the two drawables together
         val layerDrawable = LayerDrawable(arrayOf(backgroundDrawable, vectorDrawable))
@@ -72,7 +76,9 @@ object AppShortcutIconGenerator {
     }
 
     private fun drawableToBitmap(drawable: Drawable): Bitmap {
-        val bitmap = Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(
+            drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
+        )
         val canvas = Canvas(bitmap)
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)

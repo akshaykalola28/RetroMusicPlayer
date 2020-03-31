@@ -28,7 +28,6 @@ import java.util.ArrayList;
 
 import code.name.monkey.retromusic.loaders.SongLoader;
 import code.name.monkey.retromusic.model.Song;
-import io.reactivex.Observable;
 
 /**
  * @author Andrew Neal, modified for Phonograph by Karim Abou Zeid
@@ -36,10 +35,15 @@ import io.reactivex.Observable;
  * This keeps track of the music playback and history state of the playback service
  */
 public class MusicPlaybackQueueStore extends SQLiteOpenHelper {
+
     public static final String DATABASE_NAME = "music_playback_state.db";
+
     public static final String PLAYING_QUEUE_TABLE_NAME = "playing_queue";
+
     public static final String ORIGINAL_PLAYING_QUEUE_TABLE_NAME = "original_playing_queue";
+
     private static final int VERSION = 10;
+
     @Nullable
     private static MusicPlaybackQueueStore sInstance = null;
 
@@ -68,6 +72,38 @@ public class MusicPlaybackQueueStore extends SQLiteOpenHelper {
     public void onCreate(@NonNull final SQLiteDatabase db) {
         createTable(db, PLAYING_QUEUE_TABLE_NAME);
         createTable(db, ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
+    }
+
+    @NonNull
+    public ArrayList<Song> getSavedOriginalPlayingQueue() {
+        return getQueue(ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
+    }
+
+    @NonNull
+    public ArrayList<Song> getSavedPlayingQueue() {
+        return getQueue(PLAYING_QUEUE_TABLE_NAME);
+    }
+
+    @Override
+    public void onDowngrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
+        // If we ever have downgrade, drop the table to be safe
+        db.execSQL("DROP TABLE IF EXISTS " + PLAYING_QUEUE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
+        onCreate(db);
+    }
+
+    @Override
+    public void onUpgrade(@NonNull final SQLiteDatabase db, final int oldVersion, final int newVersion) {
+        // not necessary yet
+        db.execSQL("DROP TABLE IF EXISTS " + PLAYING_QUEUE_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
+        onCreate(db);
+    }
+
+    public synchronized void saveQueues(@NonNull final ArrayList<Song> playingQueue,
+                                        @NonNull final ArrayList<Song> originalPlayingQueue) {
+        saveQueue(PLAYING_QUEUE_TABLE_NAME, playingQueue);
+        saveQueue(ORIGINAL_PLAYING_QUEUE_TABLE_NAME, originalPlayingQueue);
     }
 
     private void createTable(@NonNull final SQLiteDatabase db, final String tableName) {
@@ -116,25 +152,11 @@ public class MusicPlaybackQueueStore extends SQLiteOpenHelper {
         db.execSQL(builder.toString());
     }
 
-    @Override
-    public void onUpgrade(@NonNull final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-        // not necessary yet
-        db.execSQL("DROP TABLE IF EXISTS " + PLAYING_QUEUE_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
-        onCreate(db);
-    }
-
-    @Override
-    public void onDowngrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
-        // If we ever have downgrade, drop the table to be safe
-        db.execSQL("DROP TABLE IF EXISTS " + PLAYING_QUEUE_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
-        onCreate(db);
-    }
-
-    public synchronized void saveQueues(@NonNull final ArrayList<Song> playingQueue, @NonNull final ArrayList<Song> originalPlayingQueue) {
-        saveQueue(PLAYING_QUEUE_TABLE_NAME, playingQueue);
-        saveQueue(ORIGINAL_PLAYING_QUEUE_TABLE_NAME, originalPlayingQueue);
+    @NonNull
+    private ArrayList<Song> getQueue(@NonNull final String tableName) {
+        Cursor cursor = getReadableDatabase().query(tableName, null,
+                null, null, null, null, null);
+        return SongLoader.INSTANCE.getSongs(cursor);
     }
 
     /**
@@ -184,39 +206,5 @@ public class MusicPlaybackQueueStore extends SQLiteOpenHelper {
                 position += NUM_PROCESS;
             }
         }
-    }
-
-    @NonNull
-    public Observable<ArrayList<Song>> getSavedPlayingQueueFlowable() {
-        return getQueueFlowable(PLAYING_QUEUE_TABLE_NAME);
-    }
-
-    @NonNull
-    public Observable<ArrayList<Song>> getSavedOriginalPlayingQueueFlowable() {
-        return getQueueFlowable(ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
-    }
-
-    @NonNull
-    public ArrayList<Song> getSavedPlayingQueue() {
-        return getQueue(PLAYING_QUEUE_TABLE_NAME);
-    }
-
-    @NonNull
-    public ArrayList<Song> getSavedOriginalPlayingQueue() {
-        return getQueue(ORIGINAL_PLAYING_QUEUE_TABLE_NAME);
-    }
-
-    @NonNull
-    private Observable<ArrayList<Song>> getQueueFlowable(@NonNull final String tableName) {
-        Cursor cursor = getReadableDatabase().query(tableName, null,
-                null, null, null, null, null);
-        return SongLoader.INSTANCE.getSongsFlowable(cursor);
-    }
-
-    @NonNull
-    private ArrayList<Song> getQueue(@NonNull final String tableName) {
-        Cursor cursor = getReadableDatabase().query(tableName, null,
-                null, null, null, null, null);
-        return SongLoader.INSTANCE.getSongs(cursor);
     }
 }

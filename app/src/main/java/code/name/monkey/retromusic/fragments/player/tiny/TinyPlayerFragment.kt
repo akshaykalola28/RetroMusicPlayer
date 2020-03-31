@@ -13,6 +13,8 @@ import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.MaterialValueHelper
 import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.extensions.hide
+import code.name.monkey.retromusic.extensions.show
 import code.name.monkey.retromusic.fragments.MiniPlayerFragment
 import code.name.monkey.retromusic.fragments.base.AbsPlayerFragment
 import code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment
@@ -38,17 +40,17 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
         animatorSet.interpolator = LinearInterpolator()
         animatorSet.start()
 
-        playerSongTotalTime.text = String.format("%s/%s", MusicUtil.getReadableDurationString(total.toLong()),
-                MusicUtil.getReadableDurationString(progress.toLong()))
+        playerSongTotalTime.text = String.format(
+            "%s/%s", MusicUtil.getReadableDurationString(total.toLong()),
+            MusicUtil.getReadableDurationString(progress.toLong())
+        )
     }
-
 
     override fun playerToolbar(): Toolbar {
         return playerToolbar
     }
 
     override fun onShow() {
-
     }
 
     override fun onHide() {
@@ -79,10 +81,12 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
 
         if (ColorUtil.isColorLight(colorFinal)) {
             textColorPrimary = MaterialValueHelper.getSecondaryTextColor(requireContext(), true)
-            textColorPrimaryDisabled = MaterialValueHelper.getSecondaryTextColor(requireContext(), true)
+            textColorPrimaryDisabled =
+                MaterialValueHelper.getSecondaryTextColor(requireContext(), true)
         } else {
             textColorPrimary = MaterialValueHelper.getPrimaryTextColor(requireContext(), false)
-            textColorPrimaryDisabled = MaterialValueHelper.getSecondaryTextColor(requireContext(), false)
+            textColorPrimaryDisabled =
+                MaterialValueHelper.getSecondaryTextColor(requireContext(), false)
         }
 
         this.lastColor = colorFinal
@@ -93,9 +97,9 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
 
         ViewUtil.setProgressDrawable(progressBar, colorFinal)
 
-        songTitle.setTextColor(textColorPrimary)
-        songText.setTextColor(textColorPrimaryDisabled)
-
+        title.setTextColor(textColorPrimary)
+        text.setTextColor(textColorPrimaryDisabled)
+        songInfo.setTextColor(textColorPrimaryDisabled)
         playerSongTotalTime.setTextColor(textColorPrimary)
 
         ToolbarContentTintHelper.colorizeToolbar(playerToolbar, textColorPrimary, requireActivity())
@@ -125,35 +129,47 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
 
     private fun updateSong() {
         val song = MusicPlayerRemote.currentSong
-        songTitle.text = song.title
-        songText.text = String.format("%s \nby - %s", song.albumName, song.artistName)
+        title.text = song.title
+        text.text = String.format("%s \nby - %s", song.albumName, song.artistName)
+
+        if (PreferenceUtil.getInstance(requireContext()).isSongInfo) {
+            songInfo.text = getSongInfo(song)
+            songInfo.show()
+        } else {
+            songInfo.hide()
+        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_tiny_player, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        title.isSelected = true
         progressBar.setOnClickListener(PlayPauseButtonOnClickHandler())
-        progressBar.setOnTouchListener(MiniPlayerFragment.FlingPlayBackController(activity!!))
+        progressBar.setOnTouchListener(MiniPlayerFragment.FlingPlayBackController(requireContext()))
 
         setUpPlayerToolbar()
         setUpSubFragments()
     }
 
     private fun setUpSubFragments() {
-        tinyPlaybackControlsFragment = childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as TinyPlaybackControlsFragment
-        val playerAlbumCoverFragment = childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
+        tinyPlaybackControlsFragment =
+            childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as TinyPlaybackControlsFragment
+        val playerAlbumCoverFragment =
+            childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
         playerAlbumCoverFragment.setCallbacks(this)
-
     }
 
     private fun setUpPlayerToolbar() {
         playerToolbar.apply {
             inflateMenu(R.menu.menu_player)
-            setNavigationOnClickListener { activity!!.onBackPressed() }
+            setNavigationOnClickListener { requireActivity().onBackPressed() }
             setOnMenuItemClickListener(this@TinyPlayerFragment)
         }
     }
@@ -174,5 +190,4 @@ class TinyPlayerFragment : AbsPlayerFragment(), MusicProgressViewUpdateHelper.Ca
         super.onPlayingMetaChanged()
         updateSong()
     }
-
 }

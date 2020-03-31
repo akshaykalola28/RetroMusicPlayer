@@ -23,8 +23,6 @@ import android.media.audiofx.AudioEffect;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +31,7 @@ import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.activities.AboutActivity;
 import code.name.monkey.retromusic.activities.AlbumDetailsActivity;
 import code.name.monkey.retromusic.activities.ArtistDetailActivity;
+import code.name.monkey.retromusic.activities.DriveModeActivity;
 import code.name.monkey.retromusic.activities.GenreDetailsActivity;
 import code.name.monkey.retromusic.activities.LicenseActivity;
 import code.name.monkey.retromusic.activities.LyricsActivity;
@@ -55,6 +54,14 @@ import static code.name.monkey.retromusic.util.RetroUtil.openUrl;
 
 public class NavigationUtil {
 
+    public static void bugReport(@NonNull Activity activity) {
+        ActivityCompat.startActivity(activity, new Intent(activity, BugReportActivity.class), null);
+    }
+
+    public static void goToAbout(@NonNull Activity activity) {
+        ActivityCompat.startActivity(activity, new Intent(activity, AboutActivity.class), null);
+    }
+
     public static void goToAlbum(@NonNull Activity activity, int albumId) {
         Intent intent = new Intent(activity, AlbumDetailsActivity.class);
         intent.putExtra(AlbumDetailsActivity.EXTRA_ALBUM_ID, albumId);
@@ -63,18 +70,9 @@ public class NavigationUtil {
 
     public static void goToAlbumOptions(@NonNull Activity activity,
                                         int albumId,
-                                        @NonNull ActivityOptions activityOptions) {
+                                        @NonNull ActivityOptions options) {
         Intent intent = new Intent(activity, AlbumDetailsActivity.class);
         intent.putExtra(AlbumDetailsActivity.EXTRA_ALBUM_ID, albumId);
-        ActivityCompat.startActivity(activity, intent, activityOptions.toBundle());
-    }
-
-    public static void goToArtistOptions(@NotNull AppCompatActivity activity,
-                                         int artistId,
-                                         @NonNull ActivityOptions options) {
-
-        Intent intent = new Intent(activity, ArtistDetailActivity.class);
-        intent.putExtra(ArtistDetailActivity.EXTRA_ARTIST_ID, artistId);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
@@ -84,10 +82,82 @@ public class NavigationUtil {
         ActivityCompat.startActivity(activity, intent, null);
     }
 
+    public static void goToArtistOptions(@NotNull Activity activity,
+                                         int artistId,
+                                         @NonNull ActivityOptions options) {
+
+        Intent intent = new Intent(activity, ArtistDetailActivity.class);
+        intent.putExtra(ArtistDetailActivity.EXTRA_ARTIST_ID, artistId);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
+    }
+
+    public static void goToGenre(@NonNull Activity activity, @NonNull Genre genre) {
+        Intent intent = new Intent(activity, GenreDetailsActivity.class);
+        intent.putExtra(GenreDetailsActivity.EXTRA_GENRE_ID, genre);
+        ActivityCompat.startActivity(activity, intent, null);
+    }
+
+    public static void goToLyrics(@NonNull Activity activity) {
+        Intent intent = new Intent(activity, LyricsActivity.class);
+        ActivityCompat.startActivity(activity, intent, null);
+    }
+
+    public static void goToOpenSource(@NonNull Activity activity) {
+        ActivityCompat.startActivity(activity, new Intent(activity, LicenseActivity.class), null);
+    }
+
+    public static void goToPlayStore(@NonNull Activity activity) {
+        openUrl(activity, RATE_ON_GOOGLE_PLAY);
+    }
+
+    public static void goToPlayingQueue(@NonNull Activity activity) {
+        Intent intent = new Intent(activity, PlayingQueueActivity.class);
+        ActivityCompat.startActivity(activity, intent, null);
+    }
+
     public static void goToPlaylistNew(@NonNull Activity activity, @NonNull Playlist playlist) {
         Intent intent = new Intent(activity, PlaylistDetailActivity.class);
         intent.putExtra(PlaylistDetailActivity.Companion.getEXTRA_PLAYLIST(), playlist);
         ActivityCompat.startActivity(activity, intent, null);
+    }
+
+    public static void goToProVersion(@NonNull Context context) {
+        ActivityCompat.startActivity(context, new Intent(context, PurchaseActivity.class), null);
+    }
+
+    public static void goToSearch(@NonNull Activity activity,
+                                  @NonNull ActivityOptions activityOptions) {
+        ActivityCompat.startActivity(activity, new Intent(activity, SearchActivity.class),
+                activityOptions.toBundle());
+    }
+
+    public static void goToSearch(@NonNull Activity activity, boolean isMicOpen,
+                                  @NonNull ActivityOptions activityOptions) {
+        ActivityCompat.startActivity(activity, new Intent(activity, SearchActivity.class)
+                        .putExtra(SearchActivity.EXTRA_SHOW_MIC, isMicOpen),
+                activityOptions.toBundle());
+    }
+
+    public static void goToSettings(@NonNull Activity activity) {
+        ActivityCompat.startActivity(activity, new Intent(activity, SettingsActivity.class), null);
+    }
+
+    public static void goToSupportDevelopment(@NonNull Activity activity) {
+        ActivityCompat.startActivity(activity, new Intent(activity, SupportDevelopmentActivity.class), null);
+    }
+
+    public static void goToUserInfo(@NonNull Activity activity,
+                                    @NonNull ActivityOptions activityOptions) {
+        ActivityCompat.startActivity(activity, new Intent(activity, UserInfoActivity.class),
+                activityOptions.toBundle());
+    }
+
+    public static void gotoDriveMode(@NotNull final Activity activity) {
+        ActivityCompat.startActivity(activity, new Intent(activity, DriveModeActivity.class), null);
+    }
+
+    public static void gotoWhatNews(@NonNull Activity activity) {
+        ActivityCompat.startActivity(activity, new Intent(activity, WhatsNewActivity.class), null);
     }
 
     public static void openEqualizer(@NonNull final Activity activity) {
@@ -110,74 +180,6 @@ public class NavigationUtil {
                         Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public static void goToPlayingQueue(@NonNull Activity activity) {
-        Intent intent = new Intent(activity, PlayingQueueActivity.class);
-        ActivityCompat.startActivity(activity, intent, null);
-    }
-
-    public static void goToLyrics(@NonNull Activity activity,
-                                  @Nullable ActivityOptions activityOptions) {
-        Intent intent = new Intent(activity, LyricsActivity.class);
-        ActivityCompat.startActivity(activity, intent, activityOptions != null ? activityOptions.toBundle() : null);
-    }
-
-    public static void goToGenre(@NonNull Activity activity, @NonNull Genre genre) {
-        Intent intent = new Intent(activity, GenreDetailsActivity.class);
-        intent.putExtra(GenreDetailsActivity.EXTRA_GENRE_ID, genre);
-        ActivityCompat.startActivity(activity, intent, null);
-    }
-
-    public static void goToProVersion(@NonNull Context context) {
-        ActivityCompat.startActivity(context, new Intent(context, PurchaseActivity.class), null);
-    }
-
-    public static void goToSettings(@NonNull Activity activity) {
-        ActivityCompat.startActivity(activity, new Intent(activity, SettingsActivity.class), null);
-    }
-
-    public static void goToAbout(@NonNull Activity activity) {
-        ActivityCompat.startActivity(activity, new Intent(activity, AboutActivity.class), null);
-    }
-
-    public static void goToUserInfo(@NonNull Activity activity,
-                                    @NonNull ActivityOptions activityOptions) {
-        ActivityCompat.startActivity(activity, new Intent(activity, UserInfoActivity.class),
-                activityOptions.toBundle());
-    }
-
-    public static void goToOpenSource(@NonNull Activity activity) {
-        ActivityCompat.startActivity(activity, new Intent(activity, LicenseActivity.class), null);
-    }
-
-    public static void goToSearch(@NonNull Activity activity,
-                                  @NonNull ActivityOptions activityOptions) {
-        ActivityCompat.startActivity(activity, new Intent(activity, SearchActivity.class),
-                activityOptions.toBundle());
-    }
-
-    public static void goToSearch(@NonNull Activity activity, boolean isMicOpen,
-                                  @NonNull ActivityOptions activityOptions) {
-        ActivityCompat.startActivity(activity, new Intent(activity, SearchActivity.class)
-                        .putExtra(SearchActivity.EXTRA_SHOW_MIC, isMicOpen),
-                activityOptions.toBundle());
-    }
-
-    public static void goToSupportDevelopment(@NonNull Activity activity) {
-        ActivityCompat.startActivity(activity, new Intent(activity, SupportDevelopmentActivity.class), null);
-    }
-
-    public static void goToPlayStore(@NonNull Activity activity) {
-        openUrl(activity, RATE_ON_GOOGLE_PLAY);
-    }
-
-    public static void gotoWhatNews(@NonNull Activity activity) {
-        ActivityCompat.startActivity(activity, new Intent(activity, WhatsNewActivity.class), null);
-    }
-
-    public static void bugReport(@NonNull Activity activity) {
-        ActivityCompat.startActivity(activity, new Intent(activity, BugReportActivity.class), null);
     }
 
 

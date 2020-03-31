@@ -10,8 +10,8 @@ import android.view.WindowManager
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import code.name.monkey.appthemehelper.ATH
-import code.name.monkey.appthemehelper.ATHActivity
 import code.name.monkey.appthemehelper.ThemeStore
+import code.name.monkey.appthemehelper.common.ATHToolbarActivity
 import code.name.monkey.appthemehelper.util.ATHUtil
 import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.TintHelper
@@ -21,7 +21,7 @@ import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.RetroUtil
 import code.name.monkey.retromusic.util.ThemeManager
 
-abstract class AbsThemeActivity : ATHActivity(), Runnable {
+abstract class AbsThemeActivity : ATHToolbarActivity(), Runnable {
 
     private val handler = Handler()
 
@@ -29,9 +29,6 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
         setTheme(ThemeManager.getThemeResValue(this))
         hideStatusBar()
         super.onCreate(savedInstanceState)
-        //MaterialDialogsUtil.updateMaterialDialogsThemeSingleton(this)
-
-        changeBackgroundShape()
         setImmersiveFullscreen()
         registerSystemUiVisibility()
         toggleScreenOn()
@@ -67,13 +64,15 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
         }
     }
 
-
     private fun changeBackgroundShape() {
         var background: Drawable? = if (PreferenceUtil.getInstance(this).isRoundCorners)
             ContextCompat.getDrawable(this, R.drawable.round_window)
-        else
-            ContextCompat.getDrawable(this, R.drawable.square_window)
-        background = TintHelper.createTintedDrawable(background, ATHUtil.resolveColor(this, R.attr.colorPrimary))
+        else ContextCompat.getDrawable(this, R.drawable.square_window)
+        background =
+            TintHelper.createTintedDrawable(
+                background,
+                ATHUtil.resolveColor(this, android.R.attr.windowBackground)
+            )
         window.setBackgroundDrawable(background)
     }
 
@@ -95,8 +94,12 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
         val statusBar = window.decorView.rootView.findViewById<View>(R.id.status_bar)
         if (statusBar != null) {
             when {
-                VersionUtils.hasMarshmallow() -> window.statusBarColor = color
-                VersionUtils.hasLollipop() -> statusBar.setBackgroundColor(ColorUtil.darkenColor(color))
+                VersionUtils.hasMarshmallow() -> statusBar.setBackgroundColor(color)
+                VersionUtils.hasLollipop() -> statusBar.setBackgroundColor(
+                    ColorUtil.darkenColor(
+                        color
+                    )
+                )
                 else -> statusBar.setBackgroundColor(color)
             }
         } else {
@@ -105,12 +108,13 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
                 else -> window.statusBarColor = ColorUtil.darkenColor(color)
             }
         }
-        setLightStatusbarAuto(color)
+        setLightStatusbarAuto(ATHUtil.resolveColor(this, R.attr.colorSurface))
     }
 
     fun setStatusbarColorAuto() {
         // we don't want to use statusbar color because we are doing the color darkening on our own to support KitKat
-        setStatusbarColor(ATHUtil.resolveColor(this, R.attr.colorPrimary))
+        setStatusbarColor(ATHUtil.resolveColor(this, R.attr.colorSurface))
+        setLightStatusbarAuto(ATHUtil.resolveColor(this, R.attr.colorSurface))
     }
 
     open fun setTaskDescriptionColor(@ColorInt color: Int) {
@@ -118,7 +122,7 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
     }
 
     fun setTaskDescriptionColorAuto() {
-        setTaskDescriptionColor(ATHUtil.resolveColor(this, R.attr.colorPrimary))
+        setTaskDescriptionColor(ATHUtil.resolveColor(this, R.attr.colorSurface))
     }
 
     open fun setNavigationbarColor(color: Int) {
@@ -129,12 +133,8 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
         }
     }
 
-    open fun setNavigationBarColorPrimary() {
-        ATH.setNavigationbarColor(this, ATHUtil.resolveColor(this, R.attr.colorPrimary))
-    }
-
     fun setNavigationbarColorAuto() {
-        setNavigationbarColor(ATHUtil.resolveColor(this, R.attr.colorSecondary))
+        setNavigationbarColor(ATHUtil.resolveColor(this, R.attr.colorSurface))
     }
 
     open fun setLightStatusbar(enabled: Boolean) {
@@ -166,12 +166,8 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
     }
 
     private fun setImmersiveFullscreen() {
-        val flags = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        val flags =
+            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
         if (PreferenceUtil.getInstance(this).fullScreenMode) {
             window.decorView.systemUiVisibility = flags
@@ -197,13 +193,11 @@ abstract class AbsThemeActivity : ATHActivity(), Runnable {
         exitFullscreen()
     }
 
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             handler.removeCallbacks(this)
             handler.postDelayed(this, 500)
         }
         return super.onKeyDown(keyCode, event)
-
     }
 }

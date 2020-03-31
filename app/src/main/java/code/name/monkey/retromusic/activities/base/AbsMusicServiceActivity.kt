@@ -11,7 +11,6 @@ import code.name.monkey.retromusic.service.MusicService.*
 import java.lang.ref.WeakReference
 import java.util.*
 
-
 abstract class AbsMusicServiceActivity : AbsBaseActivity(), MusicServiceEventListener {
 
     private val mMusicServiceEventListeners = ArrayList<MusicServiceEventListener>()
@@ -32,7 +31,7 @@ abstract class AbsMusicServiceActivity : AbsBaseActivity(), MusicServiceEventLis
             }
         })
 
-        setPermissionDeniedMessage(getString(R.string.permission_external_storage_denied));
+        setPermissionDeniedMessage(getString(R.string.permission_external_storage_denied))
     }
 
     override fun onDestroy() {
@@ -129,13 +128,19 @@ abstract class AbsMusicServiceActivity : AbsBaseActivity(), MusicServiceEventLis
     override fun onHasPermissionsChanged(hasPermissions: Boolean) {
         super.onHasPermissionsChanged(hasPermissions)
         val intent = Intent(MEDIA_STORE_CHANGED)
-        intent.putExtra("from_permissions_changed", true) // just in case we need to know this at some point
+        intent.putExtra(
+            "from_permissions_changed",
+            true
+        ) // just in case we need to know this at some point
         sendBroadcast(intent)
     }
 
-
     override fun getPermissionsToRequest(): Array<String> {
-        return arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.BLUETOOTH
+        )
     }
 
     private class MusicStateReceiver(activity: AbsMusicServiceActivity) : BroadcastReceiver() {
@@ -147,8 +152,7 @@ abstract class AbsMusicServiceActivity : AbsBaseActivity(), MusicServiceEventLis
             val activity = reference.get()
             if (activity != null && action != null) {
                 when (action) {
-                    FAVORITE_STATE_CHANGED,
-                    META_CHANGED -> activity.onPlayingMetaChanged()
+                    FAVORITE_STATE_CHANGED, META_CHANGED -> activity.onPlayingMetaChanged()
                     QUEUE_CHANGED -> activity.onQueueChanged()
                     PLAY_STATE_CHANGED -> activity.onPlayStateChanged()
                     REPEAT_MODE_CHANGED -> activity.onRepeatModeChanged()

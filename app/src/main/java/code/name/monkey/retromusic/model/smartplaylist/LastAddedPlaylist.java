@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import code.name.monkey.retromusic.R;
 import code.name.monkey.retromusic.loaders.LastAddedSongsLoader;
 import code.name.monkey.retromusic.model.Song;
-import io.reactivex.Observable;
 
 
 public class LastAddedPlaylist extends AbsSmartPlaylist {
@@ -49,10 +48,13 @@ public class LastAddedPlaylist extends AbsSmartPlaylist {
         super(in);
     }
 
-    @NonNull
     @Override
-    public Observable<ArrayList<Song>> getSongsFlowable(@NotNull @NonNull Context context) {
-        return LastAddedSongsLoader.INSTANCE.getLastAddedSongsFlowable(context);
+    public void clear(@NonNull Context context) {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @NonNull
@@ -62,16 +64,7 @@ public class LastAddedPlaylist extends AbsSmartPlaylist {
     }
 
     @Override
-    public void clear(@NonNull Context context) {
-    }
-
-    @Override
     public boolean isClearable() {
         return false;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 }

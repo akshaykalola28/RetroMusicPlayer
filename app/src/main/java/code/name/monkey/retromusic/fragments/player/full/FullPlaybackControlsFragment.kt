@@ -1,6 +1,5 @@
 package code.name.monkey.retromusic.fragments.player.full
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -12,23 +11,22 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import android.widget.PopupMenu
-import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.MaterialValueHelper
 import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.extensions.hide
 import code.name.monkey.retromusic.extensions.ripAlpha
+import code.name.monkey.retromusic.extensions.show
+import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.helper.MusicProgressViewUpdateHelper
 import code.name.monkey.retromusic.helper.PlayPauseButtonOnClickHandler
-import code.name.monkey.retromusic.misc.SimpleOnSeekbarChangeListener
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.service.MusicService
-import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.ViewUtil
@@ -38,7 +36,8 @@ import kotlinx.android.synthetic.main.fragment_full_player_controls.*
  * Created by hemanths on 20/09/17.
  */
 
-class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMenuItemClickListener {
+class FullPlaybackControlsFragment : AbsPlayerControlsFragment(),
+    PopupMenu.OnMenuItemClickListener {
 
     private var lastPlaybackControlsColor: Int = 0
     private var lastDisabledPlaybackControlsColor: Int = 0
@@ -49,12 +48,13 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
         progressViewUpdateHelper = MusicProgressViewUpdateHelper(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_full_player_controls, container, false)
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,7 +62,6 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
 
         songTotalTime.setTextColor(Color.WHITE)
         songCurrentProgress.setTextColor(Color.WHITE)
-
         title.isSelected = true
     }
 
@@ -76,26 +75,14 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
         progressViewUpdateHelper!!.stop()
     }
 
-    override fun onUpdateProgressViews(progress: Int, total: Int) {
-        progressSlider.max = total
-
-        val animator = ObjectAnimator.ofInt(progressSlider, "progress", progress)
-        animator.duration = SLIDER_ANIMATION_TIME
-        animator.interpolator = LinearInterpolator()
-        animator.start()
-
-        songTotalTime.text = MusicUtil.getReadableDurationString(total.toLong())
-        songCurrentProgress.text = MusicUtil.getReadableDurationString(progress.toLong())
-    }
 
     public override fun show() {
         playPauseButton!!.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
+            .scaleX(1f)
+            .scaleY(1f)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
     }
-
 
     public override fun hide() {
         playPauseButton.apply {
@@ -107,12 +94,13 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
 
     override fun setDark(color: Int) {
         lastPlaybackControlsColor = Color.WHITE
-        lastDisabledPlaybackControlsColor = ContextCompat.getColor(context!!, R.color.md_grey_500)
+        lastDisabledPlaybackControlsColor =
+            ContextCompat.getColor(requireContext(), R.color.md_grey_500)
 
         val colorFinal = if (PreferenceUtil.getInstance(requireContext()).adaptiveColor) {
             color
         } else {
-            ThemeStore.accentColor(context!!).ripAlpha()
+            ThemeStore.accentColor(requireContext()).ripAlpha()
         }
         volumeFragment?.setTintableColor(colorFinal)
         text.setTextColor(colorFinal)
@@ -120,12 +108,16 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
         ViewUtil.setProgressDrawable(progressSlider, colorFinal, true)
 
         playPauseButton.backgroundTintList = ColorStateList.valueOf(colorFinal)
-        playPauseButton.imageTintList = ColorStateList.valueOf(MaterialValueHelper.getPrimaryTextColor(context, ColorUtil.isColorLight(colorFinal)))
+        playPauseButton.imageTintList = ColorStateList.valueOf(
+            MaterialValueHelper.getPrimaryTextColor(
+                context,
+                ColorUtil.isColorLight(colorFinal)
+            )
+        )
 
         updateRepeatState()
         updateShuffleState()
         updatePrevNextColor()
-
     }
 
     override fun onServiceConnected() {
@@ -140,6 +132,12 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
         title.text = song.title
         text.text = song.artistName
         updateIsFavorite()
+        if (PreferenceUtil.getInstance(requireContext()).isSongInfo) {
+            songInfo.text = getSongInfo(song)
+            songInfo.show()
+        } else {
+            songInfo.hide()
+        }
     }
 
     override fun onPlayingMetaChanged() {
@@ -182,7 +180,7 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
 
     private fun setupMenu() {
         playerMenu.setOnClickListener {
-            val popupMenu = PopupMenu(context!!, it)
+            val popupMenu = PopupMenu(requireContext(), it)
             popupMenu.setOnMenuItemClickListener(this)
             popupMenu.inflate(R.menu.menu_player)
             popupMenu.show()
@@ -199,23 +197,29 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
         previousButton.setOnClickListener { MusicPlayerRemote.back() }
     }
 
-
     private fun updatePrevNextColor() {
         nextButton.setColorFilter(lastPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
         previousButton.setColorFilter(lastPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
     }
 
-    override fun setUpProgressSlider() {
-        progressSlider!!.setOnSeekBarChangeListener(object : SimpleOnSeekbarChangeListener() {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    MusicPlayerRemote.seekTo(progress)
-                    onUpdateProgressViews(MusicPlayerRemote.songProgressMillis, MusicPlayerRemote.songDurationMillis)
-                }
-            }
-        })
+    override fun onUpdateProgressViews(progress: Int, total: Int) {
+        progressSlider.valueTo = total.toFloat()
+        progressSlider.value = progress.toFloat()
+        songTotalTime.text = MusicUtil.getReadableDurationString(total.toLong())
+        songCurrentProgress.text = MusicUtil.getReadableDurationString(progress.toLong())
     }
 
+    override fun setUpProgressSlider() {
+        progressSlider.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                MusicPlayerRemote.seekTo(value.toInt())
+                onUpdateProgressViews(
+                    MusicPlayerRemote.songProgressMillis,
+                    MusicPlayerRemote.songDurationMillis
+                )
+            }
+        }
+    }
 
     override fun onRepeatModeChanged() {
         updateRepeatState()
@@ -231,8 +235,14 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
 
     override fun updateShuffleState() {
         when (MusicPlayerRemote.shuffleMode) {
-            MusicService.SHUFFLE_MODE_SHUFFLE -> shuffleButton.setColorFilter(lastPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
-            else -> shuffleButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+            MusicService.SHUFFLE_MODE_SHUFFLE -> shuffleButton.setColorFilter(
+                lastPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
+            else -> shuffleButton.setColorFilter(
+                lastDisabledPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
         }
     }
 
@@ -244,7 +254,10 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
         when (MusicPlayerRemote.repeatMode) {
             MusicService.REPEAT_MODE_NONE -> {
                 repeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
-                repeatButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+                repeatButton.setColorFilter(
+                    lastDisabledPlaybackControlsColor,
+                    PorterDuff.Mode.SRC_IN
+                )
             }
             MusicService.REPEAT_MODE_ALL -> {
                 repeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
@@ -264,7 +277,7 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
     }
 
     private fun toggleFavorite(song: Song) {
-        MusicUtil.toggleFavorite(activity!!, song)
+        MusicUtil.toggleFavorite(requireContext(), song)
         if (song.id == MusicPlayerRemote.currentSong.id) {
             updateIsFavorite()
         }
@@ -275,13 +288,13 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
     @SuppressLint("StaticFieldLeak")
     fun updateIsFavorite() {
         if (updateIsFavoriteTask != null) {
-            updateIsFavoriteTask!!.cancel(false)
+            updateIsFavoriteTask?.cancel(false)
         }
         updateIsFavoriteTask = object : AsyncTask<Song, Void, Boolean>() {
             override fun doInBackground(vararg params: Song): Boolean? {
                 val activity = activity
                 return if (activity != null) {
-                    MusicUtil.isFavorite(getActivity()!!, params[0])
+                    MusicUtil.isFavorite(requireActivity(), params[0])
                 } else {
                     cancel(false)
                     null
@@ -306,5 +319,4 @@ class FullPlaybackControlsFragment : AbsPlayerControlsFragment(), PopupMenu.OnMe
     fun onFavoriteToggled() {
         toggleFavorite(MusicPlayerRemote.currentSong)
     }
-
 }

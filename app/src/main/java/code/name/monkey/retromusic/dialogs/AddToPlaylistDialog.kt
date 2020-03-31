@@ -27,16 +27,14 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.list.listItems
 
-
 class AddToPlaylistDialog : DialogFragment() {
 
     override fun onCreateDialog(
-            savedInstanceState: Bundle?
+        savedInstanceState: Bundle?
     ): Dialog {
-        val cntx = requireContext()
-        val playlists = PlaylistLoader.getAllPlaylists(cntx)
+        val playlists = PlaylistLoader.getAllPlaylists(requireContext())
         val playlistNames: MutableList<String> = mutableListOf()
-        playlistNames.add(cntx.resources.getString(R.string.action_new_playlist))
+        playlistNames.add(requireContext().resources.getString(R.string.action_new_playlist))
         for (p in playlists) {
             playlistNames.add(p.name)
         }
@@ -45,13 +43,21 @@ class AddToPlaylistDialog : DialogFragment() {
             title(R.string.add_playlist_title)
             cornerRadius(PreferenceUtil.getInstance(requireContext()).dialogCorner)
             listItems(items = playlistNames) { dialog, index, _ ->
-                val songs = arguments!!.getParcelableArrayList<Song>("songs") ?: return@listItems
+                val songs =
+                    requireArguments().getParcelableArrayList<Song>("songs") ?: return@listItems
                 if (index == 0) {
                     dialog.dismiss()
-                    activity?.supportFragmentManager?.let { CreatePlaylistDialog.create(songs).show(it, "ADD_TO_PLAYLIST") }
+                    activity?.supportFragmentManager?.let {
+                        CreatePlaylistDialog.create(songs).show(it, "ADD_TO_PLAYLIST")
+                    }
                 } else {
                     dialog.dismiss()
-                    PlaylistsUtil.addToPlaylist(cntx, songs, playlists[index - 1].id, true)
+                    PlaylistsUtil.addToPlaylist(
+                        requireContext(),
+                        songs,
+                        playlists[index - 1].id,
+                        true
+                    )
                 }
             }
         }
@@ -65,10 +71,10 @@ class AddToPlaylistDialog : DialogFragment() {
             return create(list)
         }
 
-        fun create(songs: ArrayList<Song>): AddToPlaylistDialog {
+        fun create(songs: List<Song>): AddToPlaylistDialog {
             val dialog = AddToPlaylistDialog()
             val args = Bundle()
-            args.putParcelableArrayList("songs", songs)
+            args.putParcelableArrayList("songs", ArrayList(songs))
             dialog.arguments = args
             return dialog
         }

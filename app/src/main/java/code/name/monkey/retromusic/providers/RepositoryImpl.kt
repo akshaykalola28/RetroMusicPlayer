@@ -15,178 +15,279 @@
 package code.name.monkey.retromusic.providers
 
 import android.content.Context
-import code.name.monkey.retromusic.App
+import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.Result
+import code.name.monkey.retromusic.Result.Error
+import code.name.monkey.retromusic.Result.Success
+import code.name.monkey.retromusic.adapter.HomeAdapter
 import code.name.monkey.retromusic.loaders.*
 import code.name.monkey.retromusic.model.*
 import code.name.monkey.retromusic.providers.interfaces.Repository
-import code.name.monkey.retromusic.rest.LastFMRestClient
+import code.name.monkey.retromusic.rest.LastFmClient
+import code.name.monkey.retromusic.rest.model.LastFmAlbum
 import code.name.monkey.retromusic.rest.model.LastFmArtist
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import java.io.IOException
+import javax.inject.Inject
 
-class RepositoryImpl(private val context: Context) : Repository {
+class RepositoryImpl @Inject constructor(private val context: Context) : Repository {
 
-    override fun artistInfoFloable(
-            name: String,
-            lang: String?,
-            cache: String?
-    ): Observable<LastFmArtist> {
-        return LastFMRestClient(context).apiService.getArtistInfoFloable(name, lang, cache)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+    override suspend fun allAlbums(): Result<ArrayList<Album>> {
+        return try {
+            val albums = AlbumLoader.getAllAlbums(context)
+            if (albums.isNotEmpty()) {
+                Success(albums)
+            } else {
+                Error(Throwable("No items found"))
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun search(query: String?): MutableList<Any> {
-        return SearchLoader.searchAll(context, query)
+    override suspend fun albumById(albumId: Int): Result<Album> {
+        return try {
+            val album = AlbumLoader.getAlbum(context, albumId)
+            if (album != null) {
+                Success(album)
+            } else {
+                Error(Throwable("No album"))
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun allAlbums(): ArrayList<Album> {
-        return AlbumLoader.getAllAlbums(context)
+    override suspend fun allArtists(): Result<ArrayList<Artist>> {
+        return try {
+            val artists = ArtistLoader.getAllArtists(context)
+            if (artists.isNotEmpty()) {
+                Success(artists)
+            } else {
+                Error(Throwable("No items found"))
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun recentAlbums(): ArrayList<Album> {
-        return LastAddedSongsLoader.getLastAddedAlbums(context)
+    override suspend fun allPlaylists(): Result<ArrayList<Playlist>> {
+        return try {
+            val playlists = PlaylistLoader.getAllPlaylists(context)
+            if (playlists.isNotEmpty()) {
+                Success(playlists)
+            } else {
+                Error(Throwable("No items found"))
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun topAlbums(): ArrayList<Album> {
-        return TopAndRecentlyPlayedTracksLoader.getTopAlbums(context)
+    override suspend fun allGenres(): Result<ArrayList<Genre>> {
+        return try {
+            val genres = GenreLoader.getAllGenres(context)
+            if (genres.isNotEmpty()) {
+                Success(genres)
+            } else {
+                Error(Throwable("No items found"))
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun allArtists(): ArrayList<Artist> {
-        return ArtistLoader.getAllArtists(context)
+    override suspend fun search(query: String?): Result<MutableList<Any>> {
+        return try {
+            val result = SearchLoader.searchAll(context, query)
+            if (result.isNotEmpty()) {
+                Success(result)
+            } else {
+                Error(Throwable("No items found"))
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun recentArtists(): ArrayList<Artist> {
-        return LastAddedSongsLoader.getLastAddedArtists(context)
+    override suspend fun allSongs(): Result<ArrayList<Song>> {
+        return try {
+            val songs = SongLoader.getAllSongs(context)
+            if (songs.isEmpty()) {
+                Error(Throwable("No items found"))
+            } else {
+                Success(songs)
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun topArtists(): ArrayList<Artist> {
-        return TopAndRecentlyPlayedTracksLoader.getTopArtists(context)
+    override suspend fun getPlaylistSongs(playlist: Playlist): Result<ArrayList<Song>> {
+        return try {
+            val songs: ArrayList<Song> = if (playlist is AbsCustomPlaylist) {
+                playlist.getSongs(context)
+            } else {
+                PlaylistSongsLoader.getPlaylistSongList(context, playlist.id)
+            }
+            Success(songs)
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun allPlaylists(): ArrayList<Playlist> {
-        return PlaylistLoader.getAllPlaylists(context)
+    override suspend fun getGenre(genreId: Int): Result<ArrayList<Song>> {
+        return try {
+            val songs = GenreLoader.getSongs(context, genreId)
+            if (songs.isEmpty()) {
+                Error(Throwable("No items found"))
+            } else {
+                Success(songs)
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun allGenres(): ArrayList<Genre> {
-        return GenreLoader.getAllGenres(context)
+    override suspend fun recentArtists(): Result<Home> {
+        return try {
+            val artists = LastAddedSongsLoader.getLastAddedArtists(context)
+            if (artists.isEmpty()) {
+                Error(Throwable("No items found"))
+            } else {
+                Success(
+                    Home(
+                        0,
+                        R.string.recent_artists,
+                        artists,
+                        HomeAdapter.RECENT_ARTISTS,
+                        R.drawable.ic_artist_white_24dp
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun getSongFlowable(id: Int): Observable<Song> {
-        return SongLoader.getSongFlowable(context, id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+    override suspend fun recentAlbums(): Result<Home> {
+        return try {
+            val albums = LastAddedSongsLoader.getLastAddedAlbums(context)
+            if (albums.isEmpty()) {
+                Error(Throwable("No items found"))
+            } else {
+                Success(
+                    Home(
+                        1,
+                        R.string.recent_albums,
+                        albums,
+                        HomeAdapter.RECENT_ALBUMS,
+                        R.drawable.ic_album_white_24dp
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun getAlbumFlowable(albumId: Int): Observable<Album> {
-        return AlbumLoader.getAlbumFlowable(context, albumId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+    override suspend fun topAlbums(): Result<Home> {
+        return try {
+            val albums = TopAndRecentlyPlayedTracksLoader.getTopAlbums(context)
+            if (albums.isEmpty()) {
+                Error(Throwable("No items found"))
+            } else {
+                Success(
+                    Home(
+                        3,
+                        R.string.top_albums,
+                        albums,
+                        HomeAdapter.TOP_ALBUMS,
+                        R.drawable.ic_album_white_24dp
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun getArtistByIdFlowable(artistId: Int): Observable<Artist> {
-        return ArtistLoader.getArtistFlowable(context, artistId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+    override suspend fun topArtists(): Result<Home> {
+        return try {
+            val artists = TopAndRecentlyPlayedTracksLoader.getTopArtists(context)
+            if (artists.isEmpty()) {
+                Error(Throwable("No items found"))
+            } else {
+                Success(
+                    Home(
+                        2,
+                        R.string.top_artists,
+                        artists,
+                        HomeAdapter.TOP_ARTISTS,
+                        R.drawable.ic_artist_white_24dp
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-
-    override fun getPlaylistSongsFlowable(playlist: Playlist): Observable<ArrayList<Song>> {
-        return PlaylistSongsLoader.getPlaylistSongListFlowable(context, playlist)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+    override suspend fun favoritePlaylist(): Result<Home> {
+        return try {
+            val playlists = PlaylistLoader.getFavoritePlaylist(context)
+            if (playlists.isEmpty()) {
+                Error(Throwable("No items found"))
+            } else {
+                Success(
+                    Home(
+                        4,
+                        R.string.favorites,
+                        playlists,
+                        HomeAdapter.PLAYLISTS,
+                        R.drawable.ic_favorite_white_24dp
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Error(e)
+        }
     }
 
-    override fun getGenreFlowable(genreId: Int): Observable<ArrayList<Song>> {
-        return GenreLoader.getSongsFlowable(context, genreId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-    }
+    override suspend fun artistInfo(
+        name: String,
+        lang: String?,
+        cache: String?
+    ): Result<LastFmArtist> = safeApiCall(
+        call = {
+            Success(LastFmClient.getApiService().artistInfo(name, lang, cache))
+        },
+        errorMessage = "Error"
 
-    override val favoritePlaylist: ArrayList<Playlist>
-        get() = PlaylistLoader.getFavoritePlaylist(context)
+    )
 
-    override fun allSongs(): ArrayList<Song> {
-        return SongLoader.getAllSongs(context)
-    }
+    override suspend fun albumInfo(
+        artist: String,
+        album: String
+    ): Result<LastFmAlbum> = safeApiCall(
+        call = {
+            Success(LastFmClient.getApiService().albumInfo(artist, album))
+        },
+        errorMessage = "Error"
+    )
 
-    override val favoritePlaylistFlowable: Observable<ArrayList<Playlist>>
-        get() = PlaylistLoader.getFavoritePlaylistFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-
-    override val allSongsFlowable: Observable<ArrayList<Song>>
-        get() = SongLoader.getAllSongsFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val suggestionSongsFlowable: Observable<ArrayList<Song>>
-        get() = SongLoader.suggestSongs(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val allAlbumsFlowable: Observable<ArrayList<Album>>
-        get() = AlbumLoader.getAllAlbumsFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val recentAlbumsFlowable: Observable<ArrayList<Album>>
-        get() = LastAddedSongsLoader.getLastAddedAlbumsFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val topAlbumsFlowable: Observable<ArrayList<Album>>
-        get() = TopAndRecentlyPlayedTracksLoader.getTopAlbumsFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val allArtistsFlowable: Observable<ArrayList<Artist>>
-        get() = ArtistLoader.getAllArtistsFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val recentArtistsFlowable: Observable<ArrayList<Artist>>
-        get() = LastAddedSongsLoader.getLastAddedArtistsFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val topArtistsFlowable: Observable<ArrayList<Artist>>
-        get() = TopAndRecentlyPlayedTracksLoader.getTopArtistsFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override val allPlaylistsFlowable: Observable<ArrayList<Playlist>>
-        get() = PlaylistLoader.getAllPlaylistsFlowoable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-
-    override val allGenresFlowable: Observable<ArrayList<Genre>>
-        get() = GenreLoader.getAllGenresFlowable(context)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-
-    override fun getSong(id: Int): Song {
-        return SongLoader.getSong(context, id)
-    }
-
-    override fun getAlbum(albumId: Int): Album {
-        return AlbumLoader.getAlbum(context, albumId)
-    }
-
-    override fun getArtistById(artistId: Long): Artist {
-        return ArtistLoader.getArtist(context, artistId.toInt())
-    }
-
-    override fun getPlaylistSongs(playlist: Playlist): ArrayList<Song> {
-        return PlaylistSongsLoader.getPlaylistSongList(context, playlist)
-
-    }
-
-    override fun getGenre(genreId: Int): ArrayList<Song> {
-        return GenreLoader.getSongs(context, genreId)
-
+    override suspend fun artistById(artistId: Int): Result<Artist> {
+        return try {
+            val artist = ArtistLoader.getArtist(context, artistId)
+            return Success(artist)
+        } catch (e: Exception) {
+            Error(Throwable("Error loading artist"))
+        }
     }
 }
+
+suspend fun <T : Any> safeApiCall(call: suspend () -> Result<T>, errorMessage: String): Result<T> =
+    try {
+        call.invoke()
+    } catch (e: Exception) {
+        Error(IOException(errorMessage, e))
+    }

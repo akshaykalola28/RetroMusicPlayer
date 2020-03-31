@@ -12,14 +12,13 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.core.app.ActivityCompat
 import code.name.monkey.appthemehelper.ThemeStore
+import code.name.monkey.retromusic.R
 import com.google.android.material.snackbar.Snackbar
-
 
 abstract class AbsBaseActivity : AbsThemeActivity() {
     private var hadPermissions: Boolean = false
     private lateinit var permissions: Array<String>
     private var permissionDeniedMessage: String? = null
-
 
     open fun getPermissionsToRequest(): Array<String> {
         return arrayOf()
@@ -30,13 +29,11 @@ abstract class AbsBaseActivity : AbsThemeActivity() {
     }
 
     fun getPermissionDeniedMessage(): String {
-        return if (permissionDeniedMessage == null) getString(code.name.monkey.retromusic.R.string.permissions_denied) else permissionDeniedMessage!!
+        return if (permissionDeniedMessage == null) getString(R.string.permissions_denied) else permissionDeniedMessage!!
     }
-
 
     private val snackBarContainer: View
         get() = window.decorView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +74,6 @@ abstract class AbsBaseActivity : AbsThemeActivity() {
     }
 
     protected fun showOverflowMenu() {
-
     }
 
     protected open fun requestPermissions() {
@@ -97,32 +93,44 @@ abstract class AbsBaseActivity : AbsThemeActivity() {
         return true
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST) {
             for (grantResult in grantResults) {
                 if (grantResult != PackageManager.PERMISSION_GRANTED) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this@AbsBaseActivity,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            this@AbsBaseActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
                         //User has deny from permission dialog
-                        Snackbar.make(snackBarContainer, permissionDeniedMessage!!,
-                                Snackbar.LENGTH_INDEFINITE)
-                                .setAction(code.name.monkey.retromusic.R.string.action_grant) { requestPermissions() }
-                                .setActionTextColor(ThemeStore.accentColor(this))
-                                .show()
+                        Snackbar.make(
+                            snackBarContainer,
+                            permissionDeniedMessage!!,
+                            Snackbar.LENGTH_INDEFINITE
+                        )
+                            .setAction(code.name.monkey.retromusic.R.string.action_grant) { requestPermissions() }
+                            .setActionTextColor(ThemeStore.accentColor(this)).show()
                     } else {
                         // User has deny permission and checked never show permission dialog so you can redirect to Application settings page
-                        Snackbar.make(snackBarContainer, permissionDeniedMessage!!,
-                                Snackbar.LENGTH_INDEFINITE)
-                                .setAction(code.name.monkey.retromusic.R.string.action_settings) {
-                                    val intent = Intent()
-                                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                                    val uri = Uri.fromParts("package", this@AbsBaseActivity.packageName, null)
-                                    intent.data = uri
-                                    startActivity(intent)
-                                }
-                                .setActionTextColor(ThemeStore.accentColor(this))
-                                .show()
+                        Snackbar.make(
+                            snackBarContainer,
+                            permissionDeniedMessage!!,
+                            Snackbar.LENGTH_INDEFINITE
+                        ).setAction(code.name.monkey.retromusic.R.string.action_settings) {
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            val uri = Uri.fromParts(
+                                "package",
+                                this@AbsBaseActivity.packageName,
+                                null
+                            )
+                            intent.data = uri
+                            startActivity(intent)
+                        }.setActionTextColor(ThemeStore.accentColor(this)).show()
                     }
                     return
                 }

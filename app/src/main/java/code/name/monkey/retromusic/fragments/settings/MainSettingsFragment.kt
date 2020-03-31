@@ -21,10 +21,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.ColorUtil
-import code.name.monkey.appthemehelper.util.MaterialUtil
-import code.name.monkey.appthemehelper.util.MaterialValueHelper
+import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.SettingsActivity
@@ -33,23 +30,39 @@ import code.name.monkey.retromusic.extensions.show
 import code.name.monkey.retromusic.util.NavigationUtil
 import kotlinx.android.synthetic.main.fragment_main_settings.*
 
-
 class MainSettingsFragment : Fragment(), View.OnClickListener {
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.generalSettings -> inflateFragment(ThemeSettingsFragment(), R.string.general_settings_title)
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.generalSettings -> inflateFragment(
+                ThemeSettingsFragment(),
+                R.string.general_settings_title
+            )
             R.id.audioSettings -> inflateFragment(AudioSettings(), R.string.pref_header_audio)
-            R.id.nowPlayingSettings -> inflateFragment(NowPlayingSettingsFragment(), R.string.now_playing)
-            R.id.personalizeSettings -> inflateFragment(PersonaizeSettingsFragment(), R.string.personalize)
-            R.id.imageSettings -> inflateFragment(ImageSettingFragment(), R.string.pref_header_images)
-            R.id.notificationSettings -> inflateFragment(NotificationSettingsFragment(), R.string.notification)
+            R.id.nowPlayingSettings -> inflateFragment(
+                NowPlayingSettingsFragment(),
+                R.string.now_playing
+            )
+            R.id.personalizeSettings -> inflateFragment(
+                PersonalizeSettingsFragment(),
+                R.string.personalize
+            )
+            R.id.imageSettings -> inflateFragment(
+                ImageSettingFragment(),
+                R.string.pref_header_images
+            )
+            R.id.notificationSettings -> inflateFragment(
+                NotificationSettingsFragment(),
+                R.string.notification
+            )
             R.id.otherSettings -> inflateFragment(OtherSettingsFragment(), R.string.others)
             R.id.aboutSettings -> NavigationUtil.goToAbout(requireActivity())
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_main_settings, container, false)
     }
 
@@ -74,11 +87,14 @@ class MainSettingsFragment : Fragment(), View.OnClickListener {
         buyPremium.setOnClickListener {
             NavigationUtil.goToProVersion(requireContext())
         }
-        MaterialUtil.setTint(buyPremium)
-        val primaryColor = MaterialValueHelper.getPrimaryTextColor(requireContext(), ColorUtil.isColorLight(ATHUtil.resolveColor(requireContext(), R.attr.colorPrimary)))
-        text.setTextColor(ColorUtil.withAlpha(primaryColor, 0.75f))
-        text2.setTextColor(primaryColor)
-        text3.imageTintList = ColorStateList.valueOf(primaryColor)
+        ThemeStore.accentColor(requireContext()).let {
+            buyPremium.setTextColor(it)
+            diamondIcon.imageTintList = ColorStateList.valueOf(it)
+        }
+    }
+
+    companion object {
+
     }
 
     private fun inflateFragment(fragment: Fragment, @StringRes title: Int) {

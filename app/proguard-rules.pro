@@ -46,10 +46,6 @@
 -dontwarn
 -ignorewarnings
 
-# ------- FastScrollRecycleView START -------
--keep class com.simplecityapps.recyclerview_fastscroll.views.FastScrollPopup { *; }
-# ------- FastScrollRecycleView END -------
-
 -keep public class android.support.design.widget.BottomNavigationView { *; }
 -keep public class android.support.design.internal.BottomNavigationMenuView { *; }
 -keep public class android.support.design.internal.BottomNavigationPresenter { *; }
@@ -68,3 +64,7 @@
 -keep class android.support.** { *; }
 -keep class com.google.** { *; }
 -keep class java.nio.file.** { *; }
+
+-obfuscationdictionary build/obfuscation-dictionary.txt
+-classobfuscationdictionary build/class-dictionary.txt
+-packageobfuscationdictionary build/package-dictionary.txt

@@ -7,15 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.util.RetroUtil
 
-
-abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerView.Adapter<*>, LM : RecyclerView.LayoutManager> : AbsLibraryPagerRecyclerViewFragment<A, LM>() {
+abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerView.Adapter<*>, LM : RecyclerView.LayoutManager> :
+    AbsLibraryPagerRecyclerViewFragment<A, LM>() {
 
     private var gridSize: Int = 0
     private var sortOrder: String? = null
-
-    private var usePaletteInitialized: Boolean = false
-    private var usePalette: Boolean = false
     private var currentLayoutRes: Int = 0
+    private val isLandscape: Boolean
+        get() = RetroUtil.isLandscape()
 
     val maxGridSize: Int
         get() = if (isLandscape) {
@@ -24,25 +23,23 @@ abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerVie
             resources.getInteger(R.integer.max_columns)
         }
 
-    /**
-     * Override to customize which item layout currentLayoutRes should be used. You might also want to
-     * override [.canUsePalette] then.
-     *
-     * @see .getGridSize
-     */
-    protected val itemLayoutRes: Int
-        @LayoutRes
-        get() = if (getGridSize() > maxGridSizeForList) {
-            R.layout.item_grid
+    fun itemLayoutRes(): Int {
+        return if (getGridSize() > maxGridSizeForList) {
+            loadLayoutRes()
         } else R.layout.item_list
+    }
 
-    protected val maxGridSizeForList: Int
+
+    fun setAndSaveLayoutRes(layoutRes: Int) {
+        setLayoutRes(layoutRes)
+        saveLayoutRes(layoutRes)
+        invalidateAdapter()
+    }
+
+    private val maxGridSizeForList: Int
         get() = if (isLandscape) {
-            activity!!.resources.getInteger(R.integer.default_list_columns_land)
-        } else activity!!.resources.getInteger(R.integer.default_list_columns)
-
-    private val isLandscape: Boolean
-        get() = RetroUtil.isLandscape()
+            resources.getInteger(R.integer.default_list_columns_land)
+        } else resources.getInteger(R.integer.default_list_columns)
 
     fun getGridSize(): Int {
         if (gridSize == 0) {
@@ -55,7 +52,6 @@ abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerVie
         return gridSize
     }
 
-    protected abstract fun setGridSize(gridSize: Int)
 
     fun getSortOrder(): String? {
         if (sortOrder == null) {
@@ -64,7 +60,6 @@ abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerVie
         return sortOrder
     }
 
-    protected abstract fun setSortOrder(sortOrder: String)
 
     fun setAndSaveSortOrder(sortOrder: String) {
         this.sortOrder = sortOrder
@@ -72,45 +67,21 @@ abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerVie
         setSortOrder(sortOrder)
     }
 
-    /**
-     * @return whether the palette should be used at all or not
-     */
-    fun usePalette(): Boolean {
-        if (!usePaletteInitialized) {
-            usePalette = loadUsePalette()
-            usePaletteInitialized = true
-        }
-        return usePalette
-    }
-
     fun setAndSaveGridSize(gridSize: Int) {
-        val oldLayoutRes = itemLayoutRes
+        val oldLayoutRes = itemLayoutRes()
         this.gridSize = gridSize
         if (isLandscape) {
             saveGridSizeLand(gridSize)
         } else {
             saveGridSize(gridSize)
         }
+        invalidateLayoutManager()
         // only recreate the adapter and layout manager if the layout currentLayoutRes has changed
-        if (oldLayoutRes != itemLayoutRes) {
-            invalidateLayoutManager()
+        if (oldLayoutRes != itemLayoutRes()) {
             invalidateAdapter()
         } else {
             setGridSize(gridSize)
         }
-    }
-
-    fun setAndSaveUsePalette(usePalette: Boolean) {
-        this.usePalette = usePalette
-        saveUsePalette(usePalette)
-        setUsePalette(usePalette)
-    }
-
-    /**
-     * @return whether the palette option should be available for the current item layout or not
-     */
-    fun canUsePalette(): Boolean {
-        return itemLayoutRes == R.layout.item_card_color
     }
 
     protected fun notifyLayoutResChanged(@LayoutRes res: Int) {
@@ -124,16 +95,20 @@ abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerVie
         applyRecyclerViewPaddingForLayoutRes(recyclerView(), currentLayoutRes)
     }
 
-    private fun applyRecyclerViewPaddingForLayoutRes(recyclerView: RecyclerView,
-                                                     @LayoutRes res: Int) {
-        val padding: Int
-        if (res == R.layout.item_grid) {
-            padding = (resources.displayMetrics.density * 2).toInt()
+    private fun applyRecyclerViewPaddingForLayoutRes(recyclerView: RecyclerView, res: Int) {
+        val padding: Int = if (res == R.layout.item_grid) {
+            (resources.displayMetrics.density * 2).toInt()
         } else {
-            padding = 0
+            0
         }
         recyclerView.setPadding(padding, padding, padding, padding)
     }
+
+    protected abstract fun setGridSize(gridSize: Int)
+
+    protected abstract fun setSortOrder(sortOrder: String)
+
+    protected abstract fun setLayoutRes(layoutRes: Int)
 
     protected abstract fun loadSortOrder(): String
 
@@ -147,11 +122,7 @@ abstract class AbsLibraryPagerRecyclerViewCustomGridSizeFragment<A : RecyclerVie
 
     protected abstract fun saveGridSizeLand(gridColumns: Int)
 
-    protected abstract fun saveUsePalette(usePalette: Boolean)
+    protected abstract fun loadLayoutRes(): Int
 
-    protected abstract fun loadUsePalette(): Boolean
-
-    protected abstract fun setUsePalette(usePalette: Boolean)
-
-
+    protected abstract fun saveLayoutRes(layoutRes: Int)
 }

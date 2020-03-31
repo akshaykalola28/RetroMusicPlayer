@@ -16,9 +16,10 @@ package code.name.monkey.retromusic.dialogs
 
 import android.app.Dialog
 import android.os.Bundle
-import android.text.Html
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.R.string
 import code.name.monkey.retromusic.model.PlaylistSong
 import code.name.monkey.retromusic.util.PlaylistsUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
@@ -26,38 +27,48 @@ import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 
-
 class RemoveFromPlaylistDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val songs = arguments!!.getParcelableArrayList<PlaylistSong>("songs")
+        val songs = requireArguments().getParcelableArrayList<PlaylistSong>("songs")
 
         var title = 0
         var content: CharSequence = ""
         if (songs != null) {
             if (songs.size > 1) {
                 title = R.string.remove_songs_from_playlist_title
-                content = Html.fromHtml(getString(code.name.monkey.retromusic.R.string.remove_x_songs_from_playlist, songs.size))
+                content = HtmlCompat.fromHtml(
+                    getString(string.remove_x_songs_from_playlist, songs.size),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
             } else {
                 title = R.string.remove_song_from_playlist_title
-                content = Html.fromHtml(getString(code.name.monkey.retromusic.R.string.remove_song_x_from_playlist, songs[0].title))
+                content = HtmlCompat.fromHtml(
+                    getString(
+                        code.name.monkey.retromusic.R.string.remove_song_x_from_playlist,
+                        songs[0].title
+                    ),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
             }
         }
 
 
         return MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
-                .show {
-                    title(title)
-                    message(text = content)
-                    negativeButton(android.R.string.cancel)
-                    positiveButton(R.string.remove_action) {
-                        if (activity == null)
-                            return@positiveButton
-                        PlaylistsUtil.removeFromPlaylist(activity!!, songs as MutableList<PlaylistSong>)
-                    }
-                    cornerRadius(PreferenceUtil.getInstance(requireContext()).dialogCorner)
+            .show {
+                title(title)
+                message(text = content)
+                negativeButton(android.R.string.cancel)
+                positiveButton(R.string.remove_action) {
+                    if (activity == null)
+                        return@positiveButton
+                    PlaylistsUtil.removeFromPlaylist(
+                        requireContext(),
+                        songs as MutableList<PlaylistSong>
+                    )
                 }
-
+                cornerRadius(PreferenceUtil.getInstance(requireContext()).dialogCorner)
+            }
     }
 
     companion object {

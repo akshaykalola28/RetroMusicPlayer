@@ -30,9 +30,9 @@ import kotlinx.android.synthetic.main.shadow_statusbar_toolbar.*
 import java.io.FileNotFoundException
 
 abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
-        Toolbar.OnMenuItemClickListener,
-        PaletteColorHolder,
-        PlayerAlbumCoverFragment.Callbacks {
+    Toolbar.OnMenuItemClickListener,
+    PaletteColorHolder,
+    PlayerAlbumCoverFragment.Callbacks {
 
     var callbacks: Callbacks? = null
         private set
@@ -41,7 +41,7 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
     private var playerAlbumCoverFragment: PlayerAlbumCoverFragment? = null
 
     override fun onAttach(
-            context: Context
+        context: Context
     ) {
         super.onAttach(context)
         try {
@@ -57,7 +57,7 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
     }
 
     override fun onMenuItemClick(
-            item: MenuItem
+        item: MenuItem
     ): Boolean {
         val song = MusicPlayerRemote.currentSong
         when (item.itemId) {
@@ -66,15 +66,19 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
                 return true
             }
             R.id.action_share -> {
-                SongShareDialog.create(song).show(requireFragmentManager(), "SHARE_SONG")
+                SongShareDialog.create(song).show(childFragmentManager, "SHARE_SONG")
+                return true
+            }
+            R.id.action_go_to_drive_mode -> {
+                NavigationUtil.gotoDriveMode(requireActivity())
                 return true
             }
             R.id.action_delete_from_device -> {
-                DeleteSongsDialog.create(song).show(requireFragmentManager(), "DELETE_SONGS")
+                DeleteSongsDialog.create(song).show(childFragmentManager, "DELETE_SONGS")
                 return true
             }
             R.id.action_add_to_playlist -> {
-                AddToPlaylistDialog.create(song).show(requireFragmentManager(), "ADD_PLAYLIST")
+                AddToPlaylistDialog.create(song).show(childFragmentManager, "ADD_PLAYLIST")
                 return true
             }
             R.id.action_clear_playing_queue -> {
@@ -83,7 +87,7 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
             }
             R.id.action_save_playing_queue -> {
                 CreatePlaylistDialog.create(MusicPlayerRemote.playingQueue)
-                        .show(requireFragmentManager(), "ADD_TO_PLAYLIST")
+                    .show(childFragmentManager, "ADD_TO_PLAYLIST")
                 return true
             }
             R.id.action_tag_editor -> {
@@ -93,7 +97,7 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
                 return true
             }
             R.id.action_details -> {
-                SongDetailDialog.create(song).show(requireFragmentManager(), "SONG_DETAIL")
+                SongDetailDialog.create(song).show(childFragmentManager, "SONG_DETAIL")
                 return true
             }
             R.id.action_go_to_album -> {
@@ -109,7 +113,7 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
                 return true
             }
             R.id.action_show_lyrics -> {
-                NavigationUtil.goToLyrics(requireActivity(), null)
+                NavigationUtil.goToLyrics(requireActivity())
                 return true
             }
             R.id.action_equalizer -> {
@@ -117,7 +121,7 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
                 return true
             }
             R.id.action_sleep_timer -> {
-                SleepTimerDialog().show(requireFragmentManager(), TAG)
+                SleepTimerDialog().show(parentFragmentManager, TAG)
                 return true
             }
             R.id.action_set_as_ringtone -> {
@@ -130,9 +134,14 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
             }
             R.id.action_go_to_genre -> {
                 val retriever = MediaMetadataRetriever()
-                val trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.id.toLong())
+                val trackUri =
+                    ContentUris.withAppendedId(
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                        song.id.toLong()
+                    )
                 retriever.setDataSource(activity, trackUri)
-                var genre: String? = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE)
+                var genre: String? =
+                    retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE)
                 if (genre == null) {
                     genre = "Not Specified"
                 }
@@ -147,7 +156,7 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
         MusicUtil.toggleFavorite(requireActivity(), song)
     }
 
-    abstract fun playerToolbar(): Toolbar
+    abstract fun playerToolbar(): Toolbar?
 
     abstract fun onShow()
 
@@ -193,10 +202,14 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
                 else
                     R.drawable.ic_favorite_border_white_24dp
 
-                val drawable = RetroUtil.getTintedVectorDrawable(requireContext(), res, toolbarIconColor())
-                if (playerToolbar().menu.findItem(R.id.action_toggle_favorite) != null)
-                    playerToolbar().menu.findItem(R.id.action_toggle_favorite).setIcon(drawable).title = if (isFavorite) getString(R.string.action_remove_from_favorites) else getString(R.string.action_add_to_favorites)
-
+                val drawable =
+                    RetroUtil.getTintedVectorDrawable(requireContext(), res, toolbarIconColor())
+                if (playerToolbar() != null && playerToolbar()!!.menu.findItem(R.id.action_toggle_favorite) != null)
+                    playerToolbar()!!.menu.findItem(R.id.action_toggle_favorite).setIcon(drawable)
+                        .title =
+                        if (isFavorite) getString(R.string.action_remove_from_favorites) else getString(
+                            R.string.action_add_to_favorites
+                        )
             }
         }.execute(MusicPlayerRemote.currentSong)
     }
@@ -213,7 +226,8 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
 
             override fun doInBackground(vararg params: Song): Lyrics? {
                 try {
-                    var data: String? = LyricUtil.getStringFromFile(params[0].title, params[0].artistName)
+                    var data: String? =
+                        LyricUtil.getStringFromFile(params[0].title, params[0].artistName)
                     return if (TextUtils.isEmpty(data)) {
                         data = MusicUtil.getLyrics(params[0])
                         return if (TextUtils.isEmpty(data)) {
@@ -238,17 +252,18 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
     }
 
     open fun setLyrics(l: Lyrics?) {
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.setBackgroundColor(ATHUtil.resolveColor(requireContext(), R.attr.colorSecondary))
         if (PreferenceUtil.getInstance(requireContext()).fullScreenMode &&
-                view.findViewById<View>(R.id.status_bar) != null) {
+            view.findViewById<View>(R.id.status_bar) != null
+        ) {
             view.findViewById<View>(R.id.status_bar).visibility = View.GONE
         }
-        playerAlbumCoverFragment = childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment?
+        playerAlbumCoverFragment =
+            childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment?
         playerAlbumCoverFragment?.setCallbacks(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -269,8 +284,8 @@ abstract class AbsPlayerFragment : AbsMusicServiceFragment(),
         val duration = MusicPlayerRemote.getQueueDurationMillis(MusicPlayerRemote.position)
 
         return MusicUtil.buildInfoString(
-                resources.getString(R.string.up_next),
-                MusicUtil.getReadableDurationString(duration)
+            resources.getString(R.string.up_next),
+            MusicUtil.getReadableDurationString(duration)
         )
     }
 }

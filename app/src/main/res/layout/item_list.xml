@@ -4,11 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
+    android:layout_marginBottom="2dp"
+    android:background="?rectSelector"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?rectSelector"
-    android:gravity="center_vertical"
-    android:minHeight="64dp"
+    android:minHeight="?attr/listPreferredItemHeight"
     android:orientation="horizontal"
     tools:ignore="MissingPrefix">
 
@@ -19,20 +21,20 @@
         android:layout_gravity="center_vertical|start"
         android:visibility="gone"
         app:srcCompat="@drawable/ic_drag_vertical_white_24dp"
-        app:tint="?colorOnBackground"
+        app:tint="?attr/colorControlNormal"
         tools:ignore="ContentDescription"
         tools:visibility="visible" />
 
     <FrameLayout
-        android:id="@+id/image_container"
+        android:id="@+id/imageContainer"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0"
-        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
         android:paddingEnd="0dp">
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/image_text_container"
+            android:id="@+id/imageTextContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -48,16 +50,15 @@
                 tools:srcCompat="@tools:sample/backgrounds/scenic[16]" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/image_text"
+                android:id="@+id/imageText"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:fontFeatureSettings="onum"
                 android:gravity="center"
                 android:maxLines="1"
                 android:minHeight="40dp"
                 android:textAppearance="@style/TextViewSubtitle2"
                 android:visibility="gone"
-                tools:text="1"
+                tools:text="100"
                 tools:visibility="visible" />
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>
@@ -80,8 +81,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextViewSubtitle1"
-            android:textColor="?colorOnPrimary"
-            tools:text="Song name" />
+            android:textColor="?android:attr/textColorPrimary"
+            tools:text="@tools:sample/lorem/random" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text"
@@ -89,8 +90,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="?colorOnBackground"
-            tools:text="Song artist name " />
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="@tools:sample/lorem/random" />
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -98,6 +99,6 @@
         style="@style/OverFlowButton"
         android:layout_gravity="center_vertical"
         android:layout_weight="0"
-        app:tint="?colorOnBackground" />
+        app:tint="?attr/colorControlNormal" />
 
 </LinearLayout>

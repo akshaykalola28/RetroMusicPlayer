@@ -1,6 +1,5 @@
 package code.name.monkey.retromusic.activities
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -8,22 +7,19 @@ import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.ATHUtil
-import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.retromusic.App
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.base.AbsSlidingMusicPanelActivity
 import code.name.monkey.retromusic.adapter.song.ShuffleButtonSongAdapter
-import code.name.monkey.retromusic.extensions.applyToolbar
 import code.name.monkey.retromusic.helper.menu.GenreMenuHelper
 import code.name.monkey.retromusic.interfaces.CabHolder
 import code.name.monkey.retromusic.model.Genre
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.mvp.presenter.GenreDetailsPresenter
 import code.name.monkey.retromusic.mvp.presenter.GenreDetailsView
+import code.name.monkey.retromusic.util.DensityUtil
 import code.name.monkey.retromusic.util.RetroColorUtil
-import code.name.monkey.retromusic.util.ViewUtil
 import com.afollestad.materialcab.MaterialCab
 import kotlinx.android.synthetic.main.activity_playlist_detail.*
 import java.util.*
@@ -42,19 +38,28 @@ class GenreDetailsActivity : AbsSlidingMusicPanelActivity(), CabHolder, GenreDet
     private lateinit var songAdapter: ShuffleButtonSongAdapter
     private var cab: MaterialCab? = null
 
+    private fun getEmojiByUnicode(unicode: Int): String {
+        return String(Character.toChars(unicode))
+    }
+
     private fun checkIsEmpty() {
+        checkForPadding()
+        emptyEmoji.text = getEmojiByUnicode(0x1F631)
         empty?.visibility = if (songAdapter.itemCount == 0) View.VISIBLE else View.GONE
+    }
+
+    private fun checkForPadding() {
+        val height = DensityUtil.dip2px(this, 52f)
+        recyclerView.setPadding(0, 0, 0, (height))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setDrawUnderStatusBar()
         super.onCreate(savedInstanceState)
-
-        setStatusbarColor(Color.TRANSPARENT)
+        setStatusbarColorAuto()
         setNavigationbarColorAuto()
         setTaskDescriptionColorAuto()
         setLightNavigationBar(true)
-        setLightStatusbar(ColorUtil.isColorLight(ATHUtil.resolveColor(this, R.attr.colorPrimary)))
         toggleBottomNavigationView(true)
 
         if (intent.extras != null) {
@@ -68,13 +73,11 @@ class GenreDetailsActivity : AbsSlidingMusicPanelActivity(), CabHolder, GenreDet
 
         App.musicComponent.inject(this)
         genreDetailsPresenter.attachView(this)
-
     }
 
     private fun setUpToolBar() {
-        val primaryColor = ATHUtil.resolveColor(this, R.attr.colorPrimary)
-        appBarLayout.setBackgroundColor(primaryColor)
-        applyToolbar(toolbar)
+        toolbar.setBackgroundColor(ATHUtil.resolveColor(this, R.attr.colorSurface))
+        setSupportActionBar(toolbar)
         title = genre.name
     }
 
@@ -93,7 +96,6 @@ class GenreDetailsActivity : AbsSlidingMusicPanelActivity(), CabHolder, GenreDet
     }
 
     override fun showEmptyView() {
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -109,8 +111,7 @@ class GenreDetailsActivity : AbsSlidingMusicPanelActivity(), CabHolder, GenreDet
     }
 
     private fun setupRecyclerView() {
-        ViewUtil.setUpFastScrollRecyclerViewColor(this, recyclerView, ThemeStore.accentColor(this))
-        songAdapter = ShuffleButtonSongAdapter(this, ArrayList(), R.layout.item_list, false, this)
+        songAdapter = ShuffleButtonSongAdapter(this, ArrayList(), R.layout.item_list, this)
         recyclerView.apply {
             itemAnimator = DefaultItemAnimator()
             layoutManager = LinearLayoutManager(this@GenreDetailsActivity)
@@ -124,23 +125,27 @@ class GenreDetailsActivity : AbsSlidingMusicPanelActivity(), CabHolder, GenreDet
         })
     }
 
-    override fun songs(songs: ArrayList<Song>) {
+    override fun songs(songs: List<Song>) {
         songAdapter.swapDataSet(songs)
     }
 
     override fun openCab(menuRes: Int, callback: MaterialCab.Callback): MaterialCab {
-        if (cab != null && cab!!.isActive) cab!!.finish()
-        cab = MaterialCab(this, R.id.cab_stub)
-                .setMenu(menuRes)
-                .setCloseDrawableRes(R.drawable.ic_close_white_24dp)
-                .setBackgroundColor(RetroColorUtil.shiftBackgroundColorForLightText(ATHUtil.resolveColor(this, R.attr.colorPrimary)))
-                .start(callback)
+        if (cab != null && cab!!.isActive) cab?.finish()
+        cab = MaterialCab(this, R.id.cab_stub).setMenu(menuRes)
+            .setCloseDrawableRes(R.drawable.ic_close_white_24dp)
+            .setBackgroundColor(
+                RetroColorUtil.shiftBackgroundColorForLightText(
+                    ATHUtil.resolveColor(
+                        this,
+                        R.attr.colorSurface
+                    )
+                )
+            ).start(callback)
         return cab!!
     }
 
     override fun onBackPressed() {
-        if (cab != null && cab!!.isActive)
-            cab!!.finish()
+        if (cab != null && cab!!.isActive) cab!!.finish()
         else {
             recyclerView!!.stopScroll()
             super.onBackPressed()

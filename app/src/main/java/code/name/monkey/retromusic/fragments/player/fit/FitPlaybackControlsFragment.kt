@@ -16,16 +16,18 @@ import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.MaterialValueHelper
 import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.extensions.hide
 import code.name.monkey.retromusic.extensions.ripAlpha
+import code.name.monkey.retromusic.extensions.show
+import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.helper.MusicProgressViewUpdateHelper
 import code.name.monkey.retromusic.helper.PlayPauseButtonOnClickHandler
 import code.name.monkey.retromusic.misc.SimpleOnSeekbarChangeListener
 import code.name.monkey.retromusic.service.MusicService
-import code.name.monkey.retromusic.fragments.base.AbsPlayerControlsFragment
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.PreferenceUtil
-import kotlinx.android.synthetic.main.fragment_player_playback_controls.*
+import kotlinx.android.synthetic.main.fragment_fit_playback_controls.*
 
 class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
 
@@ -34,14 +36,15 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
     private var lastDisabledPlaybackControlsColor: Int = 0
     private lateinit var progressViewUpdateHelper: MusicProgressViewUpdateHelper
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         progressViewUpdateHelper = MusicProgressViewUpdateHelper(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         return inflater.inflate(R.layout.fragment_fit_playback_controls, container, false)
     }
@@ -49,6 +52,9 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpMusicControllers()
+
+        title.isSelected = true
+        text.isSelected = true
 
         playPauseButton.setOnClickListener {
             if (MusicPlayerRemote.isPlaying) {
@@ -64,6 +70,12 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
         val song = MusicPlayerRemote.currentSong
         title.text = song.title
         text.text = song.artistName
+        if (PreferenceUtil.getInstance(requireContext()).isSongInfo) {
+            songInfo.text = getSongInfo(song)
+            songInfo.show()
+        } else {
+            songInfo.hide()
+        }
     }
 
     override fun onResume() {
@@ -101,19 +113,21 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
     }
 
     override fun setDark(color: Int) {
-        val colorBg = ATHUtil.resolveColor(activity, android.R.attr.colorBackground)
+        val colorBg = ATHUtil.resolveColor(requireContext(), android.R.attr.colorBackground)
         if (ColorUtil.isColorLight(colorBg)) {
-            lastPlaybackControlsColor = MaterialValueHelper.getSecondaryTextColor(activity, true)
-            lastDisabledPlaybackControlsColor = MaterialValueHelper.getSecondaryDisabledTextColor(activity, true)
+            lastPlaybackControlsColor = MaterialValueHelper.getSecondaryTextColor(requireContext(), true)
+            lastDisabledPlaybackControlsColor =
+                MaterialValueHelper.getSecondaryDisabledTextColor(requireContext(), true)
         } else {
             lastPlaybackControlsColor = MaterialValueHelper.getPrimaryTextColor(activity, false)
-            lastDisabledPlaybackControlsColor = MaterialValueHelper.getPrimaryDisabledTextColor(activity, false)
+            lastDisabledPlaybackControlsColor =
+                MaterialValueHelper.getPrimaryDisabledTextColor(activity, false)
         }
 
         val colorFinal = if (PreferenceUtil.getInstance(requireContext()).adaptiveColor) {
             color
         } else {
-            ThemeStore.accentColor(context!!).ripAlpha()
+            ThemeStore.accentColor(requireContext()).ripAlpha()
         }
 
         volumeFragment?.setTintable(colorFinal)
@@ -125,7 +139,11 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
     }
 
     private fun setFabColor(i: Int) {
-        TintHelper.setTintAuto(playPauseButton, MaterialValueHelper.getPrimaryTextColor(context, ColorUtil.isColorLight(i)), false)
+        TintHelper.setTintAuto(
+            playPauseButton,
+            MaterialValueHelper.getPrimaryTextColor(context, ColorUtil.isColorLight(i)),
+            false
+        )
         TintHelper.setTintAuto(playPauseButton, i, true)
     }
 
@@ -166,8 +184,14 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
 
     override fun updateShuffleState() {
         when (MusicPlayerRemote.shuffleMode) {
-            MusicService.SHUFFLE_MODE_SHUFFLE -> shuffleButton.setColorFilter(lastPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
-            else -> shuffleButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+            MusicService.SHUFFLE_MODE_SHUFFLE -> shuffleButton.setColorFilter(
+                lastPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
+            else -> shuffleButton.setColorFilter(
+                lastDisabledPlaybackControlsColor,
+                PorterDuff.Mode.SRC_IN
+            )
         }
     }
 
@@ -179,7 +203,10 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
         when (MusicPlayerRemote.repeatMode) {
             MusicService.REPEAT_MODE_NONE -> {
                 repeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
-                repeatButton.setColorFilter(lastDisabledPlaybackControlsColor, PorterDuff.Mode.SRC_IN)
+                repeatButton.setColorFilter(
+                    lastDisabledPlaybackControlsColor,
+                    PorterDuff.Mode.SRC_IN
+                )
             }
             MusicService.REPEAT_MODE_ALL -> {
                 repeatButton.setImageResource(R.drawable.ic_repeat_white_24dp)
@@ -194,11 +221,11 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
 
     public override fun show() {
         playPauseButton!!.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .rotation(360f)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
+            .scaleX(1f)
+            .scaleY(1f)
+            .rotation(360f)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
     }
 
     public override fun hide() {
@@ -216,8 +243,10 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     MusicPlayerRemote.seekTo(progress)
-                    onUpdateProgressViews(MusicPlayerRemote.songProgressMillis,
-                            MusicPlayerRemote.songDurationMillis)
+                    onUpdateProgressViews(
+                        MusicPlayerRemote.songProgressMillis,
+                        MusicPlayerRemote.songDurationMillis
+                    )
                 }
             }
         })
@@ -233,16 +262,16 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
             pivotY = (height / 2).toFloat()
 
             animate().setDuration(200)
-                    .setInterpolator(DecelerateInterpolator())
-                    .scaleX(1.1f)
-                    .scaleY(1.1f)
-                    .withEndAction {
-                        animate().setDuration(200)
-                                .setInterpolator(AccelerateInterpolator())
-                                .scaleX(1f)
-                                .scaleY(1f)
-                                .alpha(1f).start()
-                    }.start()
+                .setInterpolator(DecelerateInterpolator())
+                .scaleX(1.1f)
+                .scaleY(1.1f)
+                .withEndAction {
+                    animate().setDuration(200)
+                        .setInterpolator(AccelerateInterpolator())
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .alpha(1f).start()
+                }.start()
         }
     }
 
@@ -257,5 +286,4 @@ class FitPlaybackControlsFragment : AbsPlayerControlsFragment() {
         songTotalTime.text = MusicUtil.getReadableDurationString(total.toLong())
         songCurrentProgress.text = MusicUtil.getReadableDurationString(progress.toLong())
     }
-
 }

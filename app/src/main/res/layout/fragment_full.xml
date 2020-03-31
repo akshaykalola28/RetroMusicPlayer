@@ -7,6 +7,11 @@
     android:clickable="true"
     android:focusable="true">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorSurface" />
+
     <fragment
         android:id="@+id/playerAlbumCoverFragment"
         android:name="code.name.monkey.retromusic.fragments.player.PlayerAlbumCoverFragment"
@@ -17,7 +22,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#90000000" />
+        android:background="@drawable/shadow_up_full_theme" />
 
 
     <LinearLayout
@@ -33,7 +38,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             tools:layout="@layout/fragment_full_player_controls" />
-
 
     </LinearLayout>
 
@@ -60,7 +64,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/nextSongLabel"
                     android:layout_width="0dp"
@@ -72,6 +75,7 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:text="@string/next_song"
+                    android:textAppearance="@style/TextViewSubtitle2"
                     android:textColor="@color/md_white_1000"
                     app:layout_constraintEnd_toStartOf="@+id/artistImage"
                     app:layout_constraintStart_toStartOf="parent"
@@ -79,21 +83,22 @@
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/nextSong"
-                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
                     android:gravity="center"
-                    android:marqueeRepeatLimit="marquee_forever"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:singleLine="true"
+                    android:textAppearance="@style/TextViewSubtitle1"
                     android:textColor="@color/md_white_1000"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/artistImage"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/nextSongLabel"
-                    tools:text="@string/for_you" />
+                    tools:text="@tools:sample/lorem/random" />
 
                 <code.name.monkey.retromusic.views.CircularImageView
                     android:id="@+id/artistImage"
@@ -123,7 +128,7 @@
             android:visibility="gone"
             tools:visibility="visible">
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/player_lyrics_line1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -131,11 +136,11 @@
                 android:shadowColor="@color/md_black_1000"
                 android:shadowRadius="4"
                 android:textAlignment="center"
+                android:textAppearance="@style/TextViewHeadline6"
                 android:textColor="@color/md_white_1000"
-                android:textSize="22sp"
                 android:visibility="gone" />
 
-            <TextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/player_lyrics_line2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -143,10 +148,9 @@
                 android:shadowColor="@color/md_black_1000"
                 android:shadowRadius="4"
                 android:textAlignment="center"
-                android:textColor="@color/md_white_1000"
-                android:textSize="22sp" />
+                android:textAppearance="@style/TextViewHeadline6"
+                android:textColor="@color/md_white_1000" />
 
         </FrameLayout>
-
     </LinearLayout>
 </FrameLayout>

@@ -14,41 +14,50 @@
 
 package code.name.monkey.retromusic.mvp.presenter
 
+import code.name.monkey.retromusic.Result.Error
+import code.name.monkey.retromusic.Result.Success
 import code.name.monkey.retromusic.model.Song
 import code.name.monkey.retromusic.mvp.BaseView
 import code.name.monkey.retromusic.mvp.Presenter
 import code.name.monkey.retromusic.mvp.PresenterImpl
 import code.name.monkey.retromusic.providers.interfaces.Repository
-import io.reactivex.disposables.Disposable
-import java.util.*
+import kotlinx.coroutines.*
 import javax.inject.Inject
-
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by hemanths on 20/08/17.
  */
 
 interface GenreDetailsView : BaseView {
-    fun songs(songs: ArrayList<Song>)
+
+    fun songs(songs: List<Song>)
 }
 
 interface GenreDetailsPresenter : Presenter<GenreDetailsView> {
     fun loadGenreSongs(genreId: Int)
 
     class GenreDetailsPresenterImpl @Inject constructor(
-            private val repository: Repository
-    ) : PresenterImpl<GenreDetailsView>(), GenreDetailsPresenter {
+        private val repository: Repository
+    ) : PresenterImpl<GenreDetailsView>(), GenreDetailsPresenter, CoroutineScope {
+
+        private val job = Job()
+
+        override val coroutineContext: CoroutineContext
+            get() = Dispatchers.IO + job
 
         override fun detachView() {
             super.detachView()
-            disposable?.dispose()
+            job.cancel()
         }
 
-        private var disposable: Disposable? = null
-
         override fun loadGenreSongs(genreId: Int) {
-            disposable = repository.getGenreFlowable(genreId)
-                    .subscribe({ view?.songs(it) }, { t -> println(t) })
+            launch {
+                when (val result = repository.getGenre(genreId)) {
+                    is Success -> withContext(Dispatchers.Main) { view?.songs(result.data) }
+                    is Error -> withContext(Dispatchers.Main) { view?.showEmptyView() }
+                }
+            }
         }
     }
 }

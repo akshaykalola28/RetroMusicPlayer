@@ -4,11 +4,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.core.content.ContextCompat
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.util.ATHUtil
 import code.name.monkey.appthemehelper.util.MaterialUtil
-import code.name.monkey.appthemehelper.util.TintHelper
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.extensions.appHandleColor
 import code.name.monkey.retromusic.loaders.SongLoader
@@ -16,30 +13,18 @@ import kotlinx.android.synthetic.main.activity_song_tag_editor.*
 import org.jaudiotagger.tag.FieldKey
 import java.util.*
 
-
 class SongTagEditorActivity : AbsTagEditorActivity(), TextWatcher {
 
     override val contentViewLayout: Int
         get() = R.layout.activity_song_tag_editor
-
-    private fun setupToolbar() {
-        appBarLayout.setBackgroundColor(ATHUtil.resolveColor(this, R.attr.colorPrimary))
-        toolbar.apply {
-            setBackgroundColor(ATHUtil.resolveColor(this@SongTagEditorActivity, R.attr.colorPrimary))
-            navigationIcon = TintHelper.createTintedDrawable(ContextCompat.getDrawable(context, R.drawable.ic_keyboard_backspace_black_24dp), ThemeStore.textColorPrimary(context))
-            setNavigationOnClickListener { onBackPressed() }
-            setSupportActionBar(toolbar)
-        }
-        title = null
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setNoImageMode()
         setUpViews()
-        setupToolbar()
-        setStatusbarColorAuto()
+        toolbar.setBackgroundColor(ATHUtil.resolveColor(this, R.attr.colorSurface))
+        setSupportActionBar(toolbar)
     }
 
     private fun setUpViews() {
@@ -78,19 +63,12 @@ class SongTagEditorActivity : AbsTagEditorActivity(), TextWatcher {
     }
 
     override fun loadCurrentImage() {
-
-    }
-
-    override fun getImageFromLastFM() {
-
     }
 
     override fun searchImageOnWeb() {
-
     }
 
     override fun deleteImage() {
-
     }
 
     override fun save() {
@@ -114,15 +92,12 @@ class SongTagEditorActivity : AbsTagEditorActivity(), TextWatcher {
     }
 
     override fun loadImageFromFile(selectedFile: Uri?) {
-
     }
 
     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
     }
 
     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-
     }
 
     override fun afterTextChanged(s: Editable) {

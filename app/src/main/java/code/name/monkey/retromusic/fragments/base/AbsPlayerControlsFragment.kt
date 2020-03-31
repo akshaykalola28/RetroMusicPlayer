@@ -9,12 +9,12 @@ import code.name.monkey.retromusic.fragments.VolumeFragment
 import code.name.monkey.retromusic.helper.MusicProgressViewUpdateHelper
 import code.name.monkey.retromusic.util.PreferenceUtil
 
-
 /**
  * Created by hemanths on 24/09/17.
  */
 
-abstract class AbsPlayerControlsFragment : AbsMusicServiceFragment(), MusicProgressViewUpdateHelper.Callback {
+abstract class AbsPlayerControlsFragment : AbsMusicServiceFragment(),
+    MusicProgressViewUpdateHelper.Callback {
 
     protected abstract fun show()
 
@@ -38,18 +38,18 @@ abstract class AbsPlayerControlsFragment : AbsMusicServiceFragment(), MusicProgr
             pivotY = (view.height / 2).toFloat()
 
             animate().setDuration(200)
-                    .setInterpolator(DecelerateInterpolator())
-                    .scaleX(1.1f)
-                    .scaleY(1.1f)
-                    .withEndAction {
-                        animate().setDuration(200)
-                                .setInterpolator(AccelerateInterpolator())
-                                .scaleX(1f)
-                                .scaleY(1f)
-                                .alpha(1f)
-                                .start()
-                    }
-                    .start()
+                .setInterpolator(DecelerateInterpolator())
+                .scaleX(1.1f)
+                .scaleY(1.1f)
+                .withEndAction {
+                    animate().setDuration(200)
+                        .setInterpolator(AccelerateInterpolator())
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .alpha(1f)
+                        .start()
+                }
+                .start()
         }
     }
 
@@ -62,9 +62,11 @@ abstract class AbsPlayerControlsFragment : AbsMusicServiceFragment(), MusicProgr
 
     private fun hideVolumeIfAvailable() {
         if (PreferenceUtil.getInstance(requireContext()).volumeToggle) {
-            childFragmentManager.beginTransaction().replace(R.id.volumeFragmentContainer, VolumeFragment()).commit()
+            childFragmentManager.beginTransaction()
+                .replace(R.id.volumeFragmentContainer, VolumeFragment()).commit()
             childFragmentManager.executePendingTransactions()
-            volumeFragment = childFragmentManager.findFragmentById(R.id.volumeFragmentContainer) as VolumeFragment?
+            volumeFragment =
+                childFragmentManager.findFragmentById(R.id.volumeFragmentContainer) as VolumeFragment?
         }
     }
 

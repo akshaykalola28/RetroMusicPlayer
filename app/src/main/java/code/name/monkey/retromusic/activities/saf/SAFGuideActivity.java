@@ -28,6 +28,7 @@ import code.name.monkey.retromusic.R;
  * Created by hemanths on 2019-07-31.
  */
 public class SAFGuideActivity extends IntroActivity {
+
     public static final int REQUEST_CODE_SAF_GUIDE = 98;
 
     @Override
@@ -44,7 +45,8 @@ public class SAFGuideActivity extends IntroActivity {
 
         addSlide(new SimpleSlide.Builder()
                 .title(title)
-                .description(Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1 ? R.string.saf_guide_slide1_description_before_o : R.string.saf_guide_slide1_description)
+                .description(Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1
+                        ? R.string.saf_guide_slide1_description_before_o : R.string.saf_guide_slide1_description)
                 .image(R.drawable.saf_guide_1)
                 .background(R.color.md_deep_purple_300)
                 .backgroundDark(R.color.md_deep_purple_400)

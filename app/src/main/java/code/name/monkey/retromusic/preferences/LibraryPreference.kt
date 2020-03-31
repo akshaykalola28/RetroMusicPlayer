@@ -16,16 +16,18 @@ package code.name.monkey.retromusic.preferences
 
 import android.app.Dialog
 import android.content.Context
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.AttributeSet
 import android.widget.Toast
+import androidx.core.graphics.BlendModeColorFilterCompat
+import androidx.core.graphics.BlendModeCompat.SRC_IN
 import androidx.preference.PreferenceDialogFragmentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.common.prefs.supportv7.ATEDialogPreference
+import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.CategoryInfoAdapter
+import code.name.monkey.retromusic.extensions.colorControlNormal
 import code.name.monkey.retromusic.model.CategoryInfo
 import code.name.monkey.retromusic.util.PreferenceUtil
 import com.afollestad.materialdialogs.LayoutMode
@@ -34,66 +36,73 @@ import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
 import java.util.*
 
-
-class LibraryPreference : ATEDialogPreference {
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
+class LibraryPreference @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = -1,
+    defStyleRes: Int = -1
+) :
+    ATEDialogPreference(context, attrs, defStyleAttr, defStyleRes) {
 
     init {
-        icon?.setColorFilter(ThemeStore.textColorSecondary(context), PorterDuff.Mode.SRC_IN)
+        icon?.colorFilter =
+            BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                colorControlNormal(context),
+                SRC_IN
+            )
     }
 }
 
 class LibraryPreferenceDialog : PreferenceDialogFragmentCompat() {
 
     override fun onDialogClosed(positiveResult: Boolean) {
-
     }
 
     lateinit var adapter: CategoryInfoAdapter
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val view = activity!!.layoutInflater.inflate(code.name.monkey.retromusic.R.layout.preference_dialog_library_categories, null)
+        val view = requireActivity().layoutInflater.inflate(
+            R.layout.preference_dialog_library_categories,
+            null
+        )
 
-        val categoryInfos: List<CategoryInfo>
-        if (savedInstanceState != null) {
-            categoryInfos = savedInstanceState.getParcelableArrayList(PreferenceUtil.LIBRARY_CATEGORIES)!!
+        val categoryInfos: List<CategoryInfo> = if (savedInstanceState != null) {
+            savedInstanceState.getParcelableArrayList(PreferenceUtil.LIBRARY_CATEGORIES)!!
         } else {
-            categoryInfos = PreferenceUtil.getInstance(requireContext()).libraryCategoryInfos
+            PreferenceUtil.getInstance(requireContext()).libraryCategoryInfos
         }
         adapter = CategoryInfoAdapter(categoryInfos)
 
-        val recyclerView = view.findViewById<RecyclerView>(code.name.monkey.retromusic.R.id.recycler_view)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.adapter = adapter
 
         adapter.attachToRecyclerView(recyclerView)
 
         return MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT))
-                .title(code.name.monkey.retromusic.R.string.library_categories)
-                .cornerRadius(PreferenceUtil.getInstance(requireContext()).dialogCorner)
-                .customView(view = view)
-                .positiveButton(android.R.string.ok) {
-                    updateCategories(adapter.categoryInfos)
-                    dismiss()
-                }
-                .negativeButton(android.R.string.cancel) {
-                    dismiss()
-                }
-                .neutralButton(code.name.monkey.retromusic.R.string.reset_action) {
-                    adapter.categoryInfos = PreferenceUtil.getInstance(requireContext()).defaultLibraryCategoryInfos
-                }
-                .noAutoDismiss()
+            .title(R.string.library_categories)
+            .cornerRadius(PreferenceUtil.getInstance(requireContext()).dialogCorner)
+            .customView(view = view)
+            .positiveButton(android.R.string.ok) {
+                updateCategories(adapter.categoryInfos)
+                dismiss()
+            }
+            .negativeButton(android.R.string.cancel) {
+                dismiss()
+            }
+            .neutralButton(R.string.reset_action) {
+                adapter.categoryInfos =
+                    PreferenceUtil.getInstance(requireContext()).defaultLibraryCategoryInfos
+            }
+            .noAutoDismiss()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(PreferenceUtil.LIBRARY_CATEGORIES, ArrayList(adapter.categoryInfos))
+        outState.putParcelableArrayList(
+            PreferenceUtil.LIBRARY_CATEGORIES,
+            ArrayList(adapter.categoryInfos)
+        )
     }
 
     private fun updateCategories(categories: List<CategoryInfo>) {

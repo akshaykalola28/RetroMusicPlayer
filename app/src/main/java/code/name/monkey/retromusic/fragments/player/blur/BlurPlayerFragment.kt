@@ -31,9 +31,10 @@ class BlurPlayerFragment : AbsPlayerFragment(), SharedPreferences.OnSharedPrefer
 
     private var lastColor: Int = 0
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_blur, container, false)
     }
 
@@ -44,15 +45,17 @@ class BlurPlayerFragment : AbsPlayerFragment(), SharedPreferences.OnSharedPrefer
     }
 
     private fun setUpSubFragments() {
-        playbackControlsFragment = childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as BlurPlaybackControlsFragment
-        val playerAlbumCoverFragment = childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
+        playbackControlsFragment =
+            childFragmentManager.findFragmentById(R.id.playbackControlsFragment) as BlurPlaybackControlsFragment
+        val playerAlbumCoverFragment =
+            childFragmentManager.findFragmentById(R.id.playerAlbumCoverFragment) as PlayerAlbumCoverFragment
         playerAlbumCoverFragment.setCallbacks(this)
     }
 
     private fun setUpPlayerToolbar() {
-        playerToolbar!!.apply {
+        playerToolbar.apply {
             inflateMenu(R.menu.menu_player)
-            setNavigationOnClickListener { activity!!.onBackPressed() }
+            setNavigationOnClickListener { requireActivity().onBackPressed() }
             ToolbarContentTintHelper.colorizeToolbar(this, Color.WHITE, activity)
         }.setOnMenuItemClickListener(this)
     }
@@ -64,8 +67,8 @@ class BlurPlayerFragment : AbsPlayerFragment(), SharedPreferences.OnSharedPrefer
     override fun onColorChanged(color: Int) {
         playbackControlsFragment.setDark(color)
         lastColor = color
-        callbacks!!.onPaletteColorChanged()
-        ToolbarContentTintHelper.colorizeToolbar(playerToolbar!!, Color.WHITE, activity)
+        callbacks?.onPaletteColorChanged()
+        ToolbarContentTintHelper.colorizeToolbar(playerToolbar, Color.WHITE, activity)
     }
 
     override fun toggleFavorite(song: Song) {
@@ -76,11 +79,9 @@ class BlurPlayerFragment : AbsPlayerFragment(), SharedPreferences.OnSharedPrefer
     }
 
     override fun onShow() {
-
     }
 
     override fun onHide() {
-
     }
 
     override fun onBackPressed(): Boolean {
@@ -94,24 +95,22 @@ class BlurPlayerFragment : AbsPlayerFragment(), SharedPreferences.OnSharedPrefer
     override val paletteColor: Int
         get() = lastColor
 
-
     private fun updateBlur() {
         val blurAmount = PreferenceManager.getDefaultSharedPreferences(requireContext())
-                .getInt(PreferenceUtil.NEW_BLUR_AMOUNT, 25)
-        colorBackground!!.clearColorFilter()
+            .getInt(PreferenceUtil.NEW_BLUR_AMOUNT, 25)
+        colorBackground.clearColorFilter()
         SongGlideRequest.Builder.from(Glide.with(requireActivity()), MusicPlayerRemote.currentSong)
-                .checkIgnoreMediaStore(requireContext())
-                .generatePalette(requireContext()).build()
-                .transform(BlurTransformation.Builder(requireContext()).blurRadius(blurAmount.toFloat()).build())
-                //.centerCrop()
-                //.override(320, 480)
-                .into(object : RetroMusicColoredTarget(colorBackground) {
-                    override fun onColorReady(color: Int) {
-                        if (color == defaultFooterColor) {
-                            colorBackground!!.setColorFilter(color)
-                        }
+            .checkIgnoreMediaStore(requireContext())
+            .generatePalette(requireContext()).build()
+            .dontAnimate()
+            .transform(BlurTransformation.Builder(requireContext()).blurRadius(blurAmount.toFloat()).build())
+            .into(object : RetroMusicColoredTarget(colorBackground) {
+                override fun onColorReady(color: Int) {
+                    if (color == defaultFooterColor) {
+                        colorBackground.setColorFilter(color)
                     }
-                })
+                }
+            })
     }
 
     override fun onServiceConnected() {
@@ -126,12 +125,14 @@ class BlurPlayerFragment : AbsPlayerFragment(), SharedPreferences.OnSharedPrefer
 
     override fun onResume() {
         super.onResume()
-        PreferenceManager.getDefaultSharedPreferences(requireContext()).registerOnSharedPreferenceChangeListener(this)
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        PreferenceManager.getDefaultSharedPreferences(requireContext()).unregisterOnSharedPreferenceChangeListener(this)
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -139,6 +140,5 @@ class BlurPlayerFragment : AbsPlayerFragment(), SharedPreferences.OnSharedPrefer
             updateBlur()
         }
     }
-
 }
 

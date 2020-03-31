@@ -14,21 +14,23 @@
 
 package code.name.monkey.retromusic.mvp.presenter
 
+import code.name.monkey.retromusic.Result.Error
+import code.name.monkey.retromusic.Result.Success
 import code.name.monkey.retromusic.model.Album
 import code.name.monkey.retromusic.mvp.BaseView
 import code.name.monkey.retromusic.mvp.Presenter
 import code.name.monkey.retromusic.mvp.PresenterImpl
 import code.name.monkey.retromusic.providers.interfaces.Repository
-import io.reactivex.disposables.Disposable
-import java.util.*
+import kotlinx.coroutines.*
 import javax.inject.Inject
-
+import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by hemanths on 12/08/17.
  */
 interface AlbumsView : BaseView {
-    fun albums(albums: ArrayList<Album>)
+
+    fun albums(albums: List<Album>)
 }
 
 interface AlbumsPresenter : Presenter<AlbumsView> {
@@ -36,23 +38,26 @@ interface AlbumsPresenter : Presenter<AlbumsView> {
     fun loadAlbums()
 
     class AlbumsPresenterImpl @Inject constructor(
-            private val repository: Repository
-    ) : PresenterImpl<AlbumsView>(), AlbumsPresenter {
+        private val repository: Repository
+    ) : PresenterImpl<AlbumsView>(), AlbumsPresenter, CoroutineScope {
 
-        private var disposable: Disposable? = null
+        private val job = Job()
 
-        private fun showList(albums: ArrayList<Album>) {
-            view?.albums(albums)
-        }
+        override val coroutineContext: CoroutineContext
+            get() = Dispatchers.IO + job
 
         override fun detachView() {
             super.detachView()
-            disposable?.dispose()
+            job.cancel()
         }
 
         override fun loadAlbums() {
-            disposable = repository.allAlbumsFlowable
-                    .subscribe({ view?.albums(it) }, { t -> println(t) })
+            launch {
+                when (val result = repository.allAlbums()) {
+                    is Success -> withContext(Dispatchers.Main) { view?.albums(result.data) }
+                    is Error -> withContext(Dispatchers.Main) { view?.showEmptyView() }
+                }
+            }
         }
     }
 }

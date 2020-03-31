@@ -9,6 +9,7 @@ import android.view.View
 import androidx.core.app.ShareCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import code.name.monkey.appthemehelper.util.ATHUtil
 import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
 import code.name.monkey.retromusic.Constants.APP_INSTAGRAM_LINK
 import code.name.monkey.retromusic.Constants.APP_TELEGRAM_LINK
@@ -60,19 +61,21 @@ class AboutActivity : AbsBaseActivity(), View.OnClickListener {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setDrawUnderStatusBar()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
         setStatusbarColorAuto()
-        setNavigationBarColorPrimary()
+        setNavigationbarColorAuto()
         setLightNavigationBar(true)
 
-        loadContributors()
+        val toolbarColor = ATHUtil.resolveColor(this, R.attr.colorSurface)
+        toolbar.setBackgroundColor(toolbarColor)
+        ToolbarContentTintHelper.colorBackButton(toolbar)
         setSupportActionBar(toolbar)
-        ToolbarContentTintHelper.colorBackButton(toolbar )
-        appVersion.text = getAppVersion()
+        version.setSummary(getAppVersion())
         setUpView()
+        loadContributors()
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
@@ -103,7 +106,6 @@ class AboutActivity : AbsBaseActivity(), View.OnClickListener {
         openSource.setOnClickListener(this)
         pinterestLink.setOnClickListener(this)
         bugReportLink.setOnClickListener(this)
-
     }
 
     override fun onClick(view: View) {
@@ -125,17 +127,16 @@ class AboutActivity : AbsBaseActivity(), View.OnClickListener {
     }
 
     private fun showChangeLogOptions() {
-        MaterialDialog(this, BottomSheet(LayoutMode.WRAP_CONTENT))
-                .show {
-                    cornerRadius(PreferenceUtil.getInstance(this@AboutActivity).dialogCorner)
-                    listItems(items = listOf("Telegram Channel", "App")) { _, position, _ ->
-                        if (position == 0) {
-                            openUrl(TELEGRAM_CHANGE_LOG)
-                        } else {
-                            NavigationUtil.gotoWhatNews(this@AboutActivity)
-                        }
-                    }
+        MaterialDialog(this, BottomSheet(LayoutMode.WRAP_CONTENT)).show {
+            cornerRadius(PreferenceUtil.getInstance(this@AboutActivity).dialogCorner)
+            listItems(items = listOf("Telegram Channel", "App")) { _, position, _ ->
+                if (position == 0) {
+                    openUrl(TELEGRAM_CHANGE_LOG)
+                } else {
+                    NavigationUtil.gotoWhatNews(this@AboutActivity)
                 }
+            }
+        }
     }
 
     private fun getAppVersion(): String {
@@ -149,11 +150,9 @@ class AboutActivity : AbsBaseActivity(), View.OnClickListener {
     }
 
     private fun shareApp() {
-        ShareCompat.IntentBuilder.from(this)
-                .setType("text/plain")
-                .setChooserTitle(R.string.share_app)
-                .setText(String.format(getString(R.string.app_share), packageName))
-                .startChooser()
+        ShareCompat.IntentBuilder.from(this).setType("text/plain")
+            .setChooserTitle(R.string.share_app)
+            .setText(String.format(getString(R.string.app_share), packageName)).startChooser()
     }
 
     private fun loadContributors() {
